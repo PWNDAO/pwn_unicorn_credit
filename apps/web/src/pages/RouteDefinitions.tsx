@@ -6,9 +6,10 @@ import { Navigate, Route, Routes, matchPath, useLocation } from 'react-router-do
 import { shouldDisableNFTRoutesAtom } from 'state/application/atoms'
 import { isBrowserRouterEnabled } from 'utils/env'
 // High-traffic pages (index and /swap) should not be lazy-loaded.
-import Landing from 'pages/Landing'
+// import Landing from 'pages/Landing'
 import { RemoveLiquidityV2WithTokenRedirects } from 'pages/LegacyPool/redirects'
 import Swap from 'pages/Swap'
+import UnicornHome from 'pages/Unicorn/UnicornHome'
 import i18n from 'uniswap/src/i18n'
 
 const NftExplore = lazy(() => import('nft/pages/explore'))
@@ -65,6 +66,7 @@ export function useRouterConfig(): RouterConfig {
 // SEO titles and descriptions sourced from https://docs.google.com/spreadsheets/d/1_6vSxGgmsx6QGEZ4mdHppv1VkuiJEro3Y_IopxUHGB4/edit#gid=0
 // getTitle and getDescription are used as static metatags for SEO. Dynamic metatags should be set in the page component itself
 const StaticTitlesAndDescriptions = {
+  UnicornTitle: i18n.t('title.unicorn'),
   UniswapTitle: i18n.t('title.uniswapTradeCrypto'),
   SwapTitle: i18n.t('title.buySellTradeEthereum'),
   SwapDescription: i18n.t('title.swappingMadeSimple'),
@@ -105,11 +107,9 @@ function createRouteDefinition(route: Partial<RouteDefinition>): RouteDefinition
 export const routes: RouteDefinition[] = [
   createRouteDefinition({
     path: '/',
-    getTitle: () => StaticTitlesAndDescriptions.UniswapTitle,
-    getDescription: () => StaticTitlesAndDescriptions.SwapDescription,
-    getElement: (args) => {
-      return args.browserRouterEnabled && args.hash ? <Navigate to={args.hash.replace('#', '')} replace /> : <Landing />
-    },
+    getTitle: () => 'Unicorn Credit from PWN',
+    getDescription: () => 'Unicorn Credit from PWN',
+    getElement: () => <UnicornHome />,
   }),
   createRouteDefinition({
     path: '/explore',

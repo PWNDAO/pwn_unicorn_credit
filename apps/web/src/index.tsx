@@ -108,10 +108,6 @@ function StatsigProvider({ children }: PropsWithChildren) {
     })
   }, [account])
 
-  if (!config.statsigApiKey) {
-    throw new Error('REACT_APP_STATSIG_API_KEY is not set')
-  }
-
   return (
     <BaseStatsigProvider
       user={statsigUser}

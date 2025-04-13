@@ -84,6 +84,7 @@ export interface Config {
  *  so we pull from github secrets directly with process.env.<var_name> for both extension and mobile. <var_name> is used for local mobile builds.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const _config: any = {
   alchemyApiKey: process.env.REACT_APP_ALCHEMY_API_KEY || process.env.ALCHEMY_API_KEY,
   amplitudeProxyUrlOverride: process.env.AMPLITUDE_PROXY_URL_OVERRIDE,
