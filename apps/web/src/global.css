@@ -21,6 +21,13 @@ html {
   scrollbar-color: gray transparent;
 }
 
+body {
+  background-image: url('../public/images/pwn_grid_background.png') !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+
 .text-wrap-pretty {
   text-wrap: pretty;
 }
