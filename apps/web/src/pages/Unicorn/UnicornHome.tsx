@@ -34,8 +34,7 @@ export default function UnicornHome() {
         borderRadius="$rounded16"
         mb="$spacing24"
         alignItems="center"
-        width="100%"
-        maxWidth={640}
+        width="100vw"
         zIndex={1}
         position="relative"
         // shadowColor="$accent1"
@@ -49,7 +48,7 @@ export default function UnicornHome() {
             opacity: 0.05,
             position: 'absolute',
             top: '50%',
-            left: '40%',
+            left: '45%',
             transform: 'translate(-50%, -50%)',
             zIndex: 0,
             lineHeight: 1,
@@ -81,6 +80,8 @@ export default function UnicornHome() {
         </Text>
       </Flex>
       <Flex
+        backgroundColor="#333333"
+        borderRadius="$rounded32"
       >
         <Button
           backgroundColor="#333333"
@@ -97,6 +98,28 @@ export default function UnicornHome() {
           </Text>
         </Button>
       </Flex>
+      <Text
+        position="absolute"
+        bottom="$spacing24"
+        right={64}
+        color="$white"
+        fontSize={24}
+        style={{ fontFamily: 'Screener' }}
+      >
+        Built by{' '}
+        <a 
+          href="https://pwn.xyz" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          style={{ 
+            color: 'inherit',
+            textDecoration: 'underline',
+            cursor: 'pointer'
+          }}
+        >
+          PWN
+        </a>
+      </Text>
     </Flex>
   )
 }
