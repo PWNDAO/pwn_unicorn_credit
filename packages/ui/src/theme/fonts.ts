@@ -42,6 +42,7 @@ const fontFamily = {
     book: fontFamilyByPlatform[platform].book,
     medium: fontFamilyByPlatform[platform].medium,
     monospace: 'InputMono-Regular',
+    screener: isWeb ? 'Screener' : 'Screener',
   },
 }
 
@@ -52,6 +53,10 @@ const baselMedium = isWeb
 const baselBook = isWeb
   ? 'Basel, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
   : fontFamily.sansSerif.book
+
+const screener = isWeb
+  ? 'Screener, -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+  : fontFamily.sansSerif.screener
 
 type SansSerifFontFamilyKey = keyof typeof fontFamily.sansSerif
 type SansSerifFontFamilyValue = (typeof fontFamily.sansSerif)[SansSerifFontFamilyKey]
@@ -272,9 +277,31 @@ export const buttonFont = createFont({
   },
 })
 
+export const screenerFont = createFont({
+  family: screener,
+  ...(isAndroid ? { face: { 400: { normal: screener } } } : null),
+  size: {
+    small: fonts.body3.fontSize,
+    medium: fonts.body2.fontSize,
+    true: fonts.body2.fontSize,
+    large: fonts.body1.fontSize,
+  },
+  weight: {
+    400: '400',
+    true: '400',
+  },
+  lineHeight: {
+    small: fonts.body3.lineHeight,
+    medium: fonts.body2.lineHeight,
+    true: fonts.body2.lineHeight,
+    large: fonts.body1.lineHeight,
+  },
+})
+
 export const allFonts = {
   heading: headingFont,
   subHeading: subHeadingFont,
   body: bodyFont,
   button: buttonFont,
+  screener: screenerFont,
 }

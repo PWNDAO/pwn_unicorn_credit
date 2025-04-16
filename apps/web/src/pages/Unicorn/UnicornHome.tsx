@@ -52,10 +52,10 @@ export default function UnicornHome() {
             left: '40%',
             transform: 'translate(-50%, -50%)',
             zIndex: 0,
-            fontSize: '500px',
             lineHeight: 1,
             userSelect: 'none',
             pointerEvents: 'none',
+            fontSize: '500px',
           }}
         >
           🦄
