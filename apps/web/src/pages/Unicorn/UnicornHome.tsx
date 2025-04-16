@@ -106,7 +106,7 @@ export default function UnicornHome() {
         fontSize={24}
         style={{ fontFamily: 'Screener' }}
       >
-        Built by{' '}
+        Built on{' '}
         <a 
           href="https://pwn.xyz" 
           target="_blank" 
@@ -114,10 +114,18 @@ export default function UnicornHome() {
           style={{ 
             color: 'inherit',
             textDecoration: 'underline',
-            cursor: 'pointer'
+            cursor: 'pointer',
+            display: 'inline-block',
+            lineHeight: 0
           }}
         >
-          PWN
+          <Image 
+            src="/images/pwn_logo_text_white.png" 
+            alt="PWN" 
+            width={64}
+            height={64}
+            style={{ verticalAlign: 'middle' }}
+          />
         </a>
       </Text>
     </Flex>
