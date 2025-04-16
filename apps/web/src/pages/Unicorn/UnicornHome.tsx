@@ -1,5 +1,5 @@
-import { Button, Flex, Text, useMedia, Image } from 'ui/src'
-import { MockSwapComponent } from './MockSwapComponent'
+import { Button, Flex, Image, Text, useMedia } from 'ui/src'
+// import { MockSwapComponent } from './MockSwapComponent'
 
 export default function UnicornHome() {
   const media = useMedia()
@@ -41,10 +41,9 @@ export default function UnicornHome() {
         // shadowOffset={{ width: 0, height: 2 }}
         // shadowOpacity={0.25}
         // shadowRadius={3.84}
-        
       >
         <Text
-          style={{ 
+          style={{
             opacity: 0.05,
             position: 'absolute',
             top: '50%',
@@ -79,10 +78,7 @@ export default function UnicornHome() {
           put your 🦄 unicorn assets to work
         </Text>
       </Flex>
-      <Flex
-        backgroundColor="#333333"
-        borderRadius="$rounded32"
-      >
+      <Flex backgroundColor="#333333" borderRadius="$rounded32">
         <Button
           backgroundColor="#333333"
           // py="$spacing8"
@@ -107,21 +103,21 @@ export default function UnicornHome() {
         style={{ fontFamily: 'Screener' }}
       >
         Built on{' '}
-        <a 
-          href="https://pwn.xyz" 
-          target="_blank" 
+        <a
+          href="https://pwn.xyz"
+          target="_blank"
           rel="noopener noreferrer"
-          style={{ 
+          style={{
             color: 'inherit',
             textDecoration: 'underline',
             cursor: 'pointer',
             display: 'inline-block',
-            lineHeight: 0
+            lineHeight: 0,
           }}
         >
-          <Image 
-            src="/images/pwn_logo_text_white.png" 
-            alt="PWN" 
+          <Image
+            src="/images/pwn_logo_text_white.png"
+            alt="PWN"
             width={64}
             height={64}
             style={{ verticalAlign: 'middle' }}
