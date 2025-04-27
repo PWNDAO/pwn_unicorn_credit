@@ -64,6 +64,9 @@ const LendingDialog = () => {
   const outputSelectionRef = useRef<TextInputProps['selection']>()
 
   const [selectedInputCurrency, setSelectedInputCurrency] = useState<CurrencyInfo | null>(null)
+  const [selectedOutputCurrency, setSelectedOutputCurrency] = useState<CurrencyInfo | null>(null)
+
+  const [modalInputOutputCurrency, setModalInputOutputCurrency] = useState<'input' | 'output' | null>(null)
 
   const formattedDerivedValue = formatCurrencyAmount({
     amount: currencyAmounts[derivedCurrencyField],
@@ -73,6 +76,12 @@ const LendingDialog = () => {
   })
 
   const onShowTokenSelectorInput = () => {
+    setModalInputOutputCurrency('input')
+    setIsTokenSelectorOpen(true)
+  }
+
+  const onShowTokenSelectorOutput = () => {
+    setModalInputOutputCurrency('output')
     setIsTokenSelectorOpen(true)
   }
 
@@ -236,12 +245,47 @@ const LendingDialog = () => {
               onToggleIsFiatMode={() => {}}
             />
           </Flex>
+          <Flex
+            animation="simple"
+            borderColor={true ? '$surface3' : '$transparent'}
+            borderRadius="$rounded20"
+            backgroundColor={true ? '$surface1' : '$surface2'}
+            borderWidth="$spacing1"
+            overflow="hidden"
+            pb={currencies[CurrencyField.INPUT] ? '$spacing4' : '$none'}
+            // hoverStyle={hoverStyles.input}
+          >
+            <CurrencyInputPanel
+              ref={inputRef}
+              headerLabel={'Borrow'}
+              currencyAmount={currencyAmounts[CurrencyField.OUTPUT]}
+              currencyBalance={currencyBalances[CurrencyField.OUTPUT]}
+              currencyField={CurrencyField.OUTPUT}
+              currencyInfo={selectedOutputCurrency}
+              // // We do not want to force-focus the input when the token selector is open.
+              focus={selectingCurrencyField ? undefined : focusOnCurrencyField === CurrencyField.OUTPUT}
+              isFiatMode={isFiatMode && exactFieldIsInput}
+              isIndicativeLoading={trade.isIndicativeLoading}
+              isLoading={false}
+              // resetSelection={resetSelection}
+              showSoftInputOnFocus={false}
+              usdValue={currencyAmountsUSDValue[CurrencyField.OUTPUT]}
+              value={exactFieldIsInput ? exactValue : formattedDerivedValue}
+              valueIsIndicative={!exactFieldIsInput && trade.indicativeTrade && !trade.trade}
+              onPressIn={() => {}}
+              onSelectionChange={onInputSelectionChange}
+              onSetExactAmount={onSetExactAmountInput}
+              onSetPresetValue={() => {}} // Added this line
+              onShowTokenSelector={onShowTokenSelectorOutput}
+              onToggleIsFiatMode={() => {}}
+            />
+          </Flex>
         </Flex>
         <TokenSelectorModal
           isModalOpen={isTokenSelectorOpen}
           variation={TokenSelectorVariation.BalancesOnly}
-          currencyField={CurrencyField.INPUT}
-          flow={TokenSelectorFlow.Swap}
+          currencyField={modalInputOutputCurrency === 'input' ? CurrencyField.INPUT : CurrencyField.OUTPUT}
+          flow={TokenSelectorFlow.Send}
           onClose={() => setIsTokenSelectorOpen(false)}
           activeAccountAddress={address}
           onSelectCurrency={(currency, field, isBridgePair) => {
@@ -261,7 +305,11 @@ const LendingDialog = () => {
               currencyId: field.toString(),
               logoUrl: '',
             }
-            setSelectedInputCurrency(currencyInfo)
+            if (modalInputOutputCurrency === 'input') {
+              setSelectedInputCurrency(currencyInfo)
+            } else {
+              setSelectedOutputCurrency(currencyInfo)
+            }
             setIsTokenSelectorOpen(false)
           }}
         />
