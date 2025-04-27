@@ -1,6 +1,6 @@
 import styled from 'lib/styled-components'
 import { Body } from 'pages/App/Body'
-// import { Header } from 'pages/App/Header'
+import { Header } from 'pages/App/Header'
 import { GRID_AREAS } from 'pages/App/utils/shared'
 import { breakpoints } from 'ui/src/theme'
 
@@ -36,7 +36,7 @@ const AppBody = styled.div`
 export function AppLayout() {
   return (
     <AppContainer>
-      {/* <Header /> */}
+      <Header />
       <AppBody>
         <Body />
       </AppBody>

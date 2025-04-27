@@ -1,7 +1,7 @@
 import { SVGProps } from 'components/Logo/UniIcon'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Flex, styled, useSporeColors } from 'ui/src'
+import { Flex, styled, useSporeColors, Text } from 'ui/src'
 
 function Logo({ color, onClick }: { color: string; onClick?: () => void }) {
   return (
@@ -162,7 +162,8 @@ export const NavIcon = ({ clickable, onClick }: NavIconProps) => {
       {showHolidayUni ? (
         <HolidayLogo color={colors.accent1.val} onClick={onClick} />
       ) : (
-        <Logo color={colors.accent1.val} onClick={onClick} />
+        // <Logo color={colors.accent1.val} onClick={onClick} />
+        <Text>🦄</Text>
       )}
     </Container>
   )

@@ -114,7 +114,7 @@ export default function Navbar() {
       <UnpositionedFlex row centered width="100%">
         <Left>
           <CompanyMenu />
-          {areTabsVisible && <Tabs />}
+          {false && areTabsVisible && <Tabs />}
         </Left>
 
         <SearchContainer>

@@ -19,26 +19,32 @@ export const useMenuContent = (): MenuSection[] => {
 
   return [
     {
-      title: t('common.company'),
+      title: 'Made on',
       items: [
-        { label: t('common.careers'), href: 'https://careers.uniswap.org/' },
-        { label: t('common.blog'), href: 'https://blog.uniswap.org/' },
-      ],
-    },
-    {
-      title: t('common.protocol'),
-      items: [
-        { label: t('common.vote'), href: 'https://vote.uniswapfoundation.org' },
-        { label: t('common.governance'), href: 'https://uniswap.org/governance' },
-        { label: t('common.developers'), href: 'https://uniswap.org/developers' },
-      ],
-    },
-    {
-      title: t('common.needHelp'),
-      items: [
-        { label: t('common.helpCenter'), href: 'https://support.uniswap.org/hc/en-us' },
-        { label: t('common.contactUs.button'), href: 'https://support.uniswap.org/hc/en-us/requests/new' },
-      ],
-    },
+        { label: 'PWN.xyz', href: 'https://pwn.xyz', internal: false },
+      ]
+    }
+    // {
+    //   title: t('common.company'),
+    //   items: [
+        // { label: t('common.careers'), href: 'https://careers.uniswap.org/' },
+        // { label: t('common.blog'), href: 'https://blog.uniswap.org/' },
+    //   ],
+    // },
+    // {
+    //   title: t('common.protocol'),
+    //   items: [
+    //     { label: t('common.vote'), href: 'https://vote.uniswapfoundation.org' },
+    //     { label: t('common.governance'), href: 'https://uniswap.org/governance' },
+    //     { label: t('common.developers'), href: 'https://uniswap.org/developers' },
+    //   ],
+    // },
+    // {
+    //   title: t('common.needHelp'),
+    //   items: [
+    //     { label: t('common.helpCenter'), href: 'https://support.uniswap.org/hc/en-us' },
+    //     { label: t('common.contactUs.button'), href: 'https://support.uniswap.org/hc/en-us/requests/new' },
+    //   ],
+    // },
   ]
 }
