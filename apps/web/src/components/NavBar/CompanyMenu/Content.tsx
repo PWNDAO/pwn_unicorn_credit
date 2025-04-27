@@ -20,15 +20,13 @@ export const useMenuContent = (): MenuSection[] => {
   return [
     {
       title: 'Made on',
-      items: [
-        { label: 'PWN.xyz', href: 'https://pwn.xyz', internal: false },
-      ]
-    }
+      items: [{ label: 'PWN.xyz', href: 'https://pwn.xyz', internal: false }],
+    },
     // {
     //   title: t('common.company'),
     //   items: [
-        // { label: t('common.careers'), href: 'https://careers.uniswap.org/' },
-        // { label: t('common.blog'), href: 'https://blog.uniswap.org/' },
+    // { label: t('common.careers'), href: 'https://careers.uniswap.org/' },
+    // { label: t('common.blog'), href: 'https://blog.uniswap.org/' },
     //   ],
     // },
     // {

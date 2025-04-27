@@ -1,7 +1,7 @@
 import { SVGProps } from 'components/Logo/UniIcon'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Flex, styled, useSporeColors, Text } from 'ui/src'
+import { Flex, Text, styled, useSporeColors } from 'ui/src'
 
 function Logo({ color, onClick }: { color: string; onClick?: () => void }) {
   return (
