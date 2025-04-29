@@ -37,6 +37,7 @@ import { dismissNativeKeyboard } from 'utilities/src/device/keyboard'
 import { isExtension, isInterface, isMobileApp, isMobileWeb } from 'utilities/src/platform'
 import { useTrace } from 'utilities/src/telemetry/trace/TraceContext'
 import { useDebounce } from 'utilities/src/time/timing'
+import { TokenSelectorPoolsList } from './lists/TokenSelectorPoolsList'
 
 export const TOKEN_SELECTOR_WEB_MAX_WIDTH = 400
 export const TOKEN_SELECTOR_WEB_MAX_HEIGHT = 700
@@ -44,6 +45,7 @@ export const TOKEN_SELECTOR_WEB_MAX_HEIGHT = 700
 export enum TokenSelectorVariation {
   // used for Send flow, only show currencies with a balance
   BalancesOnly = 'balances-only',
+  PoolOnly = 'pool-only',
 
   // Swap input and output sections specced in 'Multichain UX: Token Selector and Swap' doc on Notion
   SwapInput = 'swap-input', // balances, recent searches, favorites, popular
@@ -219,6 +221,17 @@ export function TokenSelectorContent({
             onSelectCurrency={onSelectCurrencyCallback}
           />
         )
+      case TokenSelectorVariation.PoolOnly:
+        return (
+          <TokenSelectorPoolsList
+            activeAccountAddress={activeAccountAddress}
+            chainFilter={chainFilter}
+            isKeyboardOpen={isKeyboardOpen}
+            onEmptyActionPress={onSendEmptyActionPress}
+            onSelectCurrency={onSelectCurrencyCallback}
+          />
+        )
+
       case TokenSelectorVariation.SwapInput:
         return (
           <TokenSelectorSwapInputList

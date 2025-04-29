@@ -283,7 +283,7 @@ const LendingDialog = () => {
         </Flex>
         <TokenSelectorModal
           isModalOpen={isTokenSelectorOpen}
-          variation={TokenSelectorVariation.BalancesOnly}
+          variation={modalInputOutputCurrency === 'input' ? TokenSelectorVariation.PoolOnly : TokenSelectorVariation.BalancesOnly}
           currencyField={modalInputOutputCurrency === 'input' ? CurrencyField.INPUT : CurrencyField.OUTPUT}
           flow={TokenSelectorFlow.Send}
           onClose={() => setIsTokenSelectorOpen(false)}
