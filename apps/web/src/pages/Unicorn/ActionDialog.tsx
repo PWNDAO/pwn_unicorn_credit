@@ -21,6 +21,7 @@ import { CurrencyField } from 'uniswap/src/types/currency'
 import { formatCurrencyAmount } from 'utilities/src/format/localeBased'
 import { NumberType } from 'utilities/src/format/types'
 import { useLendingState } from './hooks/lendingState'
+import { useAssetPrice } from './queries/useAssetPrice'
 
 const LendingDialog = () => {
   const {
@@ -39,8 +40,6 @@ const LendingDialog = () => {
     hideFooter,
     updateSwapForm,
   } = useSwapFormContext()
-  const inputRef = useRef<CurrencyInputPanelRef>(null)
-
   const { address } = useAccount()
 
   const {
@@ -75,6 +74,15 @@ const LendingDialog = () => {
     handleUpdateBorrowValue,
     focusOnFirstNotSecondInput,
   } = useLendingState()
+
+  const { data: lendAssetPrice } = useAssetPrice(selectedLendAsset?.currency?.chainId, (selectedLendAsset?.currency as unknown as Token)?.address)
+  const { data: borrowAssetPrice } = useAssetPrice(selectedBorrowAsset?.currency?.chainId, (selectedBorrowAsset?.currency as unknown as Token)?.address)
+
+  const lendAssetPriceValue = lendAssetPrice ? lendAssetPrice : 0
+  const borrowAssetPriceValue = borrowAssetPrice ? borrowAssetPrice : 0
+
+  const priceOfLendAsset = lendAssetPriceValue * Number(lendValue)
+  const priceOfBorrowAsset = borrowAssetPriceValue * Number(borrowValue)
 
   const tabs: SegmentedControlOption[] = [
     {
@@ -166,7 +174,7 @@ const LendingDialog = () => {
           isIndicativeLoading={trade.isIndicativeLoading}
           isLoading={false}
           showSoftInputOnFocus={false}
-          usdValue={currencyAmountsUSDValue[CurrencyField.OUTPUT]}
+          usdValue={undefined}
           value={borrowValue}
           valueIsIndicative={!exactFieldIsInput && trade.indicativeTrade && !trade.trade}
           onPressIn={() => onToggleFocusOnFirstNotSecondInput(false)}
