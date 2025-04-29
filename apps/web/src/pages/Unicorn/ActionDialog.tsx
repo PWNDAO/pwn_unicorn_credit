@@ -53,19 +53,14 @@ const LendingDialog = () => {
   } = derivedSwapInfo
 
   const exactFieldIsInput = exactCurrencyField === CurrencyField.INPUT
-  const derivedCurrencyField = exactFieldIsInput ? CurrencyField.OUTPUT : CurrencyField.INPUT
-  const exactValue = isFiatMode ? exactAmountFiat : exactAmountToken
-
-  const inputSelectionRef = useRef<TextInputProps['selection']>()
-  const decimalPadRef = useRef<DecimalPadInputRef>(null)
-  const outputRef = useRef<CurrencyInputPanelRef>(null)
-  const decimalPadControlledField = focusOnCurrencyField ?? exactCurrencyField
-  const outputSelectionRef = useRef<TextInputProps['selection']>()
 
   const {
     isLendNotBorrow,
     selectedLendAsset,
     selectedBorrowAsset,
+    lendValue,
+    onToggleFocusOnFirstNotSecondInput,
+    borrowValue,
     onToggleLendNotBorrow,
     onSelectLendAsset,
     onSelectBorrowAsset,
@@ -76,100 +71,10 @@ const LendingDialog = () => {
     handleChangeTokenSelectorMode,
     firstInputRef,
     secondInputRef,
+    handleUpdateLendValue,
+    handleUpdateBorrowValue,
+    focusOnFirstNotSecondInput,
   } = useLendingState()
-
-  const formattedDerivedValue = formatCurrencyAmount({
-    amount: currencyAmounts[derivedCurrencyField],
-    locale: 'en-US',
-    type: NumberType.SwapTradeAmount,
-    placeholder: '',
-  })
-
-  const onInputSelectionChange = useCallback(
-    (start: number, end: number) => {
-      if (Date.now() - amountUpdatedTimeRef.current < 500) {
-        // We only want to trigger this callback when the user is manually moving the cursor,
-        // but this function is also triggered when the input value is updated,
-        // which causes issues on Android.
-        // We use `amountUpdatedTimeRef` to check if the input value was updated recently,
-        // and if so, we assume that the user is actually typing and not manually moving the cursor.
-        return
-      }
-      inputSelectionRef.current = { start, end }
-      decimalPadRef.current?.updateDisabledKeys()
-    },
-    [amountUpdatedTimeRef],
-  )
-
-  const onSetExactAmount = useCallback(
-    (currencyField: CurrencyField, amount: string) => {
-      const currentIsFiatMode = isFiatMode && focusOnCurrencyField === exactCurrencyField
-      updateSwapForm({
-        exactAmountFiat: currentIsFiatMode ? amount : undefined,
-        exactAmountToken: currentIsFiatMode ? undefined : amount,
-        exactCurrencyField: currencyField,
-        isFiatMode: currentIsFiatMode,
-      })
-    },
-    [exactCurrencyField, focusOnCurrencyField, isFiatMode, updateSwapForm],
-  )
-
-  const onSetExactAmountInput = useCallback(
-    (amount: string) => onSetExactAmount(CurrencyField.INPUT, amount),
-    [onSetExactAmount],
-  )
-
-  const resetSelection = useCallback(
-    ({ start, end, currencyField }: { start: number; end?: number; currencyField?: CurrencyField }) => {
-      // Update refs first to have the latest selection state available in the DecimalPadInput
-      // component and properly update disabled keys of the decimal pad.
-      // We reset the native selection on the next tick because we need to wait for the native input to be updated.
-      // This is needed because of the combination of state (delayed update) + ref (instant update) to improve performance.
-
-      const _currencyField = currencyField ?? decimalPadControlledField
-      const selectionRef = _currencyField === CurrencyField.INPUT ? inputSelectionRef : outputSelectionRef
-      const inputFieldRef =
-        _currencyField === CurrencyField.INPUT ? inputRef.current?.textInputRef : outputRef.current?.textInputRef
-
-      selectionRef.current = { start, end }
-
-      if (!isWeb && inputFieldRef) {
-        setTimeout(() => {
-          inputFieldRef.current?.setNativeProps?.({ selection: { start, end } })
-        }, 0)
-      }
-    },
-    [decimalPadControlledField],
-  )
-
-  const moveCursorToEnd = useCallback(
-    ({ targetInputRef }: { targetInputRef: MutableRefObject<string> }) => {
-      resetSelection({
-        start: targetInputRef.current.length,
-        end: targetInputRef.current.length,
-      })
-    },
-    [resetSelection],
-  )
-
-  const onSetPresetValue = useCallback(
-    (amount: string, isLessThanMax?: boolean): void => {
-      updateSwapForm({
-        exactAmountFiat: undefined,
-        exactAmountToken: amount,
-        exactCurrencyField: CurrencyField.INPUT,
-        focusOnCurrencyField: undefined,
-        isMax: !isLessThanMax,
-      })
-
-      // We want this update to happen on the next tick, after the input value is updated.
-      setTimeout(() => {
-        moveCursorToEnd({ targetInputRef: exactAmountTokenRef })
-        decimalPadRef.current?.updateDisabledKeys()
-      }, 0)
-    },
-    [exactAmountTokenRef, moveCursorToEnd, updateSwapForm],
-  )
 
   const tabs: SegmentedControlOption[] = [
     {
@@ -210,7 +115,6 @@ const LendingDialog = () => {
         borderWidth="$spacing1"
         overflow="hidden"
         pb={currencies[CurrencyField.INPUT] ? '$spacing4' : '$none'}
-        // hoverStyle={hoverStyles.input}
       >
         <CurrencyInputPanel
           ref={firstInputRef}
@@ -219,19 +123,17 @@ const LendingDialog = () => {
           currencyBalance={currencyBalances[CurrencyField.INPUT]}
           currencyField={CurrencyField.INPUT}
           currencyInfo={selectedLendAsset}
-          // // We do not want to force-focus the input when the token selector is open.
-          focus={selectingCurrencyField ? undefined : focusOnCurrencyField === CurrencyField.INPUT}
+          focus={focusOnFirstNotSecondInput ? true : undefined}
           isFiatMode={isFiatMode && exactFieldIsInput}
           isIndicativeLoading={trade.isIndicativeLoading}
           isLoading={false}
-          // resetSelection={resetSelection}
           showSoftInputOnFocus={false}
           usdValue={currencyAmountsUSDValue[CurrencyField.INPUT]}
-          value={exactFieldIsInput ? exactValue : formattedDerivedValue}
+          value={lendValue}
           valueIsIndicative={!exactFieldIsInput && trade.indicativeTrade && !trade.trade}
-          onPressIn={() => {}}
-          onSelectionChange={onInputSelectionChange}
-          onSetExactAmount={onSetExactAmountInput}
+          onPressIn={() => onToggleFocusOnFirstNotSecondInput(true)}
+          onSelectionChange={() => {}}
+          onSetExactAmount={handleUpdateLendValue}
           onSetPresetValue={() => {}} // Added this line
           onShowTokenSelector={() => onShowTokenSelector('lend')}
           onToggleIsFiatMode={() => {}}
@@ -259,19 +161,17 @@ const LendingDialog = () => {
           currencyBalance={currencyBalances[CurrencyField.OUTPUT]}
           currencyField={CurrencyField.OUTPUT}
           currencyInfo={selectedBorrowAsset}
-          // // We do not want to force-focus the input when the token selector is open.
-          focus={selectingCurrencyField ? undefined : focusOnCurrencyField === CurrencyField.OUTPUT}
+          focus={focusOnFirstNotSecondInput ? undefined : true}
           isFiatMode={isFiatMode && exactFieldIsInput}
           isIndicativeLoading={trade.isIndicativeLoading}
           isLoading={false}
-          // resetSelection={resetSelection}
           showSoftInputOnFocus={false}
           usdValue={currencyAmountsUSDValue[CurrencyField.OUTPUT]}
-          value={exactFieldIsInput ? exactValue : formattedDerivedValue}
+          value={borrowValue}
           valueIsIndicative={!exactFieldIsInput && trade.indicativeTrade && !trade.trade}
-          onPressIn={() => {}}
-          onSelectionChange={onInputSelectionChange}
-          onSetExactAmount={onSetExactAmountInput}
+          onPressIn={() => onToggleFocusOnFirstNotSecondInput(false)}
+          onSelectionChange={() => {}}
+          onSetExactAmount={handleUpdateBorrowValue}
           onSetPresetValue={() => {}} // Added this line
           onShowTokenSelector={() => onShowTokenSelector('borrow')}
           onToggleIsFiatMode={() => {}}

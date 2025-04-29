@@ -12,10 +12,17 @@ export const useLendingState = () => {
     const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<CurrencyInfo | null>(null)
     const [isTokenSelectorOpen, setIsTokenSelectorOpen] = useState<boolean>(false)
     const [tokenSelectorMode, setTokenSelectorMode] = useState<'lend' | 'borrow'>('borrow')
+    const [lendValue, setLendValue] = useState<string>('')
+    const [borrowValue, setBorrowValue] = useState<string>('')
+    const [focusOnFirstNotSecondInput, setFocusOnFirstNotSecondInput] = useState<boolean>(false)
 
     // refs
     const firstInputRef = useRef<CurrencyInputPanelRef>(null)
     const secondInputRef = useRef<CurrencyInputPanelRef>(null)
+
+    const onToggleFocusOnFirstNotSecondInput = (value: boolean) => {
+        setFocusOnFirstNotSecondInput(value)
+    }
 
     const onToggleLendNotBorrow = (value: boolean) => {
         setIsLendNotBorrow(value)
@@ -45,6 +52,14 @@ export const useLendingState = () => {
     const handleChangeTokenSelectorMode = (mode: 'lend' | 'borrow') => {
         setTokenSelectorMode(mode)
     }
+
+    const handleUpdateLendValue = (value: string) => {
+        setLendValue(value)
+    }
+
+    const handleUpdateBorrowValue = (value: string) => {
+        setBorrowValue(value)
+    }
     
     return {
         // state
@@ -53,6 +68,9 @@ export const useLendingState = () => {
         selectedBorrowAsset,
         isTokenSelectorOpen,
         tokenSelectorMode,
+        lendValue,
+        borrowValue,
+        focusOnFirstNotSecondInput,
         // refs
         firstInputRef,
         secondInputRef,
@@ -63,5 +81,8 @@ export const useLendingState = () => {
         onShowTokenSelector,
         onCloseTokenSelector,
         handleChangeTokenSelectorMode,
+        handleUpdateLendValue,
+        handleUpdateBorrowValue,
+        onToggleFocusOnFirstNotSecondInput,
     }
 }
