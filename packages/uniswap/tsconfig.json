@@ -5,7 +5,8 @@
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.json",
-    "src/**/*.mts"
+    "src/**/*.mts",
+    "../../apps/web/src/pages/Unicorn/queries/**/*",
   ],
   "references": [
     {

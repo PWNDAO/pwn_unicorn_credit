@@ -246,7 +246,7 @@ export const ActionDialog = () => {
         <TransactionSettingsContextProvider settingKey={TransactionSettingKey.Swap}>
           <PrefetchBalancesWrapper>
             <SwapFormContextProvider prefilledState={{} as any} hideFooter hideSettings>
-              <LendingDialog />r{' '}
+              <LendingDialog />
             </SwapFormContextProvider>
           </PrefetchBalancesWrapper>
         </TransactionSettingsContextProvider>
