@@ -37,7 +37,7 @@ import { dismissNativeKeyboard } from 'utilities/src/device/keyboard'
 import { isExtension, isInterface, isMobileApp, isMobileWeb } from 'utilities/src/platform'
 import { useTrace } from 'utilities/src/telemetry/trace/TraceContext'
 import { useDebounce } from 'utilities/src/time/timing'
-import { TokenSelectorPoolsList } from './lists/TokenSelectorPoolsList'
+import { PoolData, TokenSelectorPoolsList } from './lists/TokenSelectorPoolsList'
 
 export const TOKEN_SELECTOR_WEB_MAX_WIDTH = 400
 export const TOKEN_SELECTOR_WEB_MAX_HEIGHT = 700
@@ -65,7 +65,7 @@ export interface TokenSelectorProps {
   isLimits?: boolean
   onClose: () => void
   onSelectChain?: (chainId: UniverseChainId | null) => void
-  onSelectCurrency: (currency: Currency, currencyField: CurrencyField, isBridgePair: boolean) => void
+  onSelectCurrency: (currency: Currency | undefined, currencyField: CurrencyField | undefined, isBridgePair: boolean | undefined, poolData?: PoolData | undefined) => void
 }
 
 export function TokenSelectorContent({
@@ -125,7 +125,13 @@ export function TokenSelectorContent({
       : undefined
 
   const onSelectCurrencyCallback = useCallback(
-    (currencyInfo: CurrencyInfo, section: TokenSection<TokenSelectorItemTypes>, index: number): void => {
+    (currencyInfo: CurrencyInfo | undefined, section: TokenSection<TokenSelectorItemTypes> | undefined, index: number | undefined, poolData?: PoolData): void => {
+      if (!currencyInfo || !section || !index) {
+        if (poolData) {
+          onSelectCurrency(undefined, undefined, undefined, poolData)
+        }
+        return
+      }
       const searchContext: SearchContext = {
         category: section.sectionKey,
         query: debouncedSearchFilter ?? undefined,
@@ -228,7 +234,7 @@ export function TokenSelectorContent({
             chainFilter={chainFilter}
             isKeyboardOpen={isKeyboardOpen}
             onEmptyActionPress={onSendEmptyActionPress}
-            onSelectCurrency={onSelectCurrencyCallback}
+            onSelectCurrency={(poolData) => onSelectCurrencyCallback(undefined, undefined, undefined, poolData)}
           />
         )
 

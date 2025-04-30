@@ -209,27 +209,31 @@ const LendingDialog = () => {
           flow={TokenSelectorFlow.Send}
           onClose={() => onCloseTokenSelector()}
           activeAccountAddress={address}
-          onSelectCurrency={(currency, field, isBridgePair) => {
-            const currencyInfo: CurrencyInfo = {
-              currency: {
-                address: (currency as unknown as Token)?.address ?? '',
-                decimals: currency?.decimals ?? 0,
-                name: currency?.name ?? '',
-                symbol: currency?.symbol ?? '',
-                isNative: false,
-                isToken: true,
-                chainId: currency?.chainId ?? 0,
-                wrapped: currency?.wrapped ?? null,
-                equals: currency?.equals ?? null,
-                sortsBefore: () => false,
-              },
-              currencyId: field.toString(),
-              logoUrl: '',
-            }
-            if (isLendNotBorrow) {
-              onSelectLendAsset(currencyInfo)
+          onSelectCurrency={(currency, field, isBridgePair, poolData) => {
+            if (!poolData && currency) {
+              const currencyInfo: CurrencyInfo = {
+                currency: {
+                  address: (currency as unknown as Token)?.address ?? '',
+                  decimals: currency?.decimals ?? 0,
+                  name: currency?.name ?? '',
+                  symbol: currency?.symbol ?? '',
+                  isNative: false,
+                  isToken: true,
+                  chainId: currency?.chainId ?? 0,
+                  wrapped: currency?.wrapped,
+                  equals: currency?.equals,
+                  sortsBefore: () => false,
+                },
+                currencyId: field?.toString() ?? '',
+                logoUrl: '',
+              }
+              if (isLendNotBorrow) {
+                onSelectLendAsset(currencyInfo)
+              } else {
+                onSelectBorrowAsset(currencyInfo)
+              }
             } else {
-              onSelectBorrowAsset(currencyInfo)
+              console.log('poolData', poolData)
             }
             onCloseTokenSelector()
           }}

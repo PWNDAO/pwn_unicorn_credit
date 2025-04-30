@@ -1,5 +1,5 @@
 import { formatUnits } from '@ethersproject/units'
-import { PoolPosition, Position, PositionStatus, ProtocolVersion } from '@uniswap/client-pools/dist/pools/v1/types_pb'
+import { PoolPosition, Position, PositionStatus, ProtocolVersion, Token } from '@uniswap/client-pools/dist/pools/v1/types_pb'
 import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Skeleton, Flex, AnimateTransition, Loader, Text } from 'ui/src'
@@ -176,8 +176,33 @@ const chainName = (chainId: number): string => {
   }
 }
 
+export interface ExtraCurrency {
+  formattedAmount: string
+  usdValue: number
+}
 
-const PoolOption = ({ position, onSelectCurrency }: { position: Position, onSelectCurrency: OnSelectCurrency }): JSX.Element => {
+export interface TokenCustom {
+  chainId: number
+  address: string 
+  symbol: string
+  decimals: number
+  name: string
+  logo?: string
+  isNative: boolean
+}
+
+export interface PoolData {
+  tokens: {
+    token0: TokenCustom & ExtraCurrency
+    token1: TokenCustom & ExtraCurrency
+  }
+  totalUsdValue: number
+  poolId: number,
+  feeTier: number,
+}
+
+
+const PoolOption = ({ position, onSelectCurrency }: { position: Position, onSelectCurrency: (poolData: PoolData) => void }): JSX.Element => {
   const v3Position = position?.position?.value as PoolPosition
   const formattedAmount0 = Number(formatUnits(v3Position.amount0, v3Position.token0?.decimals ?? 18)).toFixed(4)
   const formattedAmount1 = Number(formatUnits(v3Position.amount1, v3Position.token1?.decimals ?? 18)).toFixed(4)
@@ -186,6 +211,31 @@ const PoolOption = ({ position, onSelectCurrency }: { position: Position, onSele
   const usdValueToken0 = Number(formattedAmount0) * Number(priceDataToken0 ?? 0)
   const usdValueToken1 = Number(formattedAmount1) * Number(priceDataToken1 ?? 0)
   const totalUsdValue = usdValueToken0 + usdValueToken1
+
+  const handleOnSelect = () => {
+    if (!v3Position.token0 || !v3Position.token1) {
+      return
+    }
+    const token0: TokenCustom & ExtraCurrency = {
+      ...v3Position.token0,
+      formattedAmount: formattedAmount0,
+      usdValue: usdValueToken0,
+    }
+    const token1: TokenCustom & ExtraCurrency = {
+      ...v3Position.token1,
+      formattedAmount: formattedAmount1,
+      usdValue: usdValueToken1,
+    }
+    onSelectCurrency({
+      tokens: {
+        token0,
+        token1,
+      },
+      totalUsdValue,
+      poolId: Number(v3Position.tokenId),
+      feeTier: Number(v3Position.feeTier),
+    })
+  }
 
   return (
     <Flex
@@ -202,7 +252,7 @@ const PoolOption = ({ position, onSelectCurrency }: { position: Position, onSele
         cursor: 'pointer'
       }}
       animation="quick"
-      onPress={() => {}}
+      onPress={handleOnSelect}
     >
       <Flex row justifyContent="space-between" alignItems="center">
         <Text variant="subheading1" color="$neutral1">
@@ -255,7 +305,7 @@ function PoolSelectorList({
 }: {
   positions: Position[]
   loading: boolean
-  onSelectCurrency: OnSelectCurrency
+  onSelectCurrency: (poolData: PoolData) => void
 }): JSX.Element {
   const shortenAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`
@@ -293,7 +343,7 @@ function _TokenSelectorPoolsList({
   onSelectCurrency,
   onEmptyActionPress,
 }: TokenSectionsHookProps & {
-  onSelectCurrency: OnSelectCurrency
+  onSelectCurrency: (poolData: PoolData) => void
   onEmptyActionPress: () => void
 }): JSX.Element {
   const {
