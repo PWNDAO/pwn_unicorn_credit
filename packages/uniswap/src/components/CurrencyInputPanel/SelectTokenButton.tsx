@@ -8,10 +8,11 @@ import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
 import { TestIDType } from 'uniswap/src/test/fixtures/testIDs'
 import { getSymbolDisplayText } from 'uniswap/src/utils/currency'
 import { isInterface, isMobileWeb } from 'utilities/src/platform'
+import { PoolData } from '../TokenSelector/lists/TokenSelectorPoolsList'
 
 interface SelectTokenButtonProps {
   onPress?: () => void
-  selectedCurrencyInfo?: CurrencyInfo | null
+  selectedCurrencyInfo?: CurrencyInfo | PoolData | null
   testID?: TestIDType
   tokenColor?: string
 }
@@ -34,13 +35,14 @@ export const SelectTokenButton = memo(function _SelectTokenButton({
   )
 
   const isCompact = !isInterface || isMobileWeb
+  const isNotPool = !(selectedCurrencyInfo && typeof selectedCurrencyInfo === 'object' && 'poolId' in selectedCurrencyInfo)
 
   if (!onPress && selectedCurrencyInfo) {
     return (
       <Flex centered row gap="$spacing4" p="$spacing4" pr={isWeb ? undefined : '$spacing12'}>
-        <CurrencyLogo currencyInfo={selectedCurrencyInfo} size={iconSizes.icon28} />
+        <CurrencyLogo currencyInfo={isNotPool ? selectedCurrencyInfo : null} size={iconSizes.icon28} />
         <Text color="$neutral1" pl="$spacing4" testID={`${testID}-label`} variant="buttonLabel1">
-          {getSymbolDisplayText(selectedCurrencyInfo.currency.symbol)}
+          {isNotPool ? getSymbolDisplayText(selectedCurrencyInfo.currency.symbol) : `${selectedCurrencyInfo.tokens.token0.symbol}/${selectedCurrencyInfo.tokens.token1.symbol}`}
         </Text>
       </Flex>
     )
@@ -71,12 +73,12 @@ export const SelectTokenButton = memo(function _SelectTokenButton({
       <Flex centered row gap="$spacing6" px="$spacing12" height="$spacing36">
         {selectedCurrencyInfo && (
           <Flex ml={-spacing.spacing8}>
-            <CurrencyLogo currencyInfo={selectedCurrencyInfo} size={iconSizes.icon28} />
+            <CurrencyLogo currencyInfo={isNotPool ? selectedCurrencyInfo : null} size={iconSizes.icon28} />
           </Flex>
         )}
         <Text color={textColor} testID={`${testID}-label`} variant="buttonLabel2">
           {selectedCurrencyInfo
-            ? getSymbolDisplayText(selectedCurrencyInfo.currency.symbol)
+            ? isNotPool ? getSymbolDisplayText(selectedCurrencyInfo.currency.symbol) : `${selectedCurrencyInfo.tokens.token0.symbol}/${selectedCurrencyInfo.tokens.token1.symbol}`
             : t('tokens.selector.button.choose')}
         </Text>
         {!isCompact && (

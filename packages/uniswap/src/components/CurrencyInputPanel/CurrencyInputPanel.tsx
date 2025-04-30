@@ -38,13 +38,14 @@ import { NumberType } from 'utilities/src/format/types'
 import { isExtension, isInterfaceDesktop, isMobileWeb } from 'utilities/src/platform'
 import { usePrevious } from 'utilities/src/react/hooks'
 import { ONE_SECOND_MS } from 'utilities/src/time/time'
+import { PoolData } from '../TokenSelector/lists/TokenSelectorPoolsList'
 
 type CurrencyInputPanelProps = {
   autoFocus?: boolean
   currencyAmount: Maybe<CurrencyAmount<Currency>>
   currencyBalance: Maybe<CurrencyAmount<Currency>>
   currencyField: CurrencyField
-  currencyInfo: Maybe<CurrencyInfo>
+  currencyInfo: Maybe<CurrencyInfo | PoolData>
   isLoading?: boolean
   isIndicativeLoading?: boolean
   focus?: boolean
@@ -58,7 +59,7 @@ type CurrencyInputPanelProps = {
   selection?: TextInputProps['selection']
   showSoftInputOnFocus?: boolean
   transactionType?: TransactionType
-  usdValue: Maybe<CurrencyAmount<Currency>>
+  usdValue: Maybe<CurrencyAmount<Currency>> | Maybe<string>
   value?: string
   valueIsIndicative?: boolean
   headerLabel?: string
@@ -116,6 +117,8 @@ export const CurrencyInputPanel = memo(
         ...rest
       } = props
 
+      const isNotPool = !(currencyInfo && typeof currencyInfo === 'object' && 'poolId' in currencyInfo)
+
       const dispatch = useDispatch()
       const { t } = useTranslation()
       const colors = useSporeColors()
@@ -170,7 +173,7 @@ export const CurrencyInputPanel = memo(
       const showInsufficientBalanceWarning =
         !isOutput && !!currencyBalance && !!currencyAmount && currencyBalance.lessThan(currencyAmount)
 
-      const { price: usdPrice } = useUSDCPrice(currencyInfo?.currency)
+      const { price: usdPrice } = useUSDCPrice(isNotPool ? currencyInfo?.currency : undefined)
 
       const _onToggleIsFiatMode = useCallback(() => {
         if (!usdPrice) {
@@ -252,9 +255,9 @@ export const CurrencyInputPanel = memo(
       // In fiat mode, show equivalent token amount. In token mode, show equivalent fiat amount
       const inputPanelFormattedValue = useTokenAndFiatDisplayAmounts({
         value,
-        currencyInfo,
+        currencyInfo: isNotPool ? currencyInfo : undefined,
         currencyAmount,
-        usdValue,
+        usdValue: isNotPool && typeof usdValue !== 'string' ? usdValue : undefined,
         isFiatMode,
       })
 
@@ -361,7 +364,7 @@ export const CurrencyInputPanel = memo(
                       fontSize={fontSize}
                       lineHeight={lineHeight}
                       fontWeight="$book"
-                      maxDecimals={isFiatMode ? MAX_FIAT_INPUT_DECIMALS : currencyInfo.currency.decimals}
+                      maxDecimals={isFiatMode ? MAX_FIAT_INPUT_DECIMALS : (isNotPool ? currencyInfo?.currency.decimals : undefined)}
                       maxFontSizeMultiplier={fonts.heading2.maxFontSizeMultiplier}
                       minHeight={lineHeight}
                       overflow="visible"
@@ -424,7 +427,7 @@ export const CurrencyInputPanel = memo(
                   {!isTestnetModeEnabled && (
                     <Flex centered row shrink gap="$spacing4">
                       <Text color="$neutral2" numberOfLines={1} variant="body3">
-                        {inputPanelFormattedValue}
+                        {isNotPool ? inputPanelFormattedValue : `$${currencyInfo.totalUsdValue.toFixed(2)}`}
                       </Text>
                     </Flex>
                   )}
@@ -434,11 +437,11 @@ export const CurrencyInputPanel = memo(
                 <Flex row centered ml="auto" gap="$spacing4" justifyContent="flex-end">
                   {!hideCurrencyBalance && (
                     <Text color={showInsufficientBalanceWarning ? '$statusCritical' : '$neutral2'} variant="body3">
-                      {formatCurrencyAmount({
+                      {isNotPool ? formatCurrencyAmount({
                         value: currencyBalance,
                         type: NumberType.TokenNonTx,
-                      })}{' '}
-                      {getSymbolDisplayText(currencyInfo.currency.symbol)}
+                      }) : 1}{' '}
+                      {isNotPool ? getSymbolDisplayText(currencyInfo.currency.symbol): `${currencyInfo.tokens.token0.symbol}/${currencyInfo.tokens.token1.symbol}`}
                     </Text>
                   )}
                   {!isInputPresetsEnabled && showMaxButton && onSetPresetValue && (
@@ -463,7 +466,7 @@ export const CurrencyInputPanel = memo(
 type PanelTextDisplay = {
   value: string | undefined
   color: '$neutral1' | '$neutral2' | '$neutral3'
-  usdValue?: CurrencyAmount<Currency> | null
+  usdValue?: CurrencyAmount<Currency> | null | string
 }
 
 /**

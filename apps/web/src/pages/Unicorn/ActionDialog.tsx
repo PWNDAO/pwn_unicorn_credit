@@ -22,6 +22,7 @@ import { formatCurrencyAmount } from 'utilities/src/format/localeBased'
 import { NumberType } from 'utilities/src/format/types'
 import { useLendingState } from './hooks/lendingState'
 import { useAssetPrice } from './queries/useAssetPrice'
+import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
 
 const LendingDialog = () => {
   const {
@@ -75,8 +76,18 @@ const LendingDialog = () => {
     focusOnFirstNotSecondInput,
   } = useLendingState()
 
-  const { data: lendAssetPrice } = useAssetPrice(selectedLendAsset?.currency?.chainId, (selectedLendAsset?.currency as unknown as Token)?.address)
-  const { data: borrowAssetPrice } = useAssetPrice(selectedBorrowAsset?.currency?.chainId, (selectedBorrowAsset?.currency as unknown as Token)?.address)
+  const isLendAssetPool = selectedLendAsset && typeof selectedLendAsset === 'object' && 'poolId' in selectedLendAsset
+  const isBorrowAssetPool = selectedBorrowAsset && typeof selectedBorrowAsset === 'object' && 'poolId' in selectedBorrowAsset
+  const { data: lendAssetPrice } = useAssetPrice(
+    isLendAssetPool ? 
+      selectedLendAsset?.tokens.token0.chainId : 
+      selectedLendAsset?.currency?.chainId, 
+    isLendAssetPool ? undefined : (selectedLendAsset?.currency as unknown as Token)?.address)
+  const { data: borrowAssetPrice } = useAssetPrice(
+    isBorrowAssetPool ? 
+      selectedBorrowAsset?.tokens.token0.chainId : 
+      selectedBorrowAsset?.currency?.chainId, 
+    isBorrowAssetPool ? undefined : (selectedBorrowAsset?.currency as unknown as Token)?.address)
 
   const lendAssetPriceValue = lendAssetPrice ? lendAssetPrice : 0
   const borrowAssetPriceValue = borrowAssetPrice ? borrowAssetPrice : 0
@@ -135,9 +146,10 @@ const LendingDialog = () => {
           isFiatMode={isFiatMode && exactFieldIsInput}
           isIndicativeLoading={trade.isIndicativeLoading}
           isLoading={false}
+          disabled={!!isLendAssetPool}
           showSoftInputOnFocus={false}
-          usdValue={currencyAmountsUSDValue[CurrencyField.INPUT]}
-          value={lendValue}
+          usdValue={isLendAssetPool ? selectedLendAsset?.totalUsdValue.toString() : currencyAmountsUSDValue[CurrencyField.INPUT]}
+          value={isLendAssetPool ? '1' : lendValue}
           valueIsIndicative={!exactFieldIsInput && trade.indicativeTrade && !trade.trade}
           onPressIn={() => onToggleFocusOnFirstNotSecondInput(true)}
           onSelectionChange={() => {}}
@@ -233,7 +245,11 @@ const LendingDialog = () => {
                 onSelectBorrowAsset(currencyInfo)
               }
             } else {
-              console.log('poolData', poolData)
+              if (isLendNotBorrow) {
+                onSelectLendAsset(poolData as CurrencyInfo | PoolData)
+              } else {
+                onSelectBorrowAsset(poolData as CurrencyInfo | PoolData)
+              }
             }
             onCloseTokenSelector()
           }}

@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { CurrencyInputPanelRef } from 'uniswap/src/components/CurrencyInputPanel/CurrencyInputPanel'
+import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
 import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
 import { useAccount } from 'wagmi'
 
@@ -8,8 +9,8 @@ export const useLendingState = () => {
 
     // states
     const [isLendNotBorrow, setIsLendNotBorrow] = useState<boolean>(false)
-    const [selectedLendAsset, setSelectedLendAsset] = useState<CurrencyInfo | null>(null)
-    const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<CurrencyInfo | null>(null)
+    const [selectedLendAsset, setSelectedLendAsset] = useState<CurrencyInfo | PoolData | null>(null)
+    const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<CurrencyInfo | PoolData | null>(null)
     const [isTokenSelectorOpen, setIsTokenSelectorOpen] = useState<boolean>(false)
     const [tokenSelectorMode, setTokenSelectorMode] = useState<'lend' | 'borrow'>('borrow')
     const [lendValue, setLendValue] = useState<string>('')
@@ -28,11 +29,11 @@ export const useLendingState = () => {
         setIsLendNotBorrow(value)
     }
 
-    const onSelectLendAsset = (asset: CurrencyInfo) => {
+    const onSelectLendAsset = (asset: CurrencyInfo | PoolData) => {
         setSelectedLendAsset(asset)
     }
 
-    const onSelectBorrowAsset = (asset: CurrencyInfo) => {
+    const onSelectBorrowAsset = (asset: CurrencyInfo | PoolData) => {
         setSelectedBorrowAsset(asset)
     }
 
