@@ -158,7 +158,10 @@ export function TokenSelectorContent({
       })
 
       const isBridgePair = section.sectionKey === TokenOptionSection.BridgingTokens
-      onSelectCurrency(currencyInfo.currency, currencyField, isBridgePair)
+      onSelectCurrency({
+        ...currencyInfo.currency,
+        symbol: `${currencyInfo.currency.symbol}###${currencyInfo.logoUrl}`,
+      } as Currency, currencyField, isBridgePair)
     },
     [flow, page, currencyField, onSelectCurrency, debouncedSearchFilter],
   )
