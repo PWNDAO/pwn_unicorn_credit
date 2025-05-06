@@ -4,7 +4,6 @@ export const useAssetPrice = (
     chainId: number | undefined,
     contractAddress: string | undefined,
 ) => {
-    console.log('chainId:', chainId, 'contractAddress:', contractAddress, 'will this run?:', !!chainId && !!contractAddress)
     return useQuery({
         queryKey: ['assetPrice', chainId, contractAddress],
         queryFn: async () => {
@@ -12,9 +11,14 @@ export const useAssetPrice = (
             const response = await fetch(url, { method: "GET", headers: { "Content-Type": "application/json" }})
             const data = await response.json()
             const priceData = Number(data?.best_price?.price?.usd_amount || 0) ?? 0
-            console.log('priceData', priceData)
             return priceData
         },
         enabled: !!chainId && !!contractAddress,
+        staleTime: 1000 * 60 * 60 * 24,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
+        refetchInterval: 1000 * 60 * 60 * 24,
+        refetchIntervalInBackground: false,
     })
 }

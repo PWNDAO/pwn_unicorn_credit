@@ -1,3 +1,4 @@
+import { mockTokensBalances } from '../../../../../../apps/web/src/pages/Unicorn/mocks/mockTokens'
 import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Flex } from 'ui/src'
@@ -78,15 +79,19 @@ function _TokenSelectorSendList({
   onSelectCurrency: OnSelectCurrency
   onEmptyActionPress: () => void
 }): JSX.Element {
-  const {
-    data: sections,
-    loading,
-    error,
-    refetch,
-  } = useTokenSectionsForSend({
-    activeAccountAddress,
-    chainFilter,
-  })
+  // const {
+    // data,
+    // loading,
+    // error,
+    // refetch,
+  // } = useTokenSectionsForSend({
+  //   activeAccountAddress,
+  //   chainFilter,
+  // })
+  const sections = mockTokensBalances
+  const loading = false
+  const error = false
+  const refetch = () => {}
   const emptyElement = useMemo(() => <EmptyList onEmptyActionPress={onEmptyActionPress} />, [onEmptyActionPress])
 
   return (

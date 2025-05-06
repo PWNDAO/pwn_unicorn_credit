@@ -126,7 +126,7 @@ export function TokenSelectorContent({
 
   const onSelectCurrencyCallback = useCallback(
     (currencyInfo: CurrencyInfo | undefined, section: TokenSection<TokenSelectorItemTypes> | undefined, index: number | undefined, poolData?: PoolData): void => {
-      if (!currencyInfo || !section || !index) {
+      if (!currencyInfo || !section || (index === undefined || index !== 0)) {
         if (poolData) {
           onSelectCurrency(undefined, undefined, undefined, poolData)
         }

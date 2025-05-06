@@ -7,6 +7,7 @@
     "src/**/*.json",
     "src/**/*.mts",
     "../../apps/web/src/pages/Unicorn/queries/**/*",
+    "../../apps/web/src/pages/Unicorn/mocks/**/*",
   ],
   "references": [
     {
