@@ -159,7 +159,7 @@ enum Chain {
   POLYGON = 137,
 }
 
-const chainName = (chainId: number): string => {
+export const chainName = (chainId: number): string => {
   switch(chainId) {
     case Chain.ETHEREUM:
       return 'Ethereum'
