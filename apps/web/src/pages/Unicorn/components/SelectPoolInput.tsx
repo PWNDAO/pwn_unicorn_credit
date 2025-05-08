@@ -76,13 +76,13 @@ export const SelectPoolInput = (
               <Flex flexDirection="column" height={'$spacing120'} width="100%" justifyContent="space-between">
                 <Flex flexDirection="row" gap="$spacing12" justifyContent="space-between">
                   <Flex flexDirection="row" gap="$spacing12" justifyContent="space-between">
-                    <Text color="$neutral2" variant="subheading2">{selectedPool.tokens.token0.symbol} / {selectedPool.tokens.token1.symbol}</Text>
-                    <Text color="$neutral2" variant="subheading2">{selectedPool.feeTier / 10000}%</Text>
+                    <Text color="$neutral1" variant="subheading2">{selectedPool.tokens.token0.symbol} / {selectedPool.tokens.token1.symbol}</Text>
+                    <Text color="$neutral1" variant="subheading2">{selectedPool.feeTier / 10000}%</Text>
                   </Flex>
-                  <Text color="$neutral2" variant="subheading2">${selectedPool.totalUsdValue.toLocaleString(undefined, {maximumFractionDigits: 2})}</Text>
+                  <Text color="$neutral1" variant="subheading2">${selectedPool.totalUsdValue.toLocaleString(undefined, {maximumFractionDigits: 2})}</Text>
                 </Flex>
                 <Flex flexDirection="row" width="$full" justifyContent="space-between">
-                  <Text color="$neutral2" variant="subheading2">Chain: {chainName(selectedPool.tokens.token0.chainId)}</Text>
+                  <Text color="$neutral1" variant="subheading2">Chain: {chainName(selectedPool.tokens.token0.chainId)}</Text>
                   <RotatableChevron color='$neutral1' direction="down" height="$spacing24" />
                 </Flex>
               </Flex>

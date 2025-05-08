@@ -20,6 +20,7 @@ import { InputAmountSelectToken } from './components/InputAmountSelectToken'
 import { CurrencyField } from 'uniswap/src/types/currency'
 import { ActionButton } from './components/ActionButton'
 import { calculateLtv } from './utils/math'
+import { AvailableOffersCards } from './components/AvailableOffersCards'
 const LendingDialog = () => {
   const { address } = useAccount()
 
@@ -70,21 +71,36 @@ const LendingDialog = () => {
         size="large"
       />
       <Flex grow gap="$spacing8" justifyContent="space-between">
-        <Flex animation="quick" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} gap="$spacing16" alignItems='center'>
-          <SelectPoolInput onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.POOL })} selectedPool={selectedLendAsset as PoolData} />
-          <InputAmountSelectToken 
-            label="Borrow" 
-            onChangeText={(value) => setAssetInputValue(value)} 
-            onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })} 
-            selectedToken={selectedBorrowAsset as CurrencyInfo}
-          />
-          <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
-            <CustomInputComponent label="LTV (%)" onChangeText={() => {}} disabled={true} fixedValue={ltv?.toString()} />
-            <CustomInputComponent label="Interest (%)" onChangeText={() => {}} />
-          </Flex>
+        <Flex flexDirection="row" gap="$spacing8" width={'100%'}>
+          <Flex animation="quick" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} gap="$spacing16" alignItems='center'>
+            <SelectPoolInput onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.POOL })} selectedPool={selectedLendAsset as PoolData} />
+            <InputAmountSelectToken 
+              label="Borrow" 
+              onChangeText={(value) => setAssetInputValue(value)} 
+              onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })} 
+              selectedToken={selectedBorrowAsset as CurrencyInfo}
+            />
+            {
+              selectedBorrowAsset &&
+              <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
+                <CustomInputComponent label="LTV (%)" onChangeText={() => {}} disabled={true} fixedValue={ltv?.toString()} />
+                <CustomInputComponent label="Interest (%)" onChangeText={() => {}} />
+              </Flex>
+            }
 
-          <ActionButton />
+          </Flex>
+          { selectedLendAsset &&
+            <Flex
+            backgroundColor="$surface1"
+            width="25rem"
+            height="30rem"
+            borderRadius="$rounded16"
+            >
+              <AvailableOffersCards />
+            </Flex>
+          }
         </Flex>
+        <ActionButton />
         <TokenSelectorModal
           isModalOpen={selectionModalState.isOpen}
           variation={selectionModalState.mode === SelectionModalMode.POOL ? TokenSelectorVariation.PoolOnly : TokenSelectorVariation.BalancesOnly}
