@@ -115,6 +115,27 @@ const LendingDialog = () => {
               />
             }
 
+            {selectedAppTab === APP_TABS.MY_ACTIVITY &&
+              <Flex
+                backgroundColor="$surface1"
+                width="100%"
+                height="30rem"
+                borderRadius="$rounded16"
+              >
+                <AvailableOffersCards />
+              </Flex>
+            }
+            {selectedAppTab === APP_TABS.MARKET &&
+              <Flex
+                backgroundColor="$surface1"
+                width="100%"
+                height="30rem"
+                borderRadius="$rounded16"
+              >
+                <AvailableOffersCards />
+              </Flex>
+            }
+
           </Flex>
           { [APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab) && 
             (

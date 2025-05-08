@@ -117,9 +117,9 @@ export default function Navbar() {
           {false && areTabsVisible && <Tabs />}
         </Left>
 
-        <SearchContainer>
+        {/* <SearchContainer>
           {!collapseSearchBar && <SearchBar maxHeight={NAV_SEARCH_MAX_HEIGHT} fullScreen={isSmallScreen} />}
-        </SearchContainer>
+        </SearchContainer> */}
 
         <Right>
           {collapseSearchBar && <SearchBar maxHeight={NAV_SEARCH_MAX_HEIGHT} fullScreen={isSmallScreen} />}
