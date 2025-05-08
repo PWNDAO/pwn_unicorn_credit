@@ -20,6 +20,7 @@ export enum APP_TABS {
     LEND = 'lend',
     MY_ACTIVITY = 'my-activity',
     MARKET = 'market',
+    ACCEPT_PROPOSAL = 'accept-proposal',
 }
 
 type SelectionModalState = {
@@ -79,6 +80,9 @@ export const useLendingState = () => {
     const [ltv, setLtv] = useState<number | null>(null)
     const [interestRate, setInterestRate] = useState<number | null>(null)
 
+    const [isShowAcceptProposal, changeShowAcceptProposal] = useState<boolean>(false)
+    const [selectedProposal, changeSelectedProposal] = useState<any>(null)
+
     return {
         // state
         selectionModalState,
@@ -89,6 +93,8 @@ export const useLendingState = () => {
         selectedAsset2,
         ltv,
         interestRate,
+        isShowAcceptProposal,
+        selectedProposal,
         // functions
         selectionModalDispatch,
         selectAppTab,
@@ -98,5 +104,7 @@ export const useLendingState = () => {
         changeAsset2,
         setLtv,
         setInterestRate,
+        changeShowAcceptProposal,
+        changeSelectedProposal,
     }
 }

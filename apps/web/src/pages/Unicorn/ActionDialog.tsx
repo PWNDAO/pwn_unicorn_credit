@@ -20,6 +20,7 @@ import { LendFlow } from './components/LendFlow'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
 import { parseUnits } from 'viem'
+import { AcceptProposalFlow } from './components/AcceptProposalFlow'
 const LendingDialog = () => {
   const navigate = useNavigate()
   const pathname = useLocation().pathname
@@ -28,10 +29,14 @@ const LendingDialog = () => {
     if (pathname === '/lend') return APP_TABS.LEND
     if (pathname === '/my-activity') return APP_TABS.MY_ACTIVITY
     if (pathname === '/market') return APP_TABS.MARKET
+    if (pathname === '/accept-proposal') return APP_TABS.ACCEPT_PROPOSAL
     return APP_TABS.BORROW
   }, [pathname])
 
   useEffect(() => {
+    if (whichTab === APP_TABS.ACCEPT_PROPOSAL && !isShowAcceptProposal && !selectedProposal) {
+      navigate('/borrow', { replace: true })
+    }
     selectAppTab(whichTab)
   }, [whichTab])
 
@@ -47,6 +52,8 @@ const LendingDialog = () => {
     assetInputValue,
     ltv,
     interestRate,
+    isShowAcceptProposal,
+    selectedProposal,
     // functions
     selectionModalDispatch,
     selectAppTab,
@@ -56,9 +63,13 @@ const LendingDialog = () => {
     changeAsset2,
     setLtv,
     setInterestRate,
+    changeShowAcceptProposal,
+    changeSelectedProposal,
   } = useLendingState()
 
-  const tabs: SegmentedControlOption[] = Object.values(APP_TABS).map((tab) => ({
+  const tabs: SegmentedControlOption[] = Object.values(APP_TABS).filter(tab => {
+    return isShowAcceptProposal ? true : tab !== APP_TABS.ACCEPT_PROPOSAL
+  }).map((tab) => ({
     display: (
       <Text
         variant="buttonLabel3"
@@ -81,12 +92,23 @@ const LendingDialog = () => {
     changeAsset(null)
     changeAsset2(null)
     setAssetInputValue('')
+    changeShowAcceptProposal(false)
+    changeSelectedProposal(null)
 
     // select tab
     selectAppTab(option)
     navigate(`/${option.toLowerCase()}`, { replace: true })
   }
   
+  const handleAcceptProposal = (proposal: any) => {
+    changeShowAcceptProposal(true)
+    navigate(`/${APP_TABS.ACCEPT_PROPOSAL}`, { replace: true })
+    changeSelectedProposal({
+      ...proposal,
+      pool: selectedPool,
+      mode: selectedAppTab === APP_TABS.BORROW ? 'borrow' : 'lend'
+    })
+  }
 
 
   return (
@@ -146,6 +168,12 @@ const LendingDialog = () => {
               </Flex>
             }
 
+            {selectedAppTab === APP_TABS.ACCEPT_PROPOSAL &&
+              <AcceptProposalFlow
+                selectedProposal={selectedProposal}
+              />
+            }
+
           </Flex>
           { [APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab) && 
             (
@@ -157,6 +185,7 @@ const LendingDialog = () => {
               ltv={ltv ? ltv * 1000 : undefined}
               interestRate={interestRate ? interestRate * 1000 : undefined}
               mode={selectedAppTab === APP_TABS.BORROW ? 'borrow' : (selectedAppTab === APP_TABS.LEND ? 'lend' : 'all')}
+              handleAcceptProposal={handleAcceptProposal}
             />
           }
         </Flex>

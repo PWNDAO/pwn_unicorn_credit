@@ -4,18 +4,22 @@ import { mockLendingProposals } from '../mocks/mockProposal'
 import { formatUnits } from 'viem'
 import { useMemo } from 'react'
 
-const TOKEN_BY_ADDRESS = {
+export const TOKEN_BY_ADDRESS = {
     ['0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913']: {
         symbol: 'USDC',
         name: 'USD Coin',
-        logoUrl: 'https://assets.coingecko.com/coins/images/638/small/usdc.png?1666510695',
-        decimals: 6
+        logoUrl: "https://imgs.search.brave.com/qVfnM06301I6nmM20XJwh7E1dtjKpAU1IA0dllgkXNo/rs:fit:40:40:1:0/g:ce/aHR0cHM6Ly9jb2lu/LWltYWdlcy5jb2lu/Z2Vja28uY29tL2Nv/aW5zL2ltYWdlcy82/MzE5L2xhcmdlL3Vz/ZGMucG5nPzE2OTY1/MDY2OTQ",
+        decimals: 6,
+        chainId: 8453,
+        address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913'
     },
     ['0x4200000000000000000000000000000000000006']: {
         symbol: 'WETH',
         name: 'Wrapped Ether',
         logoUrl: 'https://assets.coingecko.com/coins/images/2518/standard/weth.png?1696503332',
-        decimals: 18
+        decimals: 18,
+        chainId: 8453,
+        address: '0x4200000000000000000000000000000000000006'
     }
 }
 
@@ -24,12 +28,14 @@ export const AvailableOffersCards = (
         creditAmount,
         ltv,
         interestRate,
-        mode = 'all'
+        mode = 'all',
+        handleAcceptProposal
     }: {
         creditAmount?: bigint,
         ltv?: number,
         interestRate?: number,
-        mode?: 'borrow' | 'lend' | 'all'
+        mode?: 'borrow' | 'lend' | 'all',
+        handleAcceptProposal?: (proposal: any) => void
     }
 ) => {
 
@@ -99,6 +105,7 @@ export const AvailableOffersCards = (
                 justifyContent='unset'
                 flex={0}
                 mb={proposals.length - 1 === index ? 64 : '0'}
+                onPress={() => handleAcceptProposal?.(proposal)}
             >
                 <Flex flexDirection="column" height={'$spacing120'} width="100%" gap="$spacing4" justifyContent="space-between">
                 <Flex flexDirection="row" justifyContent="space-between">

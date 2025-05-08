@@ -39,9 +39,11 @@ export const InputAmountSelectToken = (
     )
 
     const inputPrice = useMemo(() => {
-        if (!assetPrice || !value) return 0
+        if (!assetPrice) return 0
+        if (!value && fixedValue) return (Number(fixedValue) * Number(assetPrice)).toFixed(2)
+        if (!value) return 0
         return (Number(value) * Number(assetPrice)).toFixed(2)
-    }, [assetPrice, value])
+    }, [assetPrice, value, fixedValue])
 
     const handleChangeText = useCallback((newValue: string) => {
       const numValue = Number(newValue)

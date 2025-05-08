@@ -10,7 +10,8 @@ export const mockLendingProposals = [
             symbol: "USDC",
             decimals: 6,
             name: "USD Coin",
-            logoUrl: "https://assets.coingecko.com/coins/images/638/small/usdc.png?1666510695"
+            chainId: 8453,
+            logoUrl: "https://imgs.search.brave.com/qVfnM06301I6nmM20XJwh7E1dtjKpAU1IA0dllgkXNo/rs:fit:40:40:1:0/g:ce/aHR0cHM6Ly9jb2lu/LWltYWdlcy5jb2lu/Z2Vja28uY29tL2Nv/aW5zL2ltYWdlcy82/MzE5L2xhcmdlL3Vz/ZGMucG5nPzE2OTY1/MDY2OTQ"
         },
         loanToValue: 70_000,
         expiration: 1747519200,
@@ -27,7 +28,8 @@ export const mockLendingProposals = [
             symbol: "USDC",
             decimals: 6,
             name: "USD Coin",
-            logoUrl: "https://assets.coingecko.com/coins/images/638/small/usdc.png?1666510695"
+            chainId: 8453,
+            logoUrl: "https://imgs.search.brave.com/qVfnM06301I6nmM20XJwh7E1dtjKpAU1IA0dllgkXNo/rs:fit:40:40:1:0/g:ce/aHR0cHM6Ly9jb2lu/LWltYWdlcy5jb2lu/Z2Vja28uY29tL2Nv/aW5zL2ltYWdlcy82/MzE5L2xhcmdlL3Vz/ZGMucG5nPzE2OTY1/MDY2OTQ"
         },
         loanToValue: 75_000,
         expiration: 1747519200,
@@ -44,7 +46,8 @@ export const mockLendingProposals = [
             symbol: "USDC",
             decimals: 6,
             name: "USD Coin",
-            logoUrl: "https://assets.coingecko.com/coins/images/638/small/usdc.png?1666510695"
+            chainId: 8453,
+            logoUrl: "https://imgs.search.brave.com/qVfnM06301I6nmM20XJwh7E1dtjKpAU1IA0dllgkXNo/rs:fit:40:40:1:0/g:ce/aHR0cHM6Ly9jb2lu/LWltYWdlcy5jb2lu/Z2Vja28uY29tL2Nv/aW5zL2ltYWdlcy82/MzE5L2xhcmdlL3Vz/ZGMucG5nPzE2OTY1/MDY2OTQ"
         },
         loanToValue: 65_000,
         expiration: 1748519200,
@@ -61,7 +64,8 @@ export const mockLendingProposals = [
             symbol: "USDC",
             decimals: 6,
             name: "USD Coin",
-            logoUrl: "https://assets.coingecko.com/coins/images/638/small/usdc.png?1666510695"
+            chainId: 8453,
+            logoUrl: "https://imgs.search.brave.com/qVfnM06301I6nmM20XJwh7E1dtjKpAU1IA0dllgkXNo/rs:fit:40:40:1:0/g:ce/aHR0cHM6Ly9jb2lu/LWltYWdlcy5jb2lu/Z2Vja28uY29tL2Nv/aW5zL2ltYWdlcy82/MzE5L2xhcmdlL3Vz/ZGMucG5nPzE2OTY1/MDY2OTQ"
         },
         loanToValue: 80_000,
         expiration: 1746519200,
@@ -78,7 +82,8 @@ export const mockLendingProposals = [
             symbol: "USDC",
             decimals: 6,
             name: "USD Coin",
-            logoUrl: "https://assets.coingecko.com/coins/images/638/small/usdc.png?1666510695"
+            chainId: 8453,
+            logoUrl: "https://imgs.search.brave.com/qVfnM06301I6nmM20XJwh7E1dtjKpAU1IA0dllgkXNo/rs:fit:40:40:1:0/g:ce/aHR0cHM6Ly9jb2lu/LWltYWdlcy5jb2lu/Z2Vja28uY29tL2Nv/aW5zL2ltYWdlcy82/MzE5L2xhcmdlL3Vz/ZGMucG5nPzE2OTY1/MDY2OTQ"
         },
         loanToValue: 72_500,
         expiration: 1745519200,
@@ -95,7 +100,8 @@ export const mockLendingProposals = [
             symbol: "USDC",
             decimals: 6,
             name: "USD Coin",
-            logoUrl: "https://assets.coingecko.com/coins/images/638/small/usdc.png?1666510695"
+            chainId: 8453,
+            logoUrl: "https://imgs.search.brave.com/qVfnM06301I6nmM20XJwh7E1dtjKpAU1IA0dllgkXNo/rs:fit:40:40:1:0/g:ce/aHR0cHM6Ly9jb2lu/LWltYWdlcy5jb2lu/Z2Vja28uY29tL2Nv/aW5zL2ltYWdlcy82/MzE5L2xhcmdlL3Vz/ZGMucG5nPzE2OTY1/MDY2OTQ"
         },
         loanToValue: 67_500,
         expiration: 1749519200,

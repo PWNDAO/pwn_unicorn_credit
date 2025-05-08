@@ -1,7 +1,13 @@
 import { Button, Flex, Text } from "ui/src"
 import { useWalletClient } from "wagmi"
 
-export const ActionButton = () => {
+export const ActionButton = ({
+  label,
+  onPress
+}: {
+  label?: string
+  onPress?: () => void
+}) => {
     const { data: walletClient } = useWalletClient()
     return (
         <Flex
@@ -39,7 +45,7 @@ export const ActionButton = () => {
               }}
             >
               <Text variant="buttonLabel1" color="$sporeWhite">
-                Sign and Create
+                {label || 'Sign and Create'}
               </Text>
             </Button>
           </Flex>
