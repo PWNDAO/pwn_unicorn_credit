@@ -5,6 +5,8 @@ import { CurrencyInfo } from "uniswap/src/features/dataApi/types"
 import { ModalState } from "../hooks/lendingState"
 import { CustomInputComponent } from "./CustomInputComponent"
 import { ActionButton } from "./ActionButton"
+import { useEffect } from "react"
+import { useState } from "react"
 
 export const LendFlow = (
     {
@@ -12,13 +14,28 @@ export const LendFlow = (
         selectedAsset2,
         setAssetInputValue,
         selectionModalDispatch,
+        ltvCallback,
+        interestRateCallback
     }: {
         selectedAsset: CurrencyInfo | null,
         selectedAsset2: CurrencyInfo | null,
         setAssetInputValue: (value: string) => void,
         selectionModalDispatch: (action: { type: ModalState, mode: SelectionModalMode }) => void,
+        ltvCallback?: (ltv: number) => void,
+        interestRateCallback?: (interestRate: number) => void
     }
 ) => {
+    const [ltv, setLtv] = useState<number | null>(null)
+    const [interestRate, setInterestRate] = useState<number | null>(null)
+
+    useEffect(() => {
+        ltvCallback?.(Number(ltv))
+    }, [ltv, ltvCallback])
+
+    useEffect(() => {
+        interestRateCallback?.(Number(interestRate))
+    }, [interestRate, interestRateCallback])
+
     return (
         <Flex flexDirection="column" gap="$spacing16" width={'30rem'}>
             <InputAmountSelectToken
@@ -47,8 +64,8 @@ export const LendFlow = (
             {
                 selectedAsset2 &&
                 <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
-                    <CustomInputComponent label="LTV (%)" onChangeText={() => { }} />
-                    <CustomInputComponent label="Interest (%)" onChangeText={() => { }} />
+                    <CustomInputComponent label="LTV (%)" onChangeText={(value) => setLtv(Number(value))} />
+                    <CustomInputComponent label="Interest (%)" onChangeText={(value) => setInterestRate(Number(value))} />
                 </Flex>
             }
             {

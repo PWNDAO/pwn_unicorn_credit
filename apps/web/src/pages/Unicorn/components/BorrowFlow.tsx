@@ -11,7 +11,7 @@ import { SelectPoolInput } from "./SelectPoolInput"
 import { PoolData } from "uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList"
 import { Flex } from "ui/src"
 import { calculateLtv } from "../utils/math"
-import { useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 export const BorrowFlow = (
     {
@@ -20,15 +20,30 @@ export const BorrowFlow = (
         setAssetInputValue,
         selectionModalDispatch,
         amountInputValue,
+        ltvCallback,
+        interestRateCallback
     }: {
         selectedPool: PoolData | null,
         selectedAsset: CurrencyInfo | null,
         setAssetInputValue: (value: string) => void,
         selectionModalDispatch: (action: { type: ModalState, mode: SelectionModalMode }) => void,
         amountInputValue: string,
+        ltvCallback?: (ltv: number) => void,
+        interestRateCallback?: (interestRate: number) => void
     }
 ) => {
+    const [interestRate, setInterestRate] = useState<number | null>(null)
+
     const ltv = useMemo(() => calculateLtv(Number(amountInputValue), Number(selectedPool?.totalUsdValue ?? 0)), [amountInputValue, selectedPool])
+
+    useEffect(() => {
+        ltvCallback?.(Number(ltv))
+    }, [ltv, ltvCallback])
+
+    useEffect(() => {
+        interestRateCallback?.(Number(interestRate))
+    }, [interestRate, interestRateCallback])
+
     return (
         <>
             <SelectPoolInput onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.POOL })} selectedPool={selectedPool as PoolData} />
@@ -42,7 +57,7 @@ export const BorrowFlow = (
                 selectedAsset &&
                 <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
                     <CustomInputComponent label="LTV (%)" onChangeText={() => { }} disabled={true} fixedValue={ltv?.toString()} />
-                    <CustomInputComponent label="Interest (%)" onChangeText={() => { }} />
+                    <CustomInputComponent label="Interest (%)" onChangeText={(value) => { setInterestRate(Number(value)) }} />
                 </Flex>
             }
             {

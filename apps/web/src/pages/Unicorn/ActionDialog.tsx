@@ -18,7 +18,8 @@ import { AvailableOffersCards } from './components/AvailableOffersCards'
 import { BorrowFlow } from './components/BorrowFlow'
 import { LendFlow } from './components/LendFlow'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { parseUnits } from 'viem'
 const LendingDialog = () => {
   const navigate = useNavigate()
   const pathname = useLocation().pathname
@@ -44,7 +45,8 @@ const LendingDialog = () => {
     selectedAsset,
     selectedAsset2,
     assetInputValue,
-
+    ltv,
+    interestRate,
     // functions
     selectionModalDispatch,
     selectAppTab,
@@ -52,6 +54,8 @@ const LendingDialog = () => {
     changeAsset,
     setAssetInputValue,
     changeAsset2,
+    setLtv,
+    setInterestRate,
   } = useLendingState()
 
   const tabs: SegmentedControlOption[] = Object.values(APP_TABS).map((tab) => ({
@@ -82,6 +86,8 @@ const LendingDialog = () => {
     selectAppTab(option)
     navigate(`/${option.toLowerCase()}`, { replace: true })
   }
+  
+
 
   return (
     <Flex width={'$full'} minWidth={'700px'} maxWidth={'$full'} gap="$spacing8" flexDirection="column" alignItems='center'>
@@ -103,6 +109,8 @@ const LendingDialog = () => {
                 setAssetInputValue={setAssetInputValue}
                 selectionModalDispatch={selectionModalDispatch}
                 amountInputValue={assetInputValue}
+                ltvCallback={(ltv) => setLtv(ltv)}
+                interestRateCallback={(interestRate) => setInterestRate(interestRate)}
               />
             }
 
@@ -112,6 +120,8 @@ const LendingDialog = () => {
                 selectedAsset2={selectedAsset2 as CurrencyInfo}
                 setAssetInputValue={setAssetInputValue}
                 selectionModalDispatch={selectionModalDispatch}
+                ltvCallback={(ltv) => setLtv(ltv)}
+                interestRateCallback={(interestRate) => setInterestRate(interestRate)}
               />
             }
 
@@ -142,14 +152,12 @@ const LendingDialog = () => {
               (selectedAppTab === APP_TABS.LEND && selectedAsset) || 
               (selectedAppTab === APP_TABS.BORROW && selectedPool)
             ) &&
-            <Flex
-              backgroundColor="$surface1"
-              width="25rem"
-              height="30rem"
-              borderRadius="$rounded16"
-            >
-              <AvailableOffersCards />
-            </Flex>
+            <AvailableOffersCards 
+              creditAmount={parseUnits(assetInputValue, selectedAsset?.currency.decimals ?? 0)}
+              ltv={ltv ? ltv * 1000 : undefined}
+              interestRate={interestRate ? interestRate * 1000 : undefined}
+              mode={selectedAppTab === APP_TABS.BORROW ? 'borrow' : (selectedAppTab === APP_TABS.LEND ? 'lend' : 'all')}
+            />
           }
         </Flex>
         <TokenSelectorModal

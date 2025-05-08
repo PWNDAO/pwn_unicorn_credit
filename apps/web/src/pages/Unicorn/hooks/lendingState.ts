@@ -76,6 +76,9 @@ export const useLendingState = () => {
     // relevant for lend
     const [selectedAsset2, changeAsset2] = useState<CurrencyInfo | null>(null)
 
+    const [ltv, setLtv] = useState<number | null>(null)
+    const [interestRate, setInterestRate] = useState<number | null>(null)
+
     return {
         // state
         selectionModalState,
@@ -84,6 +87,8 @@ export const useLendingState = () => {
         assetInputValue,
         selectedAppTab,
         selectedAsset2,
+        ltv,
+        interestRate,
         // functions
         selectionModalDispatch,
         selectAppTab,
@@ -91,5 +96,7 @@ export const useLendingState = () => {
         changeAsset,
         setAssetInputValue,
         changeAsset2,
+        setLtv,
+        setInterestRate,
     }
 }
