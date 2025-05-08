@@ -64,43 +64,25 @@ export const useLendingState = () => {
 
     const [assetInputValue, setAssetInputValue] = useState<string>('')
     const [selectedAppTab, selectAppTab] = useState<APP_TABS>(APP_TABS.BORROW)
-    const [selectedLendAsset, setSelectedLendAsset] = useState<CurrencyInfo | PoolData | null>(null)
-    const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<CurrencyInfo | PoolData | null>(null)
-    const [focusOnFirstNotSecondInput, setFocusOnFirstNotSecondInput] = useState<boolean>(false)
 
-    // refs
-    const firstInputRef = useRef<CurrencyInputPanelRef>(null)
-    const secondInputRef = useRef<CurrencyInputPanelRef>(null)
+    // this is only relevant for borrow, you select your own pool
+    const [selectedPool, changePool] = useState<PoolData | null>(null)
 
-    const onToggleFocusOnFirstNotSecondInput = (value: boolean) => {
-        setFocusOnFirstNotSecondInput(value)
-    }
-
-    const onSelectLendAsset = (asset: CurrencyInfo | PoolData | null) => {
-        setSelectedLendAsset(asset)
-    }
-
-    const onSelectBorrowAsset = (asset: CurrencyInfo | PoolData | null) => {
-        setSelectedBorrowAsset(asset)
-    }
+    // this is credit, can be as you borrow it or lend it
+    const [selectedAsset, changeAsset] = useState<CurrencyInfo | null>(null)
     
     return {
         // state
         selectionModalState,
-        selectedLendAsset,
-        selectedBorrowAsset,
+        selectedPool,
+        selectedAsset,
         assetInputValue,
-        focusOnFirstNotSecondInput,
         selectedAppTab,
-        // refs
-        firstInputRef,
-        secondInputRef,
         // functions
         selectionModalDispatch,
         selectAppTab,
-        onSelectLendAsset,
-        onSelectBorrowAsset,
-        onToggleFocusOnFirstNotSecondInput,
+        changePool,
+        changeAsset,
         setAssetInputValue,
     }
 }

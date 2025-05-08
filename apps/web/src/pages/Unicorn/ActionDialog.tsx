@@ -1,6 +1,5 @@
 import { PrefetchBalancesWrapper } from 'graphql/data/apollo/AdaptiveTokenBalancesProvider'
 import { useAccount } from 'hooks/useAccount'
-import { useEffect, useState } from 'react'
 import { MultichainContextProvider } from 'state/multichain/MultichainContext'
 import { Flex, SegmentedControl, SegmentedControlOption, Text } from 'ui/src'
 import { TokenSelectorModal, TokenSelectorVariation } from 'uniswap/src/components/TokenSelector/TokenSelector'
@@ -15,33 +14,26 @@ import {
 import { APP_TABS, ModalState, SelectionModalMode, useLendingState } from './hooks/lendingState'
 import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
 import { CurrencyField } from 'uniswap/src/types/currency'
-import { calculateLtv } from './utils/math'
 import { AvailableOffersCards } from './components/AvailableOffersCards'
 import { BorrowFlow } from './components/BorrowFlow'
 const LendingDialog = () => {
   const { address } = useAccount()
 
   const {
+    // state
     selectionModalState,
     selectedAppTab,
-    selectedLendAsset,
-    selectedBorrowAsset,
+    selectedPool,
+    selectedAsset,
     assetInputValue,
+
+    // functions
     selectionModalDispatch,
     selectAppTab,
-    onSelectLendAsset,
-    onSelectBorrowAsset,
+    changePool,
+    changeAsset,
     setAssetInputValue,
   } = useLendingState()
-
-
-  const [ltv, setLtv] = useState<number | null>(null)
-  
-  useEffect(() => {
-    if (selectedLendAsset && assetInputValue) {
-      setLtv(Number(calculateLtv(Number(assetInputValue), Number((selectedLendAsset as PoolData)?.totalUsdValue))))
-    }
-  }, [selectedLendAsset, assetInputValue])
 
   const tabs: SegmentedControlOption[] = Object.values(APP_TABS).map((tab) => ({
     display: (
@@ -59,10 +51,9 @@ const LendingDialog = () => {
 
   const handleOnChangeTab = (option: APP_TABS) => {
     // reset state
-    onSelectBorrowAsset(null)
-    onSelectLendAsset(null)
+    changePool(null)
+    changeAsset(null)
     setAssetInputValue('')
-    setLtv(null)
 
     // select tab
     selectAppTab(option)
@@ -83,8 +74,8 @@ const LendingDialog = () => {
           <Flex animation="quick" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} gap="$spacing16" alignItems='center'>
             {selectedAppTab === APP_TABS.BORROW && 
               <BorrowFlow
-                selectedLendAsset={selectedLendAsset as PoolData}
-                selectedBorrowAsset={selectedBorrowAsset as CurrencyInfo}
+                selectedPool={selectedPool as PoolData}
+                selectedAsset={selectedAsset as CurrencyInfo}
                 setAssetInputValue={setAssetInputValue}
                 selectionModalDispatch={selectionModalDispatch}
                 amountInputValue={assetInputValue}
@@ -92,7 +83,7 @@ const LendingDialog = () => {
             }
 
           </Flex>
-          { [APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab) && selectedLendAsset &&
+          { [APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab) && selectedPool &&
             <Flex
               backgroundColor="$surface1"
               width="25rem"
@@ -129,9 +120,9 @@ const LendingDialog = () => {
                 currencyId: field?.toString() ?? '',
                 logoUrl: currencyLogoUrl ?? '',
               }
-              onSelectBorrowAsset(currencyInfo)
+              changeAsset(currencyInfo)
             } else {
-              onSelectLendAsset(poolData as PoolData)
+              changePool(poolData as PoolData)
             }
             selectionModalDispatch({ type: ModalState.CLOSE })
           }}
