@@ -34,7 +34,10 @@ export const useLendingState = () => {
     const { address } = useAccount()
 
     // states
-    const selectionModalReducer = (state: SelectionModalState, action: SelectionModalAction): SelectionModalState => {
+    const selectionModalReducer = (
+        state: SelectionModalState, 
+        action: SelectionModalAction
+    ): SelectionModalState => {
         switch (action.type) {
             case ModalState.OPEN:
                 return {
@@ -51,15 +54,18 @@ export const useLendingState = () => {
         }
     }
 
-    const [selectionModalState, selectionModalDispatch] = useReducer(selectionModalReducer, {
+    const [
+        selectionModalState, 
+        selectionModalDispatch
+    ] = useReducer(selectionModalReducer, {
         mode: null,
         isOpen: false
     })
+
+    const [assetInputValue, setAssetInputValue] = useState<string>('')
     const [selectedAppTab, selectAppTab] = useState<APP_TABS>(APP_TABS.BORROW)
     const [selectedLendAsset, setSelectedLendAsset] = useState<CurrencyInfo | PoolData | null>(null)
     const [selectedBorrowAsset, setSelectedBorrowAsset] = useState<CurrencyInfo | PoolData | null>(null)
-    const [lendValue, setLendValue] = useState<string>('')
-    const [borrowValue, setBorrowValue] = useState<string>('')
     const [focusOnFirstNotSecondInput, setFocusOnFirstNotSecondInput] = useState<boolean>(false)
 
     // refs
@@ -77,22 +83,13 @@ export const useLendingState = () => {
     const onSelectBorrowAsset = (asset: CurrencyInfo | PoolData) => {
         setSelectedBorrowAsset(asset)
     }
-
-    const handleUpdateLendValue = (value: string) => {
-        setLendValue(value)
-    }
-
-    const handleUpdateBorrowValue = (value: string) => {
-        setBorrowValue(value)
-    }
     
     return {
         // state
         selectionModalState,
         selectedLendAsset,
         selectedBorrowAsset,
-        lendValue,
-        borrowValue,
+        assetInputValue,
         focusOnFirstNotSecondInput,
         selectedAppTab,
         // refs
@@ -103,8 +100,7 @@ export const useLendingState = () => {
         selectAppTab,
         onSelectLendAsset,
         onSelectBorrowAsset,
-        handleUpdateLendValue,
-        handleUpdateBorrowValue,
         onToggleFocusOnFirstNotSecondInput,
+        setAssetInputValue,
     }
 }
