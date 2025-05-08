@@ -126,12 +126,14 @@ export function TokenSelectorContent({
 
   const onSelectCurrencyCallback = useCallback(
     (currencyInfo: CurrencyInfo | undefined, section: TokenSection<TokenSelectorItemTypes> | undefined, index: number | undefined, poolData?: PoolData): void => {
-      if (!currencyInfo || !section || (index === undefined || index !== 0)) {
+      if (!currencyInfo || !section) {
         if (poolData) {
           onSelectCurrency(undefined, undefined, undefined, poolData)
         }
         return
       }
+
+      index = index ?? 0
       const searchContext: SearchContext = {
         category: section.sectionKey,
         query: debouncedSearchFilter ?? undefined,

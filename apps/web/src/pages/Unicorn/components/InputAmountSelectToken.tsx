@@ -18,6 +18,7 @@ export const InputAmountSelectToken = (
       onOpenTokenSelector,
       selectedToken,
       maxValue = Number(maxUint256),
+      includeInputField = true,
     }: {
       label: string
       onChangeText: (newValue: string) => void
@@ -26,6 +27,7 @@ export const InputAmountSelectToken = (
       fixedValue?: string
       onOpenTokenSelector: () => void
       selectedToken: CurrencyInfo | null
+      includeInputField?: boolean
     }
   ) => {
     const [value, setValue] = useState('')
@@ -64,23 +66,28 @@ export const InputAmountSelectToken = (
         px="$spacing16"
         py="$spacing16"
         width={"100%"}
+        height={includeInputField ? "100%" : "7rem"}
         flexShrink={"unset"}
       >
         <Text color="$neutral2" variant="subheading2">{label}</Text>
-        <TextInput
-          value={value}
-          fontSize={32}
-          ml={-15}
-          fontWeight={'300'}
-          onChangeText={handleChangeText}
-          placeholder={fixedValue ?? '0'}
-          placeholderTextColor={'$neutral2'}
-          color={'$neutral1'}
-          keyboardType="numeric"
-          disabled={disabled}
-        />
-        <Text variant="subheading2" color="$neutral2">${inputPrice}</Text>
-        <Flex position="absolute" right="$spacing16" top="55%" transform={[{translateY: '-50%'}]}>
+        {includeInputField && (
+          <TextInput
+            value={value}
+            fontSize={32}
+            ml={-15}
+            fontWeight={'300'}
+            onChangeText={handleChangeText}
+            placeholder={fixedValue ?? '0'}
+            placeholderTextColor={'$neutral2'}
+            color={'$neutral1'}
+            keyboardType="numeric"
+            disabled={disabled}
+          />
+        )}
+        {includeInputField && (
+          <Text variant="subheading2" color="$neutral2">${inputPrice}</Text>
+        )}
+        <Flex position="absolute" right="$spacing16" top={includeInputField ? "55%" : '50%'} left={includeInputField ? 'unset' : '3.5rem'} transform={[{translateY: includeInputField ? '-50%' : '0%'}]}>
           <Button
             backgroundColor={!selectedToken ? '$accent1' : '$surface1'}
             borderRadius="$rounded20"
@@ -96,6 +103,7 @@ export const InputAmountSelectToken = (
             }}
             animation="quick"
             size="medium"
+            isDisabled={!includeInputField && disabled}
             onPress={onOpenTokenSelector}
             width={selectedToken ? "8rem" : "100%"}
           >

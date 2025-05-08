@@ -16,6 +16,7 @@ import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelect
 import { CurrencyField } from 'uniswap/src/types/currency'
 import { AvailableOffersCards } from './components/AvailableOffersCards'
 import { BorrowFlow } from './components/BorrowFlow'
+import { LendFlow } from './components/LendFlow'
 const LendingDialog = () => {
   const { address } = useAccount()
 
@@ -25,6 +26,7 @@ const LendingDialog = () => {
     selectedAppTab,
     selectedPool,
     selectedAsset,
+    selectedAsset2,
     assetInputValue,
 
     // functions
@@ -33,6 +35,7 @@ const LendingDialog = () => {
     changePool,
     changeAsset,
     setAssetInputValue,
+    changeAsset2,
   } = useLendingState()
 
   const tabs: SegmentedControlOption[] = Object.values(APP_TABS).map((tab) => ({
@@ -53,6 +56,7 @@ const LendingDialog = () => {
     // reset state
     changePool(null)
     changeAsset(null)
+    changeAsset2(null)
     setAssetInputValue('')
 
     // select tab
@@ -82,8 +86,21 @@ const LendingDialog = () => {
               />
             }
 
+            {selectedAppTab === APP_TABS.LEND &&
+              <LendFlow
+                selectedAsset={selectedAsset as CurrencyInfo}
+                selectedAsset2={selectedAsset2 as CurrencyInfo}
+                setAssetInputValue={setAssetInputValue}
+                selectionModalDispatch={selectionModalDispatch}
+              />
+            }
+
           </Flex>
-          { [APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab) && selectedPool &&
+          { [APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab) && 
+            (
+              (selectedAppTab === APP_TABS.LEND && selectedAsset) || 
+              (selectedAppTab === APP_TABS.BORROW && selectedPool)
+            ) &&
             <Flex
               backgroundColor="$surface1"
               width="25rem"
@@ -120,7 +137,12 @@ const LendingDialog = () => {
                 currencyId: field?.toString() ?? '',
                 logoUrl: currencyLogoUrl ?? '',
               }
-              changeAsset(currencyInfo)
+
+              if (selectionModalState.mode === SelectionModalMode.ASSET) {
+                changeAsset(currencyInfo)
+              } else if (selectionModalState.mode === SelectionModalMode.ASSET_2) {
+                changeAsset2(currencyInfo)
+              }
             } else {
               changePool(poolData as PoolData)
             }

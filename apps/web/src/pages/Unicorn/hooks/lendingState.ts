@@ -6,7 +6,8 @@ import { useAccount } from 'wagmi'
 
 export enum SelectionModalMode {
     ASSET = 'asset',
-    POOL = 'pool'
+    POOL = 'pool',
+    ASSET_2 = 'asset_2'
 }
 
 export enum ModalState {
@@ -70,7 +71,11 @@ export const useLendingState = () => {
 
     // this is credit, can be as you borrow it or lend it
     const [selectedAsset, changeAsset] = useState<CurrencyInfo | null>(null)
-    
+
+    // variable second asset in pool pair
+    // relevant for lend
+    const [selectedAsset2, changeAsset2] = useState<CurrencyInfo | null>(null)
+
     return {
         // state
         selectionModalState,
@@ -78,11 +83,13 @@ export const useLendingState = () => {
         selectedAsset,
         assetInputValue,
         selectedAppTab,
+        selectedAsset2,
         // functions
         selectionModalDispatch,
         selectAppTab,
         changePool,
         changeAsset,
         setAssetInputValue,
+        changeAsset2,
     }
 }
