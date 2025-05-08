@@ -76,11 +76,11 @@ export const useLendingState = () => {
         setFocusOnFirstNotSecondInput(value)
     }
 
-    const onSelectLendAsset = (asset: CurrencyInfo | PoolData) => {
+    const onSelectLendAsset = (asset: CurrencyInfo | PoolData | null) => {
         setSelectedLendAsset(asset)
     }
 
-    const onSelectBorrowAsset = (asset: CurrencyInfo | PoolData) => {
+    const onSelectBorrowAsset = (asset: CurrencyInfo | PoolData | null) => {
         setSelectedBorrowAsset(asset)
     }
     

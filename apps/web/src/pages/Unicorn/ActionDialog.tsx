@@ -14,13 +14,10 @@ import {
 } from 'uniswap/src/features/transactions/swap/contexts/SwapFormContext'
 import { APP_TABS, ModalState, SelectionModalMode, useLendingState } from './hooks/lendingState'
 import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
-import { SelectPoolInput } from './components/SelectPoolInput'
-import { CustomInputComponent } from './components/CustomInputComponent'
-import { InputAmountSelectToken } from './components/InputAmountSelectToken'
 import { CurrencyField } from 'uniswap/src/types/currency'
-import { ActionButton } from './components/ActionButton'
 import { calculateLtv } from './utils/math'
 import { AvailableOffersCards } from './components/AvailableOffersCards'
+import { BorrowFlow } from './components/BorrowFlow'
 const LendingDialog = () => {
   const { address } = useAccount()
 
@@ -60,47 +57,52 @@ const LendingDialog = () => {
     value: tab.toLowerCase(),
   }))
 
+  const handleOnChangeTab = (option: APP_TABS) => {
+    // reset state
+    onSelectBorrowAsset(null)
+    onSelectLendAsset(null)
+    setAssetInputValue('')
+    setLtv(null)
+
+    // select tab
+    selectAppTab(option)
+  }
+
   return (
     <Flex width={'$full'} minWidth={'700px'} maxWidth={'$full'} gap="$spacing8" flexDirection="column" alignItems='center'>
       <SegmentedControl
         options={tabs}
-        disabled
+        disabled={false}
         selectedOption={selectedAppTab}
-        onSelectOption={(option) => selectAppTab(option as APP_TABS)}
+        onSelectOption={(option) => handleOnChangeTab(option as APP_TABS)}
         outlined={false}
         size="large"
       />
       <Flex grow gap="$spacing8" justifyContent="space-between">
         <Flex flexDirection="row" gap="$spacing8" width={'100%'}>
           <Flex animation="quick" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} gap="$spacing16" alignItems='center'>
-            <SelectPoolInput onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.POOL })} selectedPool={selectedLendAsset as PoolData} />
-            <InputAmountSelectToken 
-              label="Borrow" 
-              onChangeText={(value) => setAssetInputValue(value)} 
-              onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })} 
-              selectedToken={selectedBorrowAsset as CurrencyInfo}
-            />
-            {
-              selectedBorrowAsset &&
-              <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
-                <CustomInputComponent label="LTV (%)" onChangeText={() => {}} disabled={true} fixedValue={ltv?.toString()} />
-                <CustomInputComponent label="Interest (%)" onChangeText={() => {}} />
-              </Flex>
+            {selectedAppTab === APP_TABS.BORROW && 
+              <BorrowFlow
+                selectedLendAsset={selectedLendAsset as PoolData}
+                selectedBorrowAsset={selectedBorrowAsset as CurrencyInfo}
+                setAssetInputValue={setAssetInputValue}
+                selectionModalDispatch={selectionModalDispatch}
+                amountInputValue={assetInputValue}
+              />
             }
 
           </Flex>
-          { selectedLendAsset &&
+          { [APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab) && selectedLendAsset &&
             <Flex
-            backgroundColor="$surface1"
-            width="25rem"
-            height="30rem"
-            borderRadius="$rounded16"
+              backgroundColor="$surface1"
+              width="25rem"
+              height="30rem"
+              borderRadius="$rounded16"
             >
               <AvailableOffersCards />
             </Flex>
           }
         </Flex>
-        <ActionButton />
         <TokenSelectorModal
           isModalOpen={selectionModalState.isOpen}
           variation={selectionModalState.mode === SelectionModalMode.POOL ? TokenSelectorVariation.PoolOnly : TokenSelectorVariation.BalancesOnly}
