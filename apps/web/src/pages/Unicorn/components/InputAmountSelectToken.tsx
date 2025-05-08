@@ -1,8 +1,13 @@
 import { Button, Flex, Text } from 'ui/src'
 import { TextInput } from 'uniswap/src/components/input/TextInput'
 import { useDebounce } from 'utilities/src/time/timing'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { RotatableChevron } from 'ui/src/components/icons/RotatableChevron'
+import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
+import { TokenLogo } from 'uniswap/src/components/CurrencyLogo/TokenLogo'
+import { maxUint256 } from 'viem'
+import { useAssetPrice } from '../queries/useAssetPrice'
+import { Token } from '@uniswap/client-pools/dist/pools/v1/types_pb'
 
 export const InputAmountSelectToken = (
     {
@@ -11,6 +16,8 @@ export const InputAmountSelectToken = (
       disabled = false,
       fixedValue,
       onOpenTokenSelector,
+      selectedToken,
+      maxValue = Number(maxUint256),
     }: {
       label: string
       onChangeText: (newValue: string) => void
@@ -18,14 +25,25 @@ export const InputAmountSelectToken = (
       disabled?: boolean
       fixedValue?: string
       onOpenTokenSelector: () => void
+      selectedToken: CurrencyInfo | null
     }
   ) => {
     const [value, setValue] = useState('')
     const debouncedValue = useDebounce(value, 300)
 
+    const { data: assetPrice } = useAssetPrice(
+        selectedToken?.currency.chainId, 
+        (selectedToken?.currency as unknown as Token)?.address
+    )
+
+    const inputPrice = useMemo(() => {
+        if (!assetPrice || !value) return 0
+        return (Number(value) * Number(assetPrice)).toFixed(2)
+    }, [assetPrice, value])
+
     const handleChangeText = useCallback((newValue: string) => {
       const numValue = Number(newValue)
-      if (isNaN(numValue) || numValue > 100) {
+      if (isNaN(numValue) || numValue > maxValue) {
         return
       }
       setValue(newValue)
@@ -61,10 +79,13 @@ export const InputAmountSelectToken = (
           keyboardType="numeric"
           disabled={disabled}
         />
+        <Text variant="subheading2" color="$neutral2">${inputPrice}</Text>
         <Flex position="absolute" right="$spacing16" top="55%" transform={[{translateY: '-50%'}]}>
           <Button
-            backgroundColor="$accent1"
+            backgroundColor={!selectedToken ? '$accent1' : '$surface1'}
             borderRadius="$rounded20"
+            borderColor={!selectedToken ? '$accent1' : '$surface3'}
+            borderWidth="$spacing1"
             px="$spacing8"
             py="$spacing16"
             pressStyle={{
@@ -76,10 +97,23 @@ export const InputAmountSelectToken = (
             animation="quick"
             size="medium"
             onPress={onOpenTokenSelector}
+            width={selectedToken ? "8rem" : "100%"}
           >
-            <Text variant="buttonLabel2" color="$neutral1">
-              Select token
-            </Text>
+            {!selectedToken ? (
+                <Text variant="buttonLabel2" color="$neutral1">
+                    Select token
+                </Text>
+            ) : (
+              <Flex flexDirection="row" alignItems="center" gap="$spacing8">
+                <TokenLogo
+                    size={28}
+                    url={selectedToken.logoUrl}
+                />
+                <Text variant="buttonLabel2" color="$neutral1">
+                    {selectedToken.currency.symbol}
+                </Text>
+            </Flex>
+            )}
             <RotatableChevron color="$neutral1" direction="down" height="$spacing16" scale={(1.5)}/>
           </Button>
         </Flex>

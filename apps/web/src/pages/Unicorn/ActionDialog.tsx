@@ -3,7 +3,6 @@ import { useAccount } from 'hooks/useAccount'
 import { useEffect, useState } from 'react'
 import { MultichainContextProvider } from 'state/multichain/MultichainContext'
 import { Button, Flex, SegmentedControl, SegmentedControlOption, Text } from 'ui/src'
-import { CurrencyInputPanel } from 'uniswap/src/components/CurrencyInputPanel/CurrencyInputPanel'
 import { TokenSelectorModal, TokenSelectorVariation } from 'uniswap/src/components/TokenSelector/TokenSelector'
 import { TokenSelectorFlow } from 'uniswap/src/components/TokenSelector/types'
 import { Token } from 'uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks'
@@ -12,9 +11,7 @@ import { TransactionSettingsContextProvider } from 'uniswap/src/features/transac
 import { TransactionSettingKey } from 'uniswap/src/features/transactions/settings/slice'
 import {
   SwapFormContextProvider,
-  useSwapFormContext,
 } from 'uniswap/src/features/transactions/swap/contexts/SwapFormContext'
-import { CurrencyField } from 'uniswap/src/types/currency'
 import { APP_TABS, ModalState, SelectionModalMode, useLendingState } from './hooks/lendingState'
 import { useAssetPrice } from './queries/useAssetPrice'
 import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
@@ -24,36 +21,9 @@ import { useWalletClient } from 'wagmi'
 import { SelectPoolInput } from './components/SelectPoolInput'
 import { CustomInputComponent } from './components/CustomInputComponent'
 import { InputAmountSelectToken } from './components/InputAmountSelectToken'
+import { CurrencyField } from 'uniswap/src/types/currency'
 const LendingDialog = () => {
-  const {
-    amountUpdatedTimeRef,
-    derivedSwapInfo,
-    exactAmountFiat,
-    exactAmountFiatRef,
-    exactAmountToken,
-    exactAmountTokenRef,
-    exactCurrencyField,
-    focusOnCurrencyField,
-    selectingCurrencyField,
-    input,
-    isFiatMode,
-    output,
-    hideFooter,
-    updateSwapForm,
-  } = useSwapFormContext()
   const { address } = useAccount()
-
-  const {
-    currencyAmounts,
-    currencies,
-    trade,
-    currencyBalances,
-    currencyAmountsUSDValue,
-    // wrapType,
-  } = derivedSwapInfo
-
-
-  const exactFieldIsInput = exactCurrencyField === CurrencyField.INPUT
 
   const {
     selectionModalState,
@@ -61,14 +31,11 @@ const LendingDialog = () => {
     selectedLendAsset,
     selectedBorrowAsset,
     lendValue,
-    onToggleFocusOnFirstNotSecondInput,
     borrowValue,
     selectionModalDispatch,
     selectAppTab,
     onSelectLendAsset,
     onSelectBorrowAsset,
-    firstInputRef,
-    secondInputRef,
     handleUpdateLendValue,
     handleUpdateBorrowValue,
     focusOnFirstNotSecondInput,
@@ -127,44 +94,6 @@ const LendingDialog = () => {
     value: tab.toLowerCase(),
   }))
 
-  const BorrowInputPanel = () => {
-    return (
-      <Flex
-        animation="simple"
-        borderColor={true ? '$surface3' : '$transparent'}
-        borderRadius="$rounded20"
-        backgroundColor={true ? '$surface1' : '$surface2'}
-        borderWidth="$spacing1"
-        overflow="hidden"
-        pb={currencies[CurrencyField.INPUT] ? '$spacing4' : '$none'}
-        width={"30rem"}
-      >
-        <CurrencyInputPanel
-          ref={secondInputRef}
-          headerLabel={'Borrow'}
-          currencyAmount={currencyAmounts[CurrencyField.OUTPUT]}
-          currencyBalance={currencyBalances[CurrencyField.INPUT]}
-          currencyField={CurrencyField.OUTPUT}
-          currencyInfo={selectedBorrowAsset}
-          focus={focusOnFirstNotSecondInput ? undefined : true}
-          isFiatMode={isFiatMode && exactFieldIsInput}
-          isIndicativeLoading={trade.isIndicativeLoading}
-          isLoading={false}
-          showSoftInputOnFocus={false}
-          usdValue={borrowCurrencyAmount}
-          value={borrowValue}
-          valueIsIndicative={!exactFieldIsInput && trade.indicativeTrade && !trade.trade}
-          onPressIn={() => onToggleFocusOnFirstNotSecondInput(false)}
-          onSelectionChange={() => {}}
-          onSetExactAmount={handleUpdateBorrowValue}
-          onSetPresetValue={() => {}} // Added this line
-          onShowTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })}
-          onToggleIsFiatMode={() => {}}
-        />
-      </Flex>
-    )
-  }
-
   return (
     <Flex width={'$full'} minWidth={'700px'} maxWidth={'$full'} gap="$spacing8" flexDirection="column" alignItems='center'>
       <SegmentedControl
@@ -178,8 +107,12 @@ const LendingDialog = () => {
       <Flex grow gap="$spacing8" justifyContent="space-between">
         <Flex animation="quick" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} gap="$spacing16" alignItems='center'>
           <SelectPoolInput onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.POOL })} selectedPool={selectedLendAsset as PoolData} />
-          <InputAmountSelectToken label="Amount" onChangeText={() => {}} onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })} />
-          <BorrowInputPanel />
+          <InputAmountSelectToken 
+            label="Borrow" 
+            onChangeText={() => {}} 
+            onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })} 
+            selectedToken={selectedBorrowAsset as CurrencyInfo}
+          />
           <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
             <CustomInputComponent label="LTV (%)" onChangeText={() => {}} disabled={true} fixedValue={ltv?.toString()} />
             <CustomInputComponent label="Interest (%)" onChangeText={() => {}} />
