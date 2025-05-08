@@ -109,6 +109,30 @@ export const routes: RouteDefinition[] = [
     path: '/',
     getTitle: () => 'Unicorn Credit from PWN',
     getDescription: () => 'Unicorn Credit from PWN',
+    getElement: () => <Navigate to="/borrow" replace />,
+  }),
+  createRouteDefinition({
+    path: '/borrow',
+    getTitle: () => 'Borrow | Unicorn Credit from PWN',
+    getDescription: () => 'Unicorn Credit from PWN',
+    getElement: () => <UnicornHome />,
+  }),
+  createRouteDefinition({
+    path: '/lend',
+    getTitle: () => 'Lend | Unicorn Credit from PWN',
+    getDescription: () => 'Unicorn Credit from PWN',
+    getElement: () => <UnicornHome />,
+  }),
+  createRouteDefinition({
+    path: '/my-activity',
+    getTitle: () => 'My Activity | Unicorn Credit from PWN',
+    getDescription: () => 'Unicorn Credit from PWN',
+    getElement: () => <UnicornHome />,
+  }),
+  createRouteDefinition({
+    path: '/market',
+    getTitle: () => 'Market | Unicorn Credit from PWN',
+    getDescription: () => 'Unicorn Credit from PWN',
     getElement: () => <UnicornHome />,
   }),
   createRouteDefinition({

@@ -45,7 +45,10 @@ export const BorrowFlow = (
                     <CustomInputComponent label="Interest (%)" onChangeText={() => { }} />
                 </Flex>
             }
-            <ActionButton />
+            {
+                selectedAsset && selectedPool &&
+                <ActionButton />
+            }
         </>
     )
 }

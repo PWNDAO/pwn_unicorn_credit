@@ -17,7 +17,23 @@ import { CurrencyField } from 'uniswap/src/types/currency'
 import { AvailableOffersCards } from './components/AvailableOffersCards'
 import { BorrowFlow } from './components/BorrowFlow'
 import { LendFlow } from './components/LendFlow'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useMemo } from 'react'
 const LendingDialog = () => {
+  const navigate = useNavigate()
+  const pathname = useLocation().pathname
+  const whichTab = useMemo(() => {
+    if (pathname === '/borrow') return APP_TABS.BORROW
+    if (pathname === '/lend') return APP_TABS.LEND
+    if (pathname === '/my-activity') return APP_TABS.MY_ACTIVITY
+    if (pathname === '/market') return APP_TABS.MARKET
+    return APP_TABS.BORROW
+  }, [pathname])
+
+  useEffect(() => {
+    selectAppTab(whichTab)
+  }, [whichTab])
+
   const { address } = useAccount()
 
   const {
@@ -45,8 +61,11 @@ const LendingDialog = () => {
         hoverStyle={{ color: '$neutral1' }}
         color={selectedAppTab === tab ? '$neutral1' : '$neutral2'}
         tag="h1"
-      >
-        {tab.charAt(0).toUpperCase() + tab.slice(1).toLowerCase().replace('_', ' ')}
+      > 
+        {tab.includes('-') ? 
+          tab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ') :
+          tab.charAt(0).toUpperCase() + tab.slice(1).toLowerCase().replace('_', ' ')
+        }
       </Text>
     ),
     value: tab.toLowerCase(),
@@ -61,6 +80,7 @@ const LendingDialog = () => {
 
     // select tab
     selectAppTab(option)
+    navigate(`/${option.toLowerCase()}`, { replace: true })
   }
 
   return (
