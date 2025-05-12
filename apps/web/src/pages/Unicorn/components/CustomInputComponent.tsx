@@ -43,6 +43,7 @@ export const CustomInputComponent = ({
       py="$spacing16"
       width={'$full'}
       flexShrink={'unset'}
+      flex={1}
     >
       <Text color="$neutral2" variant="subheading2">
         {label}

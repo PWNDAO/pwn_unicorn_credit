@@ -66,7 +66,7 @@ export const InputAmountSelectToken = ({
       px="$spacing16"
       py="$spacing16"
       width={'100%'}
-      height={includeInputField ? 'unset' : '7rem'}
+      height={includeInputField ? 'unset' : '8rem'}
       flexShrink={'unset'}
     >
       <Text color="$neutral2" variant="subheading2">

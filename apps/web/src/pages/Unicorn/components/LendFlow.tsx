@@ -42,14 +42,6 @@ export const LendFlow = ({
       />
       <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
         <InputAmountSelectToken
-          label="1st Token in Pair"
-          onChangeText={() => {}}
-          onOpenTokenSelector={() => {}}
-          selectedToken={selectedAsset as CurrencyInfo}
-          includeInputField={false}
-          disabled={true}
-        />
-        <InputAmountSelectToken
           label="2nd Token in Pair"
           onChangeText={() => {}}
           onOpenTokenSelector={() =>
@@ -58,14 +50,11 @@ export const LendFlow = ({
           selectedToken={selectedAsset2 as CurrencyInfo}
           includeInputField={false}
         />
-      </Flex>
-      {selectedAsset2 && (
-        <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
-          <CustomInputComponent label="LTV (%)" onChangeText={(value) => setLtv(Number(value))} />
+        {selectedAsset2 && (
           <CustomInputComponent label="Interest (%)" onChangeText={(value) => setInterestRate(Number(value))} />
-        </Flex>
-      )}
-      {selectedAsset && selectedAsset2 && <ActionButton />}
+        )}
+      </Flex>
+      {selectedAsset && selectedAsset2 && <ActionButton label="Bid" />}
     </Flex>
   )
 }

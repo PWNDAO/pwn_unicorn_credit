@@ -59,7 +59,6 @@ export const BorrowFlow = ({
       />
       {selectedAsset && (
         <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
-          <CustomInputComponent label="LTV (%)" onChangeText={() => {}} disabled={true} fixedValue={ltv?.toString()} />
           <CustomInputComponent
             label="Interest (%)"
             onChangeText={(value) => {
@@ -68,7 +67,7 @@ export const BorrowFlow = ({
           />
         </Flex>
       )}
-      {selectedAsset && selectedPool && <ActionButton />}
+      {selectedAsset && selectedPool && <ActionButton label="Ask" />}
     </>
   )
 }
