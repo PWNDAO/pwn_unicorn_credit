@@ -1,77 +1,71 @@
-import { Flex, Text } from "ui/src"
-import { SelectionModalMode } from "../hooks/lendingState"
-import { InputAmountSelectToken } from "./InputAmountSelectToken"
-import { CurrencyInfo } from "uniswap/src/features/dataApi/types"
-import { ModalState } from "../hooks/lendingState"
-import { CustomInputComponent } from "./CustomInputComponent"
-import { ActionButton } from "./ActionButton"
-import { useEffect } from "react"
-import { useState } from "react"
+import { useEffect, useState } from 'react'
+import { Flex } from 'ui/src'
+import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
+import { ModalState, SelectionModalMode } from '../hooks/lendingState'
+import { ActionButton } from './ActionButton'
+import { CustomInputComponent } from './CustomInputComponent'
+import { InputAmountSelectToken } from './InputAmountSelectToken'
 
-export const LendFlow = (
-    {
-        selectedAsset,
-        selectedAsset2,
-        setAssetInputValue,
-        selectionModalDispatch,
-        ltvCallback,
-        interestRateCallback
-    }: {
-        selectedAsset: CurrencyInfo | null,
-        selectedAsset2: CurrencyInfo | null,
-        setAssetInputValue: (value: string) => void,
-        selectionModalDispatch: (action: { type: ModalState, mode: SelectionModalMode }) => void,
-        ltvCallback?: (ltv: number) => void,
-        interestRateCallback?: (interestRate: number) => void
-    }
-) => {
-    const [ltv, setLtv] = useState<number | null>(null)
-    const [interestRate, setInterestRate] = useState<number | null>(null)
+export const LendFlow = ({
+  selectedAsset,
+  selectedAsset2,
+  setAssetInputValue,
+  selectionModalDispatch,
+  ltvCallback,
+  interestRateCallback,
+}: {
+  selectedAsset: CurrencyInfo | null
+  selectedAsset2: CurrencyInfo | null
+  setAssetInputValue: (value: string) => void
+  selectionModalDispatch: (action: { type: ModalState; mode: SelectionModalMode }) => void
+  ltvCallback?: (ltv: number) => void
+  interestRateCallback?: (interestRate: number) => void
+}) => {
+  const [ltv, setLtv] = useState<number | null>(null)
+  const [interestRate, setInterestRate] = useState<number | null>(null)
 
-    useEffect(() => {
-        ltvCallback?.(Number(ltv))
-    }, [ltv, ltvCallback])
+  useEffect(() => {
+    ltvCallback?.(Number(ltv))
+  }, [ltv, ltvCallback])
 
-    useEffect(() => {
-        interestRateCallback?.(Number(interestRate))
-    }, [interestRate, interestRateCallback])
+  useEffect(() => {
+    interestRateCallback?.(Number(interestRate))
+  }, [interestRate, interestRateCallback])
 
-    return (
-        <Flex flexDirection="column" gap="$spacing16" width={'30rem'}>
-            <InputAmountSelectToken
-                label="Lend"
-                onChangeText={(value) => setAssetInputValue(value)}
-                onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })}
-                selectedToken={selectedAsset as CurrencyInfo}
-            />
-            <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
-                <InputAmountSelectToken
-                    label="1st Token in Pair"
-                    onChangeText={() => {}}
-                    onOpenTokenSelector={() => {}}
-                    selectedToken={selectedAsset as CurrencyInfo}
-                    includeInputField={false}
-                    disabled={true}
-                />
-                <InputAmountSelectToken
-                    label="2nd Token in Pair"
-                    onChangeText={() => {}} 
-                    onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET_2 })}
-                    selectedToken={selectedAsset2 as CurrencyInfo}
-                    includeInputField={false}
-                />
-            </Flex>
-            {
-                selectedAsset2 &&
-                <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
-                    <CustomInputComponent label="LTV (%)" onChangeText={(value) => setLtv(Number(value))} />
-                    <CustomInputComponent label="Interest (%)" onChangeText={(value) => setInterestRate(Number(value))} />
-                </Flex>
-            }
-            {
-                selectedAsset && selectedAsset2 &&
-                <ActionButton />
-            }
+  return (
+    <Flex flexDirection="column" gap="$spacing16" width={'30rem'}>
+      <InputAmountSelectToken
+        label="Lend"
+        onChangeText={(value) => setAssetInputValue(value)}
+        onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })}
+        selectedToken={selectedAsset as CurrencyInfo}
+      />
+      <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
+        <InputAmountSelectToken
+          label="1st Token in Pair"
+          onChangeText={() => {}}
+          onOpenTokenSelector={() => {}}
+          selectedToken={selectedAsset as CurrencyInfo}
+          includeInputField={false}
+          disabled={true}
+        />
+        <InputAmountSelectToken
+          label="2nd Token in Pair"
+          onChangeText={() => {}}
+          onOpenTokenSelector={() =>
+            selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET_2 })
+          }
+          selectedToken={selectedAsset2 as CurrencyInfo}
+          includeInputField={false}
+        />
+      </Flex>
+      {selectedAsset2 && (
+        <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
+          <CustomInputComponent label="LTV (%)" onChangeText={(value) => setLtv(Number(value))} />
+          <CustomInputComponent label="Interest (%)" onChangeText={(value) => setInterestRate(Number(value))} />
         </Flex>
-    )
+      )}
+      {selectedAsset && selectedAsset2 && <ActionButton />}
+    </Flex>
+  )
 }

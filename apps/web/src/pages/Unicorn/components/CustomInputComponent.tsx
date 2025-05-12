@@ -1,64 +1,64 @@
+import { useCallback, useEffect, useState } from 'react'
 import { Flex, Text } from 'ui/src'
 import { TextInput } from 'uniswap/src/components/input/TextInput'
 import { useDebounce } from 'utilities/src/time/timing'
-import { useCallback, useEffect, useState } from 'react'
 
-export const CustomInputComponent = (
-    {
-      label,
-      onChangeText,
-      maxValue = 100,
-      disabled = false,
-      fixedValue,
-    }: {
-      label: string
-      onChangeText: (newValue: string) => void
-      maxValue?: number
-      disabled?: boolean
-      fixedValue?: string
+export const CustomInputComponent = ({
+  label,
+  onChangeText,
+  maxValue = 100,
+  disabled = false,
+  fixedValue,
+}: {
+  label: string
+  onChangeText: (newValue: string) => void
+  maxValue?: number
+  disabled?: boolean
+  fixedValue?: string
+}) => {
+  const [value, setValue] = useState('')
+  const debouncedValue = useDebounce(value, 300)
+
+  const handleChangeText = useCallback((newValue: string) => {
+    const numValue = Number(newValue)
+    if (isNaN(numValue) || numValue > 100) {
+      return
     }
-  ) => {
-    const [value, setValue] = useState('')
-    const debouncedValue = useDebounce(value, 300)
+    setValue(newValue)
+  }, [])
 
-    const handleChangeText = useCallback((newValue: string) => {
-      const numValue = Number(newValue)
-      if (isNaN(numValue) || numValue > 100) {
-        return
-      }
-      setValue(newValue)
-    }, [])
+  useEffect(() => {
+    onChangeText(debouncedValue)
+  }, [debouncedValue, onChangeText])
 
-    useEffect(() => {
-      onChangeText(debouncedValue)
-    }, [debouncedValue, onChangeText])
-
-    return (
-      <Flex
-        animation="simple"
-        borderColor={true ? '$surface3' : '$transparent'}
-        borderRadius="$rounded20"
-        backgroundColor={true ? '$surface1' : '$surface2'}
-        borderWidth="$spacing1"
-        overflow="hidden"
-        px="$spacing16"
-        py="$spacing16"
-        width={"$full"}
-        flexShrink={"unset"}
-      >
-        <Text color="$neutral2" variant="subheading2">{label}</Text>
-        <TextInput
-          value={value}
-          fontSize={32}
-          ml={-15}
-          fontWeight={'300'}
-          onChangeText={handleChangeText}
-          placeholder={fixedValue ?? '0'}
-          placeholderTextColor={'$neutral2'}
-          color={'$neutral1'}
-          keyboardType="numeric"
-          disabled={disabled}
-        />
-      </Flex>
-    )
-  } 
+  return (
+    <Flex
+      animation="simple"
+      borderColor={true ? '$surface3' : '$transparent'}
+      borderRadius="$rounded20"
+      backgroundColor={true ? '$surface1' : '$surface2'}
+      borderWidth="$spacing1"
+      overflow="hidden"
+      px="$spacing16"
+      py="$spacing16"
+      width={'$full'}
+      flexShrink={'unset'}
+    >
+      <Text color="$neutral2" variant="subheading2">
+        {label}
+      </Text>
+      <TextInput
+        value={value}
+        fontSize={32}
+        ml={-15}
+        fontWeight={'300'}
+        onChangeText={handleChangeText}
+        placeholder={fixedValue ?? '0'}
+        placeholderTextColor={'$neutral2'}
+        color={'$neutral1'}
+        keyboardType="numeric"
+        disabled={disabled}
+      />
+    </Flex>
+  )
+}

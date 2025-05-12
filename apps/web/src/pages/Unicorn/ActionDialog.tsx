@@ -1,26 +1,24 @@
 import { PrefetchBalancesWrapper } from 'graphql/data/apollo/AdaptiveTokenBalancesProvider'
 import { useAccount } from 'hooks/useAccount'
+import { useEffect, useMemo } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { MultichainContextProvider } from 'state/multichain/MultichainContext'
 import { Flex, SegmentedControl, SegmentedControlOption, Text } from 'ui/src'
 import { TokenSelectorModal, TokenSelectorVariation } from 'uniswap/src/components/TokenSelector/TokenSelector'
+import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
 import { TokenSelectorFlow } from 'uniswap/src/components/TokenSelector/types'
 import { Token } from 'uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks'
 import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
 import { TransactionSettingsContextProvider } from 'uniswap/src/features/transactions/settings/contexts/TransactionSettingsContext'
 import { TransactionSettingKey } from 'uniswap/src/features/transactions/settings/slice'
-import {
-  SwapFormContextProvider,
-} from 'uniswap/src/features/transactions/swap/contexts/SwapFormContext'
-import { APP_TABS, ModalState, SelectionModalMode, useLendingState } from './hooks/lendingState'
-import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
+import { SwapFormContextProvider } from 'uniswap/src/features/transactions/swap/contexts/SwapFormContext'
 import { CurrencyField } from 'uniswap/src/types/currency'
+import { parseUnits } from 'viem'
+import { AcceptProposalFlow } from './components/AcceptProposalFlow'
 import { AvailableOffersCards } from './components/AvailableOffersCards'
 import { BorrowFlow } from './components/BorrowFlow'
 import { LendFlow } from './components/LendFlow'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { useEffect, useMemo, useState } from 'react'
-import { parseUnits } from 'viem'
-import { AcceptProposalFlow } from './components/AcceptProposalFlow'
+import { APP_TABS, ModalState, SelectionModalMode, useLendingState } from './hooks/lendingState'
 const LendingDialog = () => {
   const navigate = useNavigate()
   const pathname = useLocation().pathname
@@ -68,24 +66,28 @@ const LendingDialog = () => {
     getAssetsByPoolSelected,
   } = useLendingState()
 
-  const tabs: SegmentedControlOption[] = Object.values(APP_TABS).filter(tab => {
-    return isShowAcceptProposal ? true : tab !== APP_TABS.ACCEPT_PROPOSAL
-  }).map((tab) => ({
-    display: (
-      <Text
-        variant="buttonLabel3"
-        hoverStyle={{ color: '$neutral1' }}
-        color={selectedAppTab === tab ? '$neutral1' : '$neutral2'}
-        tag="h1"
-      > 
-        {tab.includes('-') ? 
-          tab.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ') :
-          tab.charAt(0).toUpperCase() + tab.slice(1).toLowerCase().replace('_', ' ')
-        }
-      </Text>
-    ),
-    value: tab.toLowerCase(),
-  }))
+  const tabs: SegmentedControlOption[] = Object.values(APP_TABS)
+    .filter((tab) => {
+      return isShowAcceptProposal ? true : tab !== APP_TABS.ACCEPT_PROPOSAL
+    })
+    .map((tab) => ({
+      display: (
+        <Text
+          variant="buttonLabel3"
+          hoverStyle={{ color: '$neutral1' }}
+          color={selectedAppTab === tab ? '$neutral1' : '$neutral2'}
+          tag="h1"
+        >
+          {tab.includes('-')
+            ? tab
+                .split('-')
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ')
+            : tab.charAt(0).toUpperCase() + tab.slice(1).toLowerCase().replace('_', ' ')}
+        </Text>
+      ),
+      value: tab.toLowerCase(),
+    }))
 
   const handleOnChangeTab = (option: APP_TABS) => {
     // reset state
@@ -100,20 +102,26 @@ const LendingDialog = () => {
     selectAppTab(option)
     navigate(`/${option.toLowerCase()}`, { replace: true })
   }
-  
+
   const handleAcceptProposal = (proposal: any) => {
     changeShowAcceptProposal(true)
     navigate(`/${APP_TABS.ACCEPT_PROPOSAL}`, { replace: true })
     changeSelectedProposal({
       ...proposal,
       pool: selectedPool,
-      mode: selectedAppTab === APP_TABS.BORROW ? 'borrow' : 'lend'
+      mode: selectedAppTab === APP_TABS.BORROW ? 'borrow' : 'lend',
     })
   }
 
-
   return (
-    <Flex width={'$full'} minWidth={'700px'} maxWidth={'$full'} gap="$spacing8" flexDirection="column" alignItems='center'>
+    <Flex
+      width={'$full'}
+      minWidth={'700px'}
+      maxWidth={'$full'}
+      gap="$spacing8"
+      flexDirection="column"
+      alignItems="center"
+    >
       <SegmentedControl
         options={tabs}
         disabled={false}
@@ -124,8 +132,14 @@ const LendingDialog = () => {
       />
       <Flex grow gap="$spacing8" justifyContent="space-between">
         <Flex flexDirection="row" gap="$spacing8" width={'100%'}>
-          <Flex animation="quick" enterStyle={{ opacity: 0 }} exitStyle={{ opacity: 0 }} gap="$spacing16" alignItems='center'>
-            {selectedAppTab === APP_TABS.BORROW && 
+          <Flex
+            animation="quick"
+            enterStyle={{ opacity: 0 }}
+            exitStyle={{ opacity: 0 }}
+            gap="$spacing16"
+            alignItems="center"
+          >
+            {selectedAppTab === APP_TABS.BORROW && (
               <BorrowFlow
                 selectedPool={selectedPool as PoolData}
                 selectedAsset={selectedAsset as CurrencyInfo}
@@ -135,9 +149,9 @@ const LendingDialog = () => {
                 ltvCallback={(ltv) => setLtv(ltv)}
                 interestRateCallback={(interestRate) => setInterestRate(interestRate)}
               />
-            }
+            )}
 
-            {selectedAppTab === APP_TABS.LEND &&
+            {selectedAppTab === APP_TABS.LEND && (
               <LendFlow
                 selectedAsset={selectedAsset as CurrencyInfo}
                 selectedAsset2={selectedAsset2 as CurrencyInfo}
@@ -146,59 +160,46 @@ const LendingDialog = () => {
                 ltvCallback={(ltv) => setLtv(ltv)}
                 interestRateCallback={(interestRate) => setInterestRate(interestRate)}
               />
-            }
+            )}
 
-            {selectedAppTab === APP_TABS.MY_ACTIVITY &&
-              <Flex
-                backgroundColor="$surface1"
-                width="100%"
-                height="30rem"
-                borderRadius="$rounded16"
-              >
+            {selectedAppTab === APP_TABS.MY_ACTIVITY && (
+              <Flex backgroundColor="$surface1" width="100%" height="30rem" borderRadius="$rounded16">
                 <AvailableOffersCards />
               </Flex>
-            }
-            {selectedAppTab === APP_TABS.MARKET &&
-              <Flex
-                backgroundColor="$surface1"
-                width="100%"
-                height="30rem"
-                borderRadius="$rounded16"
-              >
+            )}
+            {selectedAppTab === APP_TABS.MARKET && (
+              <Flex backgroundColor="$surface1" width="100%" height="30rem" borderRadius="$rounded16">
                 <AvailableOffersCards />
               </Flex>
-            }
+            )}
 
-            {selectedAppTab === APP_TABS.ACCEPT_PROPOSAL &&
-              <AcceptProposalFlow
-                selectedProposal={selectedProposal}
-              />
-            }
-
+            {selectedAppTab === APP_TABS.ACCEPT_PROPOSAL && <AcceptProposalFlow selectedProposal={selectedProposal} />}
           </Flex>
-          { [APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab) && 
-            (
-              (selectedAppTab === APP_TABS.LEND && selectedAsset) || 
-              (selectedAppTab === APP_TABS.BORROW && selectedPool)
-            ) &&
-            <AvailableOffersCards 
-              creditAmount={parseUnits(assetInputValue, selectedAsset?.currency.decimals ?? 0)}
-              ltv={ltv ? ltv * 1000 : undefined}
-              interestRate={interestRate ? interestRate * 1000 : undefined}
-              mode={selectedAppTab === APP_TABS.BORROW ? 'borrow' : (selectedAppTab === APP_TABS.LEND ? 'lend' : 'all')}
-              handleAcceptProposal={handleAcceptProposal}
-            />
-          }
+          {[APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab) &&
+            ((selectedAppTab === APP_TABS.LEND && selectedAsset) ||
+              (selectedAppTab === APP_TABS.BORROW && selectedPool)) && (
+              <AvailableOffersCards
+                creditAmount={parseUnits(assetInputValue, selectedAsset?.currency.decimals ?? 0)}
+                ltv={ltv ? ltv * 1000 : undefined}
+                interestRate={interestRate ? interestRate * 1000 : undefined}
+                mode={selectedAppTab === APP_TABS.BORROW ? 'borrow' : selectedAppTab === APP_TABS.LEND ? 'lend' : 'all'}
+                handleAcceptProposal={handleAcceptProposal}
+              />
+            )}
         </Flex>
         <TokenSelectorModal
           isModalOpen={selectionModalState.isOpen}
           variation={
-            selectionModalState.mode === SelectionModalMode.POOL ? 
-              TokenSelectorVariation.PoolOnly : 
-              selectedAppTab === APP_TABS.BORROW ? TokenSelectorVariation.FixedAssetsOnly : TokenSelectorVariation.SwapInput
+            selectionModalState.mode === SelectionModalMode.POOL
+              ? TokenSelectorVariation.PoolOnly
+              : selectedAppTab === APP_TABS.BORROW
+                ? TokenSelectorVariation.FixedAssetsOnly
+                : TokenSelectorVariation.SwapInput
           }
           predefinedAssets={selectedAppTab === APP_TABS.BORROW ? getAssetsByPoolSelected : []}
-          currencyField={selectionModalState.mode === SelectionModalMode.POOL ? CurrencyField.INPUT : CurrencyField.OUTPUT}
+          currencyField={
+            selectionModalState.mode === SelectionModalMode.POOL ? CurrencyField.INPUT : CurrencyField.OUTPUT
+          }
           flow={TokenSelectorFlow.Send}
           onClose={() => selectionModalDispatch({ type: ModalState.CLOSE })}
           activeAccountAddress={address}
