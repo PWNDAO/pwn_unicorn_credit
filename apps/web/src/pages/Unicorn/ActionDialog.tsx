@@ -65,6 +65,7 @@ const LendingDialog = () => {
     setInterestRate,
     changeShowAcceptProposal,
     changeSelectedProposal,
+    getAssetsByPoolSelected,
   } = useLendingState()
 
   const tabs: SegmentedControlOption[] = Object.values(APP_TABS).filter(tab => {
@@ -191,7 +192,12 @@ const LendingDialog = () => {
         </Flex>
         <TokenSelectorModal
           isModalOpen={selectionModalState.isOpen}
-          variation={selectionModalState.mode === SelectionModalMode.POOL ? TokenSelectorVariation.PoolOnly : TokenSelectorVariation.BalancesOnly}
+          variation={
+            selectionModalState.mode === SelectionModalMode.POOL ? 
+              TokenSelectorVariation.PoolOnly : 
+              selectedAppTab === APP_TABS.BORROW ? TokenSelectorVariation.FixedAssetsOnly : TokenSelectorVariation.SwapInput
+          }
+          predefinedAssets={selectedAppTab === APP_TABS.BORROW ? getAssetsByPoolSelected : []}
           currencyField={selectionModalState.mode === SelectionModalMode.POOL ? CurrencyField.INPUT : CurrencyField.OUTPUT}
           flow={TokenSelectorFlow.Send}
           onClose={() => selectionModalDispatch({ type: ModalState.CLOSE })}

@@ -1,8 +1,10 @@
-import { useReducer, useRef, useState } from 'react'
+import { useMemo, useReducer, useRef, useState } from 'react'
 import { CurrencyInputPanelRef } from 'uniswap/src/components/CurrencyInputPanel/CurrencyInputPanel'
 import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
 import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
 import { useAccount } from 'wagmi'
+import { mockTokensBalances } from '../mocks/mockTokens'
+import { TokenOptionSection } from 'uniswap/src/components/TokenSelector/types'
 
 export enum SelectionModalMode {
     ASSET = 'asset',
@@ -83,6 +85,15 @@ export const useLendingState = () => {
     const [isShowAcceptProposal, changeShowAcceptProposal] = useState<boolean>(false)
     const [selectedProposal, changeSelectedProposal] = useState<any>(null)
 
+    const getAssetsByPoolSelected = useMemo(() => {
+        if (!selectedPool) return []
+
+        return [{
+            ...mockTokensBalances[0],
+            sectionKey: TokenOptionSection.PredefinedAssets,
+        }]
+    }, [selectedPool])
+
     return {
         // state
         selectionModalState,
@@ -106,5 +117,6 @@ export const useLendingState = () => {
         setInterestRate,
         changeShowAcceptProposal,
         changeSelectedProposal,
+        getAssetsByPoolSelected,
     }
 }

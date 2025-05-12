@@ -15,7 +15,7 @@ import { TokenSelectorSwapOutputList } from 'uniswap/src/components/TokenSelecto
 import { TokenOptionSection, TokenSection, TokenSelectorFlow } from 'uniswap/src/components/TokenSelector/types'
 import { flowToModalName } from 'uniswap/src/components/TokenSelector/utils'
 import PasteButton from 'uniswap/src/components/buttons/PasteButton'
-import { TokenSelectorItemTypes } from 'uniswap/src/components/lists/types'
+import { TokenOption, TokenSelectorItemTypes } from 'uniswap/src/components/lists/types'
 import { useBottomSheetContext } from 'uniswap/src/components/modals/BottomSheetContext'
 import { Modal } from 'uniswap/src/components/modals/Modal'
 import { NetworkFilter } from 'uniswap/src/components/network/NetworkFilter'
@@ -46,6 +46,7 @@ export enum TokenSelectorVariation {
   // used for Send flow, only show currencies with a balance
   BalancesOnly = 'balances-only',
   PoolOnly = 'pool-only',
+  FixedAssetsOnly = 'fixed-assets-only',
 
   // Swap input and output sections specced in 'Multichain UX: Token Selector and Swap' doc on Notion
   SwapInput = 'swap-input', // balances, recent searches, favorites, popular
@@ -63,6 +64,7 @@ export interface TokenSelectorProps {
   input?: TradeableAsset
   isSurfaceReady?: boolean
   isLimits?: boolean
+  predefinedAssets?: TokenOption[] | TokenSection<TokenOption>[] // this is useful to restrict the assets that can be selected (borrow against LP, only pair + assets with chainlink price feeds)
   onClose: () => void
   onSelectChain?: (chainId: UniverseChainId | null) => void
   onSelectCurrency: (currency: Currency | undefined, currencyField: CurrencyField | undefined, isBridgePair: boolean | undefined, poolData?: PoolData | undefined) => void
@@ -81,6 +83,7 @@ export function TokenSelectorContent({
   onClose,
   onSelectChain,
   onSelectCurrency,
+  predefinedAssets,
 }: Omit<TokenSelectorProps, 'isModalOpen'>): JSX.Element {
   const { onChangeChainFilter, onChangeText, searchFilter, chainFilter, parsedChainFilter, parsedSearchFilter } =
     useFilterCallbacks(chainId ?? null, flow)
@@ -243,6 +246,18 @@ export function TokenSelectorContent({
           />
         )
 
+      case TokenSelectorVariation.FixedAssetsOnly:
+        return (
+          <TokenSelectorSendList
+            activeAccountAddress={activeAccountAddress}
+            chainFilter={chainFilter}
+            isKeyboardOpen={isKeyboardOpen}
+            onEmptyActionPress={onSendEmptyActionPress}
+            onSelectCurrency={onSelectCurrencyCallback}
+            predefinedAssets={predefinedAssets}
+          />
+        )
+
       case TokenSelectorVariation.SwapInput:
         return (
           <TokenSelectorSwapInputList
@@ -291,15 +306,16 @@ export function TokenSelectorContent({
         <Flex grow gap="$spacing8" style={scrollbarStyles}>
           {!isSmallScreen && (
             <Flex row justifyContent="space-between" pt="$spacing16" px="$spacing16">
-              <Text variant="subheading1">{t('common.selectToken.label')}</Text>
+              <Text variant="subheading1">{variation === TokenSelectorVariation.PoolOnly ? 'Select LP Position' : t('common.selectToken.label')}</Text>
               <ModalCloseIcon onClose={onClose} />
             </Flex>
           )}
           <Flex px="$spacing16" py="$spacing4">
-            <SearchTextInput
-              autoFocus={shouldAutoFocusSearch}
-              backgroundColor="$surface2"
-              endAdornment={
+            {![TokenSelectorVariation.PoolOnly, TokenSelectorVariation.BalancesOnly, TokenSelectorVariation.FixedAssetsOnly].includes(variation) && (
+              <SearchTextInput
+                autoFocus={shouldAutoFocusSearch}
+                backgroundColor="$surface2"
+                endAdornment={
                 <Flex row alignItems="center">
                   {hasClipboardString && <PasteButton inline textVariant="buttonLabel3" onPress={handlePaste} />}
                   <NetworkFilter
@@ -320,9 +336,10 @@ export function TokenSelectorContent({
               py="$none"
               value={searchFilter ?? ''}
               onCancel={isWeb ? undefined : onCancel}
-              onChangeText={onChangeText}
-              onFocus={onFocus}
-            />
+                onChangeText={onChangeText}
+                onFocus={onFocus}
+              />
+            )}
           </Flex>
           {isLimits && (
             <Flex

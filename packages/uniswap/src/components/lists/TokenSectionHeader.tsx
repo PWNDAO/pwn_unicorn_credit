@@ -68,6 +68,8 @@ function useTokenOptionsSectionTitle(section: TokenOptionSection): string {
       return t('tokens.selector.section.search')
     case TokenOptionSection.SuggestedTokens:
       return '' // no suggested tokens header
+    case TokenOptionSection.PredefinedAssets:
+      return 'Assets You Can Select'
     default:
       return section
   }
@@ -87,6 +89,8 @@ function getTokenOptionsSectionIcon(section: TokenOptionSection): JSX.Element | 
       return <Search color="$neutral2" size="$icon.16" />
     case TokenOptionSection.FavoriteTokens:
       return <Pin color="$neutral2" size="$icon.16" />
+    case TokenOptionSection.PredefinedAssets:
+      return <Coins color="$neutral2" size="$icon.16" />
     default:
       return null
   }

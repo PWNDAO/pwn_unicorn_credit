@@ -75,9 +75,11 @@ function _TokenSelectorSendList({
   isKeyboardOpen,
   onSelectCurrency,
   onEmptyActionPress,
+  predefinedAssets,
 }: TokenSectionsHookProps & {
   onSelectCurrency: OnSelectCurrency
   onEmptyActionPress: () => void
+  predefinedAssets?: TokenOption[] | TokenSection<TokenOption>[]
 }): JSX.Element {
   // const {
     // data,
@@ -88,7 +90,18 @@ function _TokenSelectorSendList({
   //   activeAccountAddress,
   //   chainFilter,
   // })
-  const sections = mockTokensBalances
+  function isTokenSection(data: unknown): data is TokenSection<TokenOption>[] {
+    return Array.isArray(data) && 'sectionKey' in (data[0] ?? {}) && 'data' in (data[0] ?? {})
+  }
+
+  const sections = predefinedAssets 
+    ? isTokenSection(predefinedAssets)
+      ? predefinedAssets
+      : [{
+          sectionKey: TokenOptionSection.PredefinedAssets,
+          data: predefinedAssets as TokenOption[]
+        }]
+    : mockTokensBalances
   const loading = false
   const error = false
   const refetch = () => {}
