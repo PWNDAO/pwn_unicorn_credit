@@ -20,7 +20,6 @@ export enum APP_TABS {
   BORROW = 'borrow',
   LEND = 'lend',
   MY_ACTIVITY = 'my-activity',
-  MARKET = 'market',
   ACCEPT_PROPOSAL = 'accept-proposal',
 }
 
@@ -76,6 +75,8 @@ export const useLendingState = () => {
   const [isShowAcceptProposal, changeShowAcceptProposal] = useState<boolean>(false)
   const [selectedProposal, changeSelectedProposal] = useState<any>(null)
 
+  const [isOffersClosed, closeOffers] = useState<boolean>(false)
+
   const getAssetsByPoolSelected = useMemo(() => {
     if (!selectedPool) return []
 
@@ -99,6 +100,7 @@ export const useLendingState = () => {
     interestRate,
     isShowAcceptProposal,
     selectedProposal,
+    isOffersClosed,
     // functions
     selectionModalDispatch,
     selectAppTab,
@@ -111,5 +113,6 @@ export const useLendingState = () => {
     changeShowAcceptProposal,
     changeSelectedProposal,
     getAssetsByPoolSelected,
+    closeOffers,
   }
 }

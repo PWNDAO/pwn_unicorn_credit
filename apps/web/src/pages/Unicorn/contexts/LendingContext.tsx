@@ -22,6 +22,7 @@ interface LendingContextType {
   interestRate: number | null
   isShowAcceptProposal: boolean
   selectedProposal: any
+  isOffersClosed: boolean
   selectionModalDispatch: React.Dispatch<SelectionModalAction>
   selectAppTab: (tab: APP_TABS) => void
   changePool: (pool: PoolData | null) => void
@@ -33,6 +34,7 @@ interface LendingContextType {
   changeShowAcceptProposal: (show: boolean) => void
   changeSelectedProposal: (proposal: any) => void
   getAssetsByPoolSelected: any[]
+  closeOffers: (value: boolean) => void
 }
 
 const LendingContext = createContext<LendingContextType | undefined>(undefined)

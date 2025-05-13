@@ -3,7 +3,8 @@ import { useAccount } from 'hooks/useAccount'
 import { useEffect, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { MultichainContextProvider } from 'state/multichain/MultichainContext'
-import { Flex, SegmentedControl, SegmentedControlOption, Text } from 'ui/src'
+import { Button, Flex, SegmentedControl, SegmentedControlOption, Text } from 'ui/src'
+import { RotatableChevron } from 'ui/src/components/icons/RotatableChevron'
 import { TokenSelectorModal, TokenSelectorVariation } from 'uniswap/src/components/TokenSelector/TokenSelector'
 import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
 import { TokenSelectorFlow } from 'uniswap/src/components/TokenSelector/types'
@@ -36,6 +37,7 @@ const LendingDialog = () => {
     interestRate,
     isShowAcceptProposal,
     selectedProposal,
+    isOffersClosed,
     // functions
     selectionModalDispatch,
     selectAppTab,
@@ -48,13 +50,13 @@ const LendingDialog = () => {
     changeShowAcceptProposal,
     changeSelectedProposal,
     getAssetsByPoolSelected,
+    closeOffers,
   } = useLendingContext()
 
   const whichTab = useMemo(() => {
     if (pathname === '/borrow') return APP_TABS.BORROW
     if (pathname === '/lend') return APP_TABS.LEND
     if (pathname === '/my-activity') return APP_TABS.MY_ACTIVITY
-    if (pathname === '/market') return APP_TABS.MARKET
     if (pathname === '/accept-proposal') return APP_TABS.ACCEPT_PROPOSAL
     return APP_TABS.BORROW
   }, [pathname])
@@ -97,6 +99,7 @@ const LendingDialog = () => {
     changeAsset(null)
     changeAsset2(null)
     setAssetInputValue('')
+    closeOffers(false)
     changeShowAcceptProposal(false)
     changeSelectedProposal(null)
 
@@ -114,6 +117,14 @@ const LendingDialog = () => {
       mode: selectedAppTab === APP_TABS.BORROW ? 'borrow' : 'lend',
     })
   }
+
+  const shouldShowCloseOffersChevron = useMemo(() => {
+    return (
+      [APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab) &&
+      ((selectedAppTab === APP_TABS.LEND && selectedAsset && isOffersClosed) ||
+        (selectedAppTab === APP_TABS.BORROW && selectedPool && isOffersClosed))
+    )
+  }, [selectedAppTab, selectedAsset, selectedPool, isOffersClosed])
 
   return (
     <Flex
@@ -141,6 +152,31 @@ const LendingDialog = () => {
             gap="$spacing16"
             alignItems="center"
           >
+            {shouldShowCloseOffersChevron && (
+              <Button
+                position="absolute"
+                top={-10}
+                right={-60}
+                backgroundColor="$surface1"
+                borderColor="$surface3"
+                borderRadius="$rounded12"
+                borderWidth="$spacing1"
+                zIndex={1}
+                px="$spacing12"
+                py="$spacing8"
+                pressStyle={{
+                  backgroundColor: 'rgb(35, 33, 34)',
+                }}
+                hoverStyle={{
+                  backgroundColor: 'rgb(35, 33, 34)',
+                }}
+                onPress={() => closeOffers(false)}
+              >
+                <Text variant="body2" color="$neutral2">
+                  <RotatableChevron color="$neutral2" direction="left" height="$spacing24" />
+                </Text>
+              </Button>
+            )}
             {selectedAppTab === APP_TABS.BORROW && (
               <BorrowFlow
                 selectedPool={selectedPool as PoolData}
@@ -169,17 +205,12 @@ const LendingDialog = () => {
                 <AvailableOffersCards />
               </Flex>
             )}
-            {selectedAppTab === APP_TABS.MARKET && (
-              <Flex backgroundColor="$surface1" width="100%" height="30rem" borderRadius="$rounded16">
-                <AvailableOffersCards />
-              </Flex>
-            )}
 
             {selectedAppTab === APP_TABS.ACCEPT_PROPOSAL && <AcceptProposalFlow selectedProposal={selectedProposal} />}
           </Flex>
           {[APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab) &&
-            ((selectedAppTab === APP_TABS.LEND && selectedAsset) ||
-              (selectedAppTab === APP_TABS.BORROW && selectedPool)) && (
+            ((selectedAppTab === APP_TABS.LEND && selectedAsset && !isOffersClosed) ||
+              (selectedAppTab === APP_TABS.BORROW && selectedPool && !isOffersClosed)) && (
               <AvailableOffersCards
                 creditAmount={parseUnits(assetInputValue, selectedAsset?.currency.decimals ?? 0)}
                 ltv={ltv ? ltv * 1000 : undefined}

@@ -130,12 +130,6 @@ export const routes: RouteDefinition[] = [
     getElement: () => <UnicornHome />,
   }),
   createRouteDefinition({
-    path: '/market',
-    getTitle: () => 'Market | Unicorn Credit from PWN',
-    getDescription: () => 'Unicorn Credit from PWN',
-    getElement: () => <UnicornHome />,
-  }),
-  createRouteDefinition({
     path: '/accept-proposal',
     getTitle: () => 'Accept Proposal | Unicorn Credit from PWN',
     getDescription: () => 'Unicorn Credit from PWN',

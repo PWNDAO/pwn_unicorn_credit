@@ -37,7 +37,7 @@ export const AvailableOffersCards = ({
   mode?: 'borrow' | 'lend' | 'all'
   handleAcceptProposal?: (proposal: any) => void
 }) => {
-  const { selectedPool, selectedAsset } = useLendingContext()
+  const { selectedPool, selectedAsset, closeOffers } = useLendingContext()
 
   const proposals = useMemo(() => {
     return mockLendingProposals
@@ -148,7 +148,7 @@ export const AvailableOffersCards = ({
                     zIndex={1}
                   >
                     <Text color="$white" variant="buttonLabel3">
-                      Best Offer
+                      Best {mode === 'borrow' ? 'Offer' : 'Request'}
                     </Text>
                   </Flex>
                 )}
@@ -188,7 +188,6 @@ export const AvailableOffersCards = ({
                   }}
                   size="large"
                   justifyContent="unset"
-                  mb={proposals.length - 1 === index ? 64 : '0'}
                   onPress={() => handleAcceptProposal?.(proposal)}
                 >
                   <Flex
@@ -218,6 +217,76 @@ export const AvailableOffersCards = ({
               </Flex>
             )
           })}
+        <Flex position="relative">
+          <Flex
+            position="absolute"
+            top={-10}
+            right={16}
+            backgroundColor="$accent1"
+            px="$spacing8"
+            py="$spacing4"
+            borderRadius="$rounded8"
+            zIndex={1}
+          >
+            <Text color="$white" variant="buttonLabel3">
+              Custom
+            </Text>
+          </Flex>
+
+          <Flex
+            position="absolute"
+            top={-10}
+            left={16}
+            backgroundColor="$surface2"
+            opacity={1}
+            px="$spacing8"
+            py="$spacing4"
+            borderRadius="$rounded8"
+            zIndex={1}
+          >
+            <Text color="$neutral1" variant="buttonLabel3">
+              {mode === 'borrow' ? 'Borrow' : 'Lend'}
+            </Text>
+          </Flex>
+
+          <Button
+            width={'$full'}
+            height={proposals.length === 1 ? '2rem' : '$full'}
+            backgroundColor="$surface1"
+            borderColor="$surface3"
+            borderRadius="$rounded20"
+            borderWidth="$spacing1"
+            px="$spacing16"
+            py={72}
+            pressStyle={{
+              backgroundColor: 'rgb(35, 33, 34)',
+            }}
+            hoverStyle={{
+              backgroundColor: 'rgb(35, 33, 34)',
+            }}
+            size="large"
+            justifyContent="unset"
+            onPress={() => closeOffers(true)}
+            mb={72}
+          >
+            <Flex
+              flexDirection="column"
+              height={'$spacing120'}
+              width="100%"
+              gap="$spacing4"
+              alignItems="center"
+              justifyContent="center"
+            >
+              <Text color="$neutral1" variant="heading3">
+                Don't like any?
+              </Text>
+              <Text color="$neutral1" variant="body1">
+                Create custom one, <Text color="$accent1">on your terms</Text>
+                {'  '}!
+              </Text>
+            </Flex>
+          </Button>
+        </Flex>
       </Flex>
     </Flex>
   )
