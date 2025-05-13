@@ -104,27 +104,6 @@ export const AvailableOffersCards = ({
         Accept Now
       </Text>
       <Flex flexDirection="column" gap="$spacing32" px="$spacing16" py="$spacing16" overflow="scroll" height="100%">
-        {(!proposals || proposals.length === 0) && (
-          <Flex
-            width={'$full'}
-            backgroundColor="$surface1"
-            borderColor="$surface3"
-            borderRadius="$rounded20"
-            borderWidth="$spacing1"
-            px="$spacing16"
-            py="$spacing24"
-            flexDirection="column"
-            alignItems="center"
-            gap="$spacing12"
-          >
-            <Text variant="subheading2" color="$neutral2" textAlign="center">
-              No offers available yet
-            </Text>
-            <Text variant="body2" color="$neutral3" textAlign="center">
-              Create a custom {mode === 'borrow' ? 'ask' : 'bid'} on your terms!
-            </Text>
-          </Flex>
-        )}
         {proposals
           ?.filter((p) => Boolean(p))
           .map((proposal, index) => {
@@ -278,7 +257,7 @@ export const AvailableOffersCards = ({
               justifyContent="center"
             >
               <Text color="$neutral1" variant="heading3">
-                Don't like any?
+                {proposals.length === 0 ? `No ${mode === 'borrow' ? 'offers' : 'requests'}, yet?` : "Don't like any?"}
               </Text>
               <Text color="$neutral1" variant="body1">
                 Create custom one, <Text color="$accent1">on your terms</Text>
