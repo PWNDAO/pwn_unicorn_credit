@@ -156,10 +156,8 @@ export const AcceptProposalFlow = () => {
           <CustomInputComponent label="Hash" onChangeText={() => {}} disabled={true} fixedValue={hash} />
           <CustomInputComponent label="Proposer" onChangeText={() => {}} disabled={true} fixedValue={proposer} />
         </Flex>
-        {/* <Flex flexDirection="row" gap="$spacing4">
-        </Flex> */}
       </Flex>
-      <ActionButton label="Accept Proposal" onPress={() => handleCreateLoan(selectedProposal)} />
+      <ActionButton label="Create loan" onPress={() => handleCreateLoan(selectedProposal)} />
     </Flex>
   )
 }
