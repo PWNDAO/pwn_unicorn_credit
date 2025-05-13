@@ -18,6 +18,7 @@ export const InputAmountSelectToken = ({
   selectedToken,
   maxValue = Number(maxUint256),
   includeInputField = true,
+  label2,
 }: {
   label: string
   onChangeText: (newValue: string) => void
@@ -27,6 +28,7 @@ export const InputAmountSelectToken = ({
   onOpenTokenSelector: () => void
   selectedToken: CurrencyInfo | null
   includeInputField?: boolean
+  label2?: string
 }) => {
   const [value, setValue] = useState('')
   const debouncedValue = useDebounce(value, 300)
@@ -69,9 +71,16 @@ export const InputAmountSelectToken = ({
       height={includeInputField ? 'unset' : '8rem'}
       flexShrink={'unset'}
     >
-      <Text color="$neutral2" variant="subheading2">
-        {label}
-      </Text>
+      <Flex row justifyContent="space-between" gap={8} mb={8}>
+        <Text color="$neutral2" variant="subheading2">
+          {label}
+        </Text>
+        {label2 && (
+          <Text color="$neutral2" variant="subheading2">
+            {label2}
+          </Text>
+        )}
+      </Flex>
       {includeInputField && (
         <TextInput
           value={value}

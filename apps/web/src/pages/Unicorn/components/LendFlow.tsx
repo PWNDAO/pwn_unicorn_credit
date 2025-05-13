@@ -36,6 +36,7 @@ export const LendFlow = ({
     <Flex flexDirection="column" gap="$spacing16" width={'30rem'}>
       <InputAmountSelectToken
         label="Lend"
+        label2={`1st Token in Pair`}
         onChangeText={(value) => setAssetInputValue(value)}
         onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })}
         selectedToken={selectedAsset as CurrencyInfo}
