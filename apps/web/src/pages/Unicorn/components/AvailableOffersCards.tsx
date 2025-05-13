@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { Button, Flex, Text } from 'ui/src'
-import { chainName } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
 import { formatUnits } from 'viem'
 import { useLendingContext } from '../contexts/LendingContext'
 import { mockLendingProposals } from '../mocks/mockProposal'
@@ -38,7 +37,7 @@ export const AvailableOffersCards = ({
   mode?: 'borrow' | 'lend' | 'all'
   handleAcceptProposal?: (proposal: any) => void
 }) => {
-  const { selectedPool } = useLendingContext()
+  const { selectedPool, selectedAsset } = useLendingContext()
 
   const proposals = useMemo(() => {
     return mockLendingProposals
@@ -68,20 +67,43 @@ export const AvailableOffersCards = ({
   }, [creditAmount, ltv, mode, interestRate, mockLendingProposals])
 
   const bestProposal = useMemo(() => {
-    if (!selectedPool || !proposals || proposals.length === 0) return null
+    if (!proposals || proposals.length === 0) return null
+    if (mode === 'lend' && !selectedAsset) return null
+    if (mode === 'borrow' && !selectedPool) return null
 
     // TODO: some algo, maybe even [best, cheapest, etc]
     return {
       [proposals[0].id]: proposals[0],
     }
-  }, [proposals, selectedPool])
+  }, [proposals, selectedPool, selectedAsset])
+
+  const formatNumberWithSuffix = (num: number): string => {
+    const suffixes = ['', 'k', 'M', 'B', 'T']
+    const tier = Math.floor(Math.log10(Math.abs(num)) / 3)
+
+    if (tier === 0) return num.toString()
+
+    const suffix = suffixes[tier]
+    const scale = Math.pow(10, tier * 3)
+    const scaled = num / scale
+
+    // Handle decimals - show up to 2 decimal places if needed
+    return scaled.toFixed(scaled % 1 === 0 ? 0 : 2) + suffix
+  }
 
   return (
-    <Flex backgroundColor="$surface1" width="25rem" height="30rem" borderRadius="$rounded16" overflow="hidden">
+    <Flex
+      backgroundColor="$surface1"
+      width="25rem"
+      maxHeight="30rem"
+      flex={1}
+      borderRadius="$rounded16"
+      overflow="hidden"
+    >
       <Text variant="subheading2" color="$neutral2" px="$spacing16" py="$spacing16">
-        Instant Loans
+        Accept Now
       </Text>
-      <Flex flexDirection="column" gap="$spacing8" px="$spacing16" py="$spacing16" overflow="scroll" height="100%">
+      <Flex flexDirection="column" gap="$spacing32" px="$spacing16" py="$spacing16" overflow="scroll" height="100%">
         {(!proposals || proposals.length === 0) && (
           <Flex
             width={'$full'}
@@ -107,33 +129,53 @@ export const AvailableOffersCards = ({
           ?.filter((p) => Boolean(p))
           .map((proposal, index) => {
             const creditAsset = TOKEN_BY_ADDRESS[proposal.creditAsset.address as keyof typeof TOKEN_BY_ADDRESS]
-            const tokenA = TOKEN_BY_ADDRESS[proposal.tokenAAllowList[0] as keyof typeof TOKEN_BY_ADDRESS]
-            const tokenB = TOKEN_BY_ADDRESS[proposal.tokenBAllowList[0] as keyof typeof TOKEN_BY_ADDRESS]
+            // const tokenA = TOKEN_BY_ADDRESS[proposal.tokenAAllowList[0] as keyof typeof TOKEN_BY_ADDRESS]
+            // const tokenB = TOKEN_BY_ADDRESS[proposal.tokenBAllowList[0] as keyof typeof TOKEN_BY_ADDRESS]
             const id = proposal.id
             const isBest = bestProposal?.[id] === proposal
             return (
               <Flex key={index} position="relative">
+                {/* Keep existing Best Offer label */}
                 {isBest && (
                   <Flex
                     position="absolute"
                     top={-10}
                     right={16}
-                    backgroundColor="#23FF21"
+                    backgroundColor="$accent1"
                     px="$spacing8"
                     py="$spacing4"
                     borderRadius="$rounded8"
                     zIndex={1}
                   >
-                    <Text color="$black" variant="buttonLabel4">
+                    <Text color="$white" variant="buttonLabel3">
                       Best Offer
                     </Text>
                   </Flex>
                 )}
+
+                {!isBest && (
+                  <Flex
+                    position="absolute"
+                    top={-10}
+                    left={16}
+                    backgroundColor="$surface2"
+                    opacity={1}
+                    px="$spacing8"
+                    py="$spacing4"
+                    borderRadius="$rounded8"
+                    zIndex={1}
+                  >
+                    <Text color="$neutral1" variant="buttonLabel3">
+                      {mode === 'borrow' ? 'Borrow' : 'Lend'}
+                    </Text>
+                  </Flex>
+                )}
+
                 <Button
                   width={'$full'}
                   height={proposals.length === 1 ? '2rem' : '$full'}
                   backgroundColor="$surface1"
-                  borderColor={isBest ? '#23FF21' : '$surface3'}
+                  borderColor={isBest ? '$accent1' : '$surface3'}
                   borderRadius="$rounded20"
                   borderWidth="$spacing1"
                   px="$spacing16"
@@ -144,10 +186,8 @@ export const AvailableOffersCards = ({
                   hoverStyle={{
                     backgroundColor: 'rgb(35, 33, 34)',
                   }}
-                  animation="quick"
                   size="large"
                   justifyContent="unset"
-                  // flex={0}
                   mb={proposals.length - 1 === index ? 64 : '0'}
                   onPress={() => handleAcceptProposal?.(proposal)}
                 >
@@ -156,38 +196,21 @@ export const AvailableOffersCards = ({
                     height={'$spacing120'}
                     width="100%"
                     gap="$spacing4"
-                    justifyContent="space-between"
+                    alignItems="center"
+                    justifyContent="center"
                   >
-                    <Flex flexDirection="row" justifyContent="space-between">
-                      <Text color="$neutral2" variant="subheading2">
-                        Position
+                    <Text color="$neutral1" variant="heading2">
+                      {formatNumberWithSuffix(
+                        Number(formatUnits(BigInt(proposal.creditAmount ?? 0), creditAsset.decimals)),
+                      )}{' '}
+                      <Text variant="heading3">{creditAsset.symbol}</Text>
+                    </Text>
+                    <Flex flexDirection="row" alignItems="baseline" gap="$spacing4">
+                      <Text color="$neutral1" variant="heading3">
+                        %{(proposal.apr / 10_00).toFixed(2)}
                       </Text>
-                      <Text color="$neutral1" variant="subheading2">
-                        {tokenA.symbol} / {tokenB.symbol}
-                      </Text>
-                    </Flex>
-                    <Flex flexDirection="row" justifyContent="space-between">
-                      <Text color="$neutral2" variant="subheading2">
-                        Liquidity
-                      </Text>
-                      <Text color="$neutral1" variant="subheading2">
-                        {formatUnits(BigInt(proposal.creditAmount ?? 0), creditAsset.decimals)} {creditAsset.symbol}
-                      </Text>
-                    </Flex>
-                    <Flex flexDirection="row" justifyContent="space-between">
-                      <Text color="$neutral2" variant="subheading2">
-                        Interest Rate
-                      </Text>
-                      <Text color="$neutral1" variant="subheading2">
-                        {proposal.apr / 10_00}%
-                      </Text>
-                    </Flex>
-                    <Flex flexDirection="row" justifyContent="space-between">
-                      <Text color="$neutral2" variant="subheading2">
-                        Chain
-                      </Text>
-                      <Text color="$neutral1" variant="subheading2">
-                        {chainName(proposal.chainId)}
+                      <Text color="$neutral3" variant="body2">
+                        APR
                       </Text>
                     </Flex>
                   </Flex>
