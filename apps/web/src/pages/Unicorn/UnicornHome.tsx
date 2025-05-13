@@ -86,11 +86,11 @@ export default function UnicornHome() {
           borderRadius="$rounded32"
           // size="medium"
           onPress={() => {
-            window.open('https://x.com/pwndao', '_blank')
+            window.open('https://form.typeform.com/to/Cu0P1U9d', '_blank')
           }}
         >
           <Text color="$white" variant="buttonLabel2" style={{ fontFamily: 'Screener' }}>
-            𝕏 Follow for updates
+            Subscribe for early access
           </Text>
         </Button>
       </Flex>
