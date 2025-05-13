@@ -38,7 +38,7 @@ export const ActionButton = ({ label, onPress }: { label?: string; onPress?: () 
           }
         }}
       >
-        <Text variant="buttonLabel1" color="$sporeWhite">
+        <Text variant="buttonLabel1" color="$white">
           {label || 'Sign and Create'}
         </Text>
       </Button>

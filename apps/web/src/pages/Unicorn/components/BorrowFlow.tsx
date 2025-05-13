@@ -67,7 +67,7 @@ export const BorrowFlow = ({
           />
         </Flex>
       )}
-      {selectedAsset && selectedPool && <ActionButton label="Ask" />}
+      {selectedAsset && selectedPool && <ActionButton label="Create a new request!" />}
     </>
   )
 }

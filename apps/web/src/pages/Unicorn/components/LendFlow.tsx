@@ -54,7 +54,7 @@ export const LendFlow = ({
           <CustomInputComponent label="Interest (%)" onChangeText={(value) => setInterestRate(Number(value))} />
         )}
       </Flex>
-      {selectedAsset && selectedAsset2 && <ActionButton label="Bid" />}
+      {selectedAsset && selectedAsset2 && <ActionButton label="Create a new offer!" />}
     </Flex>
   )
 }
