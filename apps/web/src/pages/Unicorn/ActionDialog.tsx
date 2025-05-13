@@ -18,28 +18,12 @@ import { AcceptProposalFlow } from './components/AcceptProposalFlow'
 import { AvailableOffersCards } from './components/AvailableOffersCards'
 import { BorrowFlow } from './components/BorrowFlow'
 import { LendFlow } from './components/LendFlow'
-import { APP_TABS, ModalState, SelectionModalMode, useLendingState } from './hooks/lendingState'
+import { LendingStateProvider, useLendingContext } from './contexts/LendingContext'
+import { APP_TABS, ModalState, SelectionModalMode } from './hooks/lendingState'
+
 const LendingDialog = () => {
   const navigate = useNavigate()
   const pathname = useLocation().pathname
-  const whichTab = useMemo(() => {
-    if (pathname === '/borrow') return APP_TABS.BORROW
-    if (pathname === '/lend') return APP_TABS.LEND
-    if (pathname === '/my-activity') return APP_TABS.MY_ACTIVITY
-    if (pathname === '/market') return APP_TABS.MARKET
-    if (pathname === '/accept-proposal') return APP_TABS.ACCEPT_PROPOSAL
-    return APP_TABS.BORROW
-  }, [pathname])
-
-  useEffect(() => {
-    if (whichTab === APP_TABS.ACCEPT_PROPOSAL && !isShowAcceptProposal && !selectedProposal) {
-      navigate('/borrow', { replace: true })
-    }
-    selectAppTab(whichTab)
-  }, [whichTab])
-
-  const { address } = useAccount()
-
   const {
     // state
     selectionModalState,
@@ -64,7 +48,25 @@ const LendingDialog = () => {
     changeShowAcceptProposal,
     changeSelectedProposal,
     getAssetsByPoolSelected,
-  } = useLendingState()
+  } = useLendingContext()
+
+  const whichTab = useMemo(() => {
+    if (pathname === '/borrow') return APP_TABS.BORROW
+    if (pathname === '/lend') return APP_TABS.LEND
+    if (pathname === '/my-activity') return APP_TABS.MY_ACTIVITY
+    if (pathname === '/market') return APP_TABS.MARKET
+    if (pathname === '/accept-proposal') return APP_TABS.ACCEPT_PROPOSAL
+    return APP_TABS.BORROW
+  }, [pathname])
+
+  useEffect(() => {
+    if (whichTab === APP_TABS.ACCEPT_PROPOSAL && !isShowAcceptProposal && !selectedProposal) {
+      navigate('/borrow', { replace: true })
+    }
+    selectAppTab(whichTab)
+  }, [whichTab])
+
+  const { address } = useAccount()
 
   const tabs: SegmentedControlOption[] = Object.values(APP_TABS)
     .filter((tab) => {
@@ -246,7 +248,9 @@ export const ActionDialog = () => {
         <TransactionSettingsContextProvider settingKey={TransactionSettingKey.Swap}>
           <PrefetchBalancesWrapper>
             <SwapFormContextProvider prefilledState={{} as any} hideFooter hideSettings>
-              <LendingDialog />
+              <LendingStateProvider>
+                <LendingDialog />
+              </LendingStateProvider>
             </SwapFormContextProvider>
           </PrefetchBalancesWrapper>
         </TransactionSettingsContextProvider>

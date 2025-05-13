@@ -24,12 +24,12 @@ export enum APP_TABS {
   ACCEPT_PROPOSAL = 'accept-proposal',
 }
 
-type SelectionModalState = {
+export type SelectionModalState = {
   mode: SelectionModalMode | null
   isOpen: boolean
 }
 
-type SelectionModalAction = { type: ModalState.OPEN; mode: SelectionModalMode } | { type: ModalState.CLOSE }
+export type SelectionModalAction = { type: ModalState.OPEN; mode: SelectionModalMode } | { type: ModalState.CLOSE }
 
 export const useLendingState = () => {
   const { address } = useAccount()
