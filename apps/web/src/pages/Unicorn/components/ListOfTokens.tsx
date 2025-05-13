@@ -15,6 +15,7 @@ export const ListOfTokens = ({ tokens, label }: { tokens: CurrencyInfo[]; label:
       py="$spacing16"
       width="100%"
       flexShrink="unset"
+      height="100%"
     >
       <Text color="$neutral2" variant="subheading2">
         {label}

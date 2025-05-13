@@ -23,7 +23,7 @@ export const SelectPoolInput = ({
       overflow="hidden"
       px="$spacing16"
       py="$spacing16"
-      width={'30rem'}
+      width={'100%'}
       gap="$spacing24"
       pb="$spacing24"
     >

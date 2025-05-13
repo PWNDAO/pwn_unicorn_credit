@@ -1,8 +1,22 @@
 import { Button, Flex, Text } from 'ui/src'
 import { useWalletClient } from 'wagmi'
 
-export const ActionButton = ({ label, onPress }: { label?: string; onPress?: () => void }) => {
+export const ActionButton = ({ label, onPress }: { label?: string; onPress?: () => Promise<void> }) => {
   const { data: walletClient } = useWalletClient()
+  const actionFn = async () => {
+    if (onPress) {
+      await onPress()
+    } else {
+      try {
+        const signature = await walletClient?.signMessage({
+          message: 'You will be creating the request in here, in your wallet.',
+        })
+        console.log('signature', signature)
+      } catch (error) {
+        console.error('error', error)
+      }
+    }
+  }
   return (
     <Flex
       animation="quick"
@@ -27,16 +41,7 @@ export const ActionButton = ({ label, onPress }: { label?: string; onPress?: () 
         }}
         animation="quick"
         size="large"
-        onPress={async () => {
-          try {
-            const signature = await walletClient?.signMessage({
-              message: 'You will be creating the request in here, in your wallet.',
-            })
-            console.log('signature', signature)
-          } catch (error) {
-            console.error('error', error)
-          }
-        }}
+        onPress={actionFn}
       >
         <Text variant="buttonLabel1" color="$white">
           {label || 'Sign and Create'}

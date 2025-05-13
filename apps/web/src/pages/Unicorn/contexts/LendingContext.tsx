@@ -20,7 +20,6 @@ interface LendingContextType {
   selectedAsset2: CurrencyInfo | null
   ltv: number | null
   interestRate: number | null
-  isShowAcceptProposal: boolean
   selectedProposal: any
   isOffersClosed: boolean
   selectionModalDispatch: React.Dispatch<SelectionModalAction>
@@ -31,10 +30,12 @@ interface LendingContextType {
   changeAsset2: (asset: CurrencyInfo | null) => void
   setLtv: (ltv: number | null) => void
   setInterestRate: (rate: number | null) => void
-  changeShowAcceptProposal: (show: boolean) => void
   changeSelectedProposal: (proposal: any) => void
   getAssetsByPoolSelected: any[]
   closeOffers: (value: boolean) => void
+  handleResetStates: (mode?: 'full') => void
+  handleCreateLoan: (proposal: any) => Promise<void>
+  handleDiscardAcceptProposal: () => void
 }
 
 const LendingContext = createContext<LendingContextType | undefined>(undefined)

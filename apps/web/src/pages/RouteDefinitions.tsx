@@ -129,12 +129,6 @@ export const routes: RouteDefinition[] = [
     getDescription: () => 'Unicorn Credit from PWN',
     getElement: () => <UnicornHome />,
   }),
-  createRouteDefinition({
-    path: '/accept-proposal',
-    getTitle: () => 'Accept Proposal | Unicorn Credit from PWN',
-    getDescription: () => 'Unicorn Credit from PWN',
-    getElement: () => <UnicornHome />,
-  }),
   // createRouteDefinition({
   //   path: '/explore',
   //   getTitle: getExploreTitle,

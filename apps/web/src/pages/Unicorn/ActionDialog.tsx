@@ -15,7 +15,6 @@ import { TransactionSettingKey } from 'uniswap/src/features/transactions/setting
 import { SwapFormContextProvider } from 'uniswap/src/features/transactions/swap/contexts/SwapFormContext'
 import { CurrencyField } from 'uniswap/src/types/currency'
 import { parseUnits } from 'viem'
-import { AcceptProposalFlow } from './components/AcceptProposalFlow'
 import { AvailableOffersCards } from './components/AvailableOffersCards'
 import { BorrowFlow } from './components/BorrowFlow'
 import { LendFlow } from './components/LendFlow'
@@ -35,7 +34,6 @@ const LendingDialog = () => {
     assetInputValue,
     ltv,
     interestRate,
-    isShowAcceptProposal,
     selectedProposal,
     isOffersClosed,
     // functions
@@ -47,61 +45,47 @@ const LendingDialog = () => {
     changeAsset2,
     setLtv,
     setInterestRate,
-    changeShowAcceptProposal,
     changeSelectedProposal,
     getAssetsByPoolSelected,
     closeOffers,
+    handleResetStates,
   } = useLendingContext()
 
   const whichTab = useMemo(() => {
     if (pathname === '/borrow') return APP_TABS.BORROW
     if (pathname === '/lend') return APP_TABS.LEND
     if (pathname === '/my-activity') return APP_TABS.MY_ACTIVITY
-    if (pathname === '/accept-proposal') return APP_TABS.ACCEPT_PROPOSAL
     return APP_TABS.BORROW
   }, [pathname])
 
   useEffect(() => {
-    if (whichTab === APP_TABS.ACCEPT_PROPOSAL && !isShowAcceptProposal && !selectedProposal) {
-      navigate('/borrow', { replace: true })
-    }
     selectAppTab(whichTab)
   }, [whichTab])
 
   const { address } = useAccount()
 
-  const tabs: SegmentedControlOption[] = Object.values(APP_TABS)
-    .filter((tab) => {
-      return isShowAcceptProposal ? true : tab !== APP_TABS.ACCEPT_PROPOSAL
-    })
-    .map((tab) => ({
-      display: (
-        <Text
-          variant="buttonLabel3"
-          hoverStyle={{ color: '$neutral1' }}
-          color={selectedAppTab === tab ? '$neutral1' : '$neutral2'}
-          tag="h1"
-        >
-          {tab.includes('-')
-            ? tab
-                .split('-')
-                .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-                .join(' ')
-            : tab.charAt(0).toUpperCase() + tab.slice(1).toLowerCase().replace('_', ' ')}
-        </Text>
-      ),
-      value: tab.toLowerCase(),
-    }))
+  const tabs: SegmentedControlOption[] = Object.values(APP_TABS).map((tab) => ({
+    display: (
+      <Text
+        variant="buttonLabel3"
+        hoverStyle={{ color: '$neutral1' }}
+        color={selectedAppTab === tab ? '$neutral1' : '$neutral2'}
+        tag="h1"
+      >
+        {tab.includes('-')
+          ? tab
+              .split('-')
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+              .join(' ')
+          : tab.charAt(0).toUpperCase() + tab.slice(1).toLowerCase().replace('_', ' ')}
+      </Text>
+    ),
+    value: tab.toLowerCase(),
+  }))
 
   const handleOnChangeTab = (option: APP_TABS) => {
     // reset state
-    changePool(null)
-    changeAsset(null)
-    changeAsset2(null)
-    setAssetInputValue('')
-    closeOffers(false)
-    changeShowAcceptProposal(false)
-    changeSelectedProposal(null)
+    handleResetStates()
 
     // select tab
     selectAppTab(option)
@@ -109,8 +93,8 @@ const LendingDialog = () => {
   }
 
   const handleAcceptProposal = (proposal: any) => {
-    changeShowAcceptProposal(true)
-    navigate(`/${APP_TABS.ACCEPT_PROPOSAL}`, { replace: true })
+    handleResetStates()
+    navigate(`?accept=${proposal.id}`, { replace: false })
     changeSelectedProposal({
       ...proposal,
       pool: selectedPool,
@@ -205,8 +189,6 @@ const LendingDialog = () => {
                 <AvailableOffersCards />
               </Flex>
             )}
-
-            {selectedAppTab === APP_TABS.ACCEPT_PROPOSAL && <AcceptProposalFlow selectedProposal={selectedProposal} />}
           </Flex>
           {[APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab) &&
             ((selectedAppTab === APP_TABS.LEND && selectedAsset && !isOffersClosed) ||

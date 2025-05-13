@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Flex } from 'ui/src'
 import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
 import { ModalState, SelectionModalMode } from '../hooks/lendingState'
+import { AcceptProposalFlow } from './AcceptProposalFlow'
 import { ActionButton } from './ActionButton'
 import { CustomInputComponent } from './CustomInputComponent'
 import { InputAmountSelectToken } from './InputAmountSelectToken'
@@ -21,6 +23,9 @@ export const LendFlow = ({
   ltvCallback?: (ltv: number) => void
   interestRateCallback?: (interestRate: number) => void
 }) => {
+  const [searchParams] = useSearchParams()
+  const acceptId = searchParams.get('accept')
+
   const [ltv, setLtv] = useState<number | null>(null)
   const [interestRate, setInterestRate] = useState<number | null>(null)
 
@@ -33,29 +38,39 @@ export const LendFlow = ({
   }, [interestRate, interestRateCallback])
 
   return (
-    <Flex flexDirection="column" gap="$spacing16" width={'30rem'}>
-      <InputAmountSelectToken
-        label="Lend"
-        label2={`1st Token in Pair`}
-        onChangeText={(value) => setAssetInputValue(value)}
-        onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })}
-        selectedToken={selectedAsset as CurrencyInfo}
-      />
-      <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
-        <InputAmountSelectToken
-          label="2nd Token in Pair"
-          onChangeText={() => {}}
-          onOpenTokenSelector={() =>
-            selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET_2 })
-          }
-          selectedToken={selectedAsset2 as CurrencyInfo}
-          includeInputField={false}
-        />
-        {selectedAsset2 && (
-          <CustomInputComponent label="Interest (%)" onChangeText={(value) => setInterestRate(Number(value))} />
-        )}
-      </Flex>
-      {selectedAsset && selectedAsset2 && <ActionButton label="Create a new offer!" />}
-    </Flex>
+    <>
+      {acceptId ? (
+        <Flex maxWidth={'40rem'}>
+          <AcceptProposalFlow />
+        </Flex>
+      ) : (
+        <Flex flexDirection="column" gap="$spacing16" width={'30rem'}>
+          <InputAmountSelectToken
+            label="Lend"
+            label2={`1st Token in Pair`}
+            onChangeText={(value) => setAssetInputValue(value)}
+            onOpenTokenSelector={() =>
+              selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })
+            }
+            selectedToken={selectedAsset as CurrencyInfo}
+          />
+          <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
+            <InputAmountSelectToken
+              label="2nd Token in Pair"
+              onChangeText={() => {}}
+              onOpenTokenSelector={() =>
+                selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET_2 })
+              }
+              selectedToken={selectedAsset2 as CurrencyInfo}
+              includeInputField={false}
+            />
+            {selectedAsset2 && (
+              <CustomInputComponent label="Interest (%)" onChangeText={(value) => setInterestRate(Number(value))} />
+            )}
+          </Flex>
+          {selectedAsset && selectedAsset2 && <ActionButton label="Create a new offer!" />}
+        </Flex>
+      )}
+    </>
   )
 }

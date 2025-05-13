@@ -1,8 +1,9 @@
 import { useMemo, useReducer, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
 import { TokenOptionSection } from 'uniswap/src/components/TokenSelector/types'
 import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
-import { useAccount } from 'wagmi'
+import { useAccount, useWalletClient } from 'wagmi'
 import { mockTokensBalances } from '../mocks/mockTokens'
 
 export enum SelectionModalMode {
@@ -20,7 +21,6 @@ export enum APP_TABS {
   BORROW = 'borrow',
   LEND = 'lend',
   MY_ACTIVITY = 'my-activity',
-  ACCEPT_PROPOSAL = 'accept-proposal',
 }
 
 export type SelectionModalState = {
@@ -72,7 +72,6 @@ export const useLendingState = () => {
   const [ltv, setLtv] = useState<number | null>(null)
   const [interestRate, setInterestRate] = useState<number | null>(null)
 
-  const [isShowAcceptProposal, changeShowAcceptProposal] = useState<boolean>(false)
   const [selectedProposal, changeSelectedProposal] = useState<any>(null)
 
   const [isOffersClosed, closeOffers] = useState<boolean>(false)
@@ -88,6 +87,40 @@ export const useLendingState = () => {
     ]
   }, [selectedPool])
 
+  const handleResetStates = (mode?: 'full') => {
+    changePool(null)
+    changeAsset(null)
+    changeAsset2(null)
+    setAssetInputValue('')
+    closeOffers(false)
+
+    if (mode === 'full') {
+      changeSelectedProposal(null)
+    }
+  }
+
+  const { data: walletClient } = useWalletClient()
+  const navigate = useNavigate()
+
+  const handleCreateLoan = async (proposal: any) => {
+    try {
+      const signature = await walletClient?.signMessage({
+        message: 'You will be creating the request in here, in your wallet.',
+      })
+      console.log('signature', signature)
+
+      handleResetStates('full')
+      navigate('/borrow', { replace: true })
+    } catch (error) {
+      console.error('error', error)
+    }
+  }
+
+  const handleDiscardAcceptProposal = () => {
+    handleResetStates('full')
+    navigate(`/${selectedAppTab}`, { replace: true })
+  }
+
   return {
     // state
     selectionModalState,
@@ -98,7 +131,6 @@ export const useLendingState = () => {
     selectedAsset2,
     ltv,
     interestRate,
-    isShowAcceptProposal,
     selectedProposal,
     isOffersClosed,
     // functions
@@ -110,9 +142,11 @@ export const useLendingState = () => {
     changeAsset2,
     setLtv,
     setInterestRate,
-    changeShowAcceptProposal,
     changeSelectedProposal,
     getAssetsByPoolSelected,
     closeOffers,
+    handleResetStates,
+    handleCreateLoan,
+    handleDiscardAcceptProposal,
   }
 }

@@ -68,7 +68,7 @@ export const InputAmountSelectToken = ({
       px="$spacing16"
       py="$spacing16"
       width={'100%'}
-      height={includeInputField ? 'unset' : '8rem'}
+      height={includeInputField ? (disabled ? '100%' : 'unset') : '8rem'}
       flexShrink={'unset'}
     >
       <Flex row justifyContent="space-between" gap={8} mb={8}>

@@ -17,6 +17,8 @@ export const mockLendingProposals = [
     loanToValue: 70_000,
     expiration: 1747519200,
     apr: 7842,
+    proposer: '0x1234567890123456789012345678901234567890',
+    hash: '0x779c04dab366992bfa2f4f08434df8593e1ecbb0044aa523f34cde64f4426329',
   },
   {
     id: '2',
@@ -36,6 +38,8 @@ export const mockLendingProposals = [
     loanToValue: 75_000,
     expiration: 1747519200,
     apr: 8242,
+    proposer: '0x1234567890123456789012345678901234567890',
+    hash: '0x779c04dab366992bfa2f4f08434df8593e1ecbb0044aa523f34cde64f4426329',
   },
   {
     id: '3',
@@ -55,6 +59,8 @@ export const mockLendingProposals = [
     loanToValue: 65_000,
     expiration: 1748519200,
     apr: 6842,
+    proposer: '0x1234567890123456789012345678901234567890',
+    hash: '0x779c04dab366992bfa2f4f08434df8593e1ecbb0044aa523f34cde64f4426329',
   },
   {
     id: '4',
@@ -74,6 +80,8 @@ export const mockLendingProposals = [
     loanToValue: 80_000,
     expiration: 1746519200,
     apr: 9242,
+    proposer: '0x1234567890123456789012345678901234567890',
+    hash: '0x779c04dab366992bfa2f4f08434df8593e1ecbb0044aa523f34cde64f4426329',
   },
   {
     id: '5',
@@ -93,6 +101,8 @@ export const mockLendingProposals = [
     loanToValue: 72_500,
     expiration: 1745519200,
     apr: 8042,
+    proposer: '0x1234567890123456789012345678901234567890',
+    hash: '0x779c04dab366992bfa2f4f08434df8593e1ecbb0044aa523f34cde64f4426329',
   },
   {
     id: '6',
@@ -112,5 +122,7 @@ export const mockLendingProposals = [
     loanToValue: 67_500,
     expiration: 1749519200,
     apr: 7542,
+    proposer: '0x1234567890123456789012345678901234567890',
+    hash: '0x779c04dab366992bfa2f4f08434df8593e1ecbb0044aa523f34cde64f4426329',
   },
 ]
