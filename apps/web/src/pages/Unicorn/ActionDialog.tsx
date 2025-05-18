@@ -110,6 +110,15 @@ const LendingDialog = () => {
     )
   }, [selectedAppTab, selectedAsset, selectedPool, isOffersClosed])
 
+  const shouldShowOffers = useMemo(() => {
+    if (![APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab)) return false
+
+    if (selectedAppTab === APP_TABS.LEND && selectedAsset && !isOffersClosed && assetInputValue) return true
+    if (selectedAppTab === APP_TABS.BORROW && selectedPool && !isOffersClosed) return true
+
+    return false
+  }, [selectedAppTab, selectedAsset, selectedPool, isOffersClosed, assetInputValue])
+
   return (
     <Flex
       width={'$full'}
@@ -190,17 +199,15 @@ const LendingDialog = () => {
               </Flex>
             )}
           </Flex>
-          {[APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab) &&
-            ((selectedAppTab === APP_TABS.LEND && selectedAsset && !isOffersClosed) ||
-              (selectedAppTab === APP_TABS.BORROW && selectedPool && !isOffersClosed)) && (
-              <AvailableOffersCards
-                creditAmount={parseUnits(assetInputValue, selectedAsset?.currency.decimals ?? 0)}
-                ltv={ltv ? ltv * 1000 : undefined}
-                interestRate={interestRate ? interestRate * 1000 : undefined}
-                mode={selectedAppTab === APP_TABS.BORROW ? 'borrow' : selectedAppTab === APP_TABS.LEND ? 'lend' : 'all'}
-                handleAcceptProposal={handleAcceptProposal}
-              />
-            )}
+          {shouldShowOffers && (
+            <AvailableOffersCards
+              creditAmount={parseUnits(assetInputValue, selectedAsset?.currency.decimals ?? 0)}
+              ltv={ltv ? ltv * 1000 : undefined}
+              interestRate={interestRate ? interestRate * 1000 : undefined}
+              mode={selectedAppTab === APP_TABS.BORROW ? 'borrow' : selectedAppTab === APP_TABS.LEND ? 'lend' : 'all'}
+              handleAcceptProposal={handleAcceptProposal}
+            />
+          )}
         </Flex>
         <TokenSelectorModal
           isModalOpen={selectionModalState.isOpen}

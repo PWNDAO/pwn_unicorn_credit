@@ -55,15 +55,17 @@ export const LendFlow = ({
             selectedToken={selectedAsset as CurrencyInfo}
           />
           <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
-            <InputAmountSelectToken
-              label="2nd Token in Pair"
-              onChangeText={() => {}}
-              onOpenTokenSelector={() =>
-                selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET_2 })
-              }
-              selectedToken={selectedAsset2 as CurrencyInfo}
-              includeInputField={false}
-            />
+            {selectedAsset && (
+              <InputAmountSelectToken
+                label="2nd Token in Pair"
+                onChangeText={() => {}}
+                onOpenTokenSelector={() =>
+                  selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET_2 })
+                }
+                selectedToken={selectedAsset2 as CurrencyInfo}
+                includeInputField={false}
+              />
+            )}
             {selectedAsset2 && (
               <CustomInputComponent label="Interest (%)" onChangeText={(value) => setInterestRate(Number(value))} />
             )}
