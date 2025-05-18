@@ -7,6 +7,8 @@ import { TextInput } from 'uniswap/src/components/input/TextInput'
 import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
 import { useDebounce } from 'utilities/src/time/timing'
 import { maxUint256 } from 'viem'
+import { LOAN_TO_VALUE_PERCENT } from '../constants/ltv'
+import { useLendingContext } from '../contexts/LendingContext'
 import { useAssetPrice } from '../queries/useAssetPrice'
 
 export const InputAmountSelectToken = ({
@@ -19,6 +21,7 @@ export const InputAmountSelectToken = ({
   maxValue = Number(maxUint256),
   includeInputField = true,
   label2,
+  mode = 'default',
 }: {
   label: string
   onChangeText: (newValue: string) => void
@@ -29,21 +32,17 @@ export const InputAmountSelectToken = ({
   selectedToken: CurrencyInfo | null
   includeInputField?: boolean
   label2?: string
+  mode?: 'default' | 'borrow-computed'
 }) => {
   const [value, setValue] = useState('')
   const debouncedValue = useDebounce(value, 300)
+
+  const { selectedPool } = useLendingContext()
 
   const { data: assetPrice } = useAssetPrice(
     selectedToken?.currency.chainId,
     (selectedToken?.currency as unknown as Token)?.address,
   )
-
-  const inputPrice = useMemo(() => {
-    if (!assetPrice) return 0
-    if (!value && fixedValue) return (Number(fixedValue) * Number(assetPrice)).toFixed(2)
-    if (!value) return 0
-    return (Number(value) * Number(assetPrice)).toFixed(2)
-  }, [assetPrice, value, fixedValue])
 
   const handleChangeText = useCallback((newValue: string) => {
     const numValue = Number(newValue)
@@ -57,6 +56,37 @@ export const InputAmountSelectToken = ({
     onChangeText(debouncedValue)
   }, [debouncedValue, onChangeText])
 
+  const maxBorrowAmount = useMemo(() => {
+    if (mode !== 'borrow-computed') return null
+    if (!selectedPool || !selectedToken) return '~'
+
+    const maxBorrowUsd = selectedPool.totalUsdValue * LOAN_TO_VALUE_PERCENT
+    const maxBorrowAmount = maxBorrowUsd / Number(assetPrice)
+    return maxBorrowAmount.toString()
+  }, [selectedPool, selectedToken, assetPrice])
+
+  const placeholderValue = useMemo(() => {
+    if (mode === 'borrow-computed' && maxBorrowAmount) return Number(maxBorrowAmount).toFixed(6)
+    if (!fixedValue) return '0'
+    return fixedValue
+  }, [mode, maxBorrowAmount, fixedValue])
+
+  const inputPrice = useMemo(() => {
+    if (!assetPrice) return 0
+    if (!value && fixedValue) return (Number(fixedValue) * Number(assetPrice)).toFixed(2)
+    if (mode === 'borrow-computed' && maxBorrowAmount) {
+      return (Number(maxBorrowAmount) * Number(assetPrice)).toFixed(2)
+    }
+    if (!value) return 0
+    return (Number(value) * Number(assetPrice)).toFixed(2)
+  }, [assetPrice, value, fixedValue])
+
+  const boxHeight = useMemo(() => {
+    if (mode === 'borrow-computed') return 'unset'
+    if (includeInputField) return '100%'
+    return '8rem'
+  }, [mode, includeInputField])
+
   return (
     <Flex
       animation="simple"
@@ -68,7 +98,7 @@ export const InputAmountSelectToken = ({
       px="$spacing16"
       py="$spacing16"
       width={'100%'}
-      height={includeInputField ? (disabled ? '100%' : 'unset') : '8rem'}
+      height={boxHeight}
       flexShrink={'unset'}
     >
       <Flex row justifyContent="space-between" gap={8} mb={8}>
@@ -88,7 +118,7 @@ export const InputAmountSelectToken = ({
           ml={-15}
           fontWeight={'300'}
           onChangeText={handleChangeText}
-          placeholder={fixedValue ?? '0'}
+          placeholder={placeholderValue}
           placeholderTextColor={'$neutral2'}
           color={'$neutral1'}
           keyboardType="numeric"

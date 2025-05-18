@@ -61,14 +61,18 @@ export const BorrowFlow = ({
             onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.POOL })}
             selectedPool={selectedPool as PoolData}
           />
-          <InputAmountSelectToken
-            label="Borrow"
-            onChangeText={(value) => setAssetInputValue(value)}
-            onOpenTokenSelector={() =>
-              selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })
-            }
-            selectedToken={selectedAsset as CurrencyInfo}
-          />
+          {selectedPool && (
+            <InputAmountSelectToken
+              label="Borrow"
+              onChangeText={(value) => setAssetInputValue(value)}
+              onOpenTokenSelector={() =>
+                selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })
+              }
+              selectedToken={selectedAsset as CurrencyInfo}
+              disabled
+              mode="borrow-computed"
+            />
+          )}
           {selectedAsset && (
             <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
               <CustomInputComponent
