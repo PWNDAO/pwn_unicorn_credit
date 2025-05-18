@@ -87,6 +87,14 @@ export const InputAmountSelectToken = ({
     return '8rem'
   }, [mode, includeInputField])
 
+  // syncs computed value to input state
+  useEffect(() => {
+    if (mode === 'borrow-computed' && maxBorrowAmount) {
+      const numOrZero = Number(maxBorrowAmount) ? Number(maxBorrowAmount).toFixed(6) : '0'
+      setValue(numOrZero)
+    }
+  }, [mode, maxBorrowAmount, placeholderValue])
+
   return (
     <Flex
       animation="simple"
@@ -113,7 +121,7 @@ export const InputAmountSelectToken = ({
       </Flex>
       {includeInputField && (
         <TextInput
-          value={value}
+          value={mode === 'borrow-computed' ? undefined : value} // visually it shouldnt look like enabled input, but rather use placeholder vlaue
           fontSize={32}
           ml={-15}
           fontWeight={'300'}

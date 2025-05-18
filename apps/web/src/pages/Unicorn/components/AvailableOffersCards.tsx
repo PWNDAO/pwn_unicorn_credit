@@ -42,10 +42,19 @@ export const AvailableOffersCards = ({
   const proposals = useMemo(() => {
     return mockLendingProposals
       .filter((p) => {
+        const credit = creditAmount ?? 0n
         if (mode === 'borrow') {
-          return interestRate ? p.apr <= interestRate : true
+          if (interestRate) {
+            return p.creditAmount >= credit && p.apr <= interestRate
+          } else {
+            return p.creditAmount >= credit
+          }
         } else if (mode === 'lend') {
-          return (ltv ? p.loanToValue <= ltv : true) && (interestRate ? p.apr >= interestRate : true)
+          if (interestRate) {
+            return p.creditAmount <= credit && p.apr >= interestRate
+          } else {
+            return p.creditAmount <= credit
+          }
         } else {
           return true
         }
