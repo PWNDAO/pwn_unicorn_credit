@@ -3,10 +3,11 @@ import { useMemo } from 'react'
 import { Button, Flex } from 'ui/src'
 import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
 import { formatUnits } from 'viem'
+import { DEFAULT_DURATION_DAYS } from '../constants/duration'
 import { useLendingContext } from '../contexts/LendingContext'
+import { AcceptProposalTermsTable } from './AcceptProposalTermsTable'
 import { ActionButton } from './ActionButton'
 import { TOKEN_BY_ADDRESS } from './AvailableOffersCards'
-import { CustomInputComponent } from './CustomInputComponent'
 import { InputAmountSelectToken } from './InputAmountSelectToken'
 import { ListOfTokens } from './ListOfTokens'
 import { SelectPoolInput } from './SelectPoolInput'
@@ -68,7 +69,31 @@ export const AcceptProposalFlow = () => {
   }, [selectedProposal])
 
   const hash = useMemo(() => {
-    return String(selectedProposal?.hash ?? '').slice(0, 12) + '...'
+    const hash = selectedProposal?.hash ?? ''
+    return hash ? `${hash.slice(0, 6)}...${hash.slice(-4)}` : undefined
+  }, [selectedProposal])
+
+  const blockExplorerUrl = useMemo(() => {
+    if (!selectedProposal?.hash) return undefined
+
+    const chainId = selectedProposal?.chainId
+    switch (chainId) {
+      case 8453:
+        return `https://base.blockscout.com/`
+      default:
+        return undefined
+    }
+  }, [selectedProposal])
+
+  const totalWillRepay = useMemo(() => {
+    if (!selectedProposal?.creditAmount || !selectedProposal?.apr) return undefined
+    const durationDays = DEFAULT_DURATION_DAYS
+    const totalRepayment = selectedProposal.creditAmount * (selectedProposal.apr / 1000) * (durationDays / 365)
+    const formatted = formatUnits(
+      BigInt(totalRepayment?.toString().split('.')[0]),
+      creditAssetObject?.currency?.decimals ?? 18,
+    )
+    return `${Number(formatted).toFixed(6).toString()} ${creditAssetObject?.currency?.symbol}`
   }, [selectedProposal])
 
   return (
@@ -132,30 +157,23 @@ export const AcceptProposalFlow = () => {
       )}
 
       <Flex flexDirection="column" gap="$spacing4" width={'100%'}>
-        <Flex flexDirection="row" gap="$spacing4" width={'100%'}>
-          <CustomInputComponent
-            label="LTV (%)"
-            onChangeText={() => {}}
-            disabled={true}
-            fixedValue={(selectedProposal?.loanToValue / 1_000)?.toString()}
-          />
-          <CustomInputComponent
-            label="Interest (%)"
-            onChangeText={() => {}}
-            disabled={true}
-            fixedValue={(selectedProposal?.apr / 1_000)?.toString()}
-          />
-          <CustomInputComponent
-            label="Duration (days)"
-            onChangeText={() => {}}
-            disabled={true}
-            fixedValue={'30 days'}
-          />
-        </Flex>
-        <Flex flexDirection="row" gap="$spacing4" width={'100%'}>
-          <CustomInputComponent label="Hash" onChangeText={() => {}} disabled={true} fixedValue={hash} />
-          <CustomInputComponent label="Proposer" onChangeText={() => {}} disabled={true} fixedValue={proposer} />
-        </Flex>
+        <AcceptProposalTermsTable
+          terms={[
+            {
+              label: 'Loan-to-Value',
+              value: selectedProposal?.loanToValue ? `${selectedProposal.loanToValue / 1_000}%` : 'N/A',
+            },
+            { label: 'Interest Rate', value: selectedProposal?.apr ? `${selectedProposal.apr / 1_000}%` : 'N/A' },
+            { label: 'Total Would Repay', value: totalWillRepay },
+            { label: 'Duration of the Loan', value: '30 days' },
+            { label: 'Proposal Hash', value: hash },
+            {
+              label: 'Your Counter-Party',
+              value: proposer,
+              url: `${blockExplorerUrl}/address/${selectedProposal?.proposer}`,
+            },
+          ]}
+        />
       </Flex>
       <ActionButton label="Create loan" onPress={() => handleCreateLoan(selectedProposal)} />
     </Flex>
