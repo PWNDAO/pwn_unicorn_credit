@@ -18,6 +18,8 @@ import { parseUnits } from 'viem'
 import { AvailableOffersCards } from './components/AvailableOffersCards'
 import { BorrowFlow } from './components/BorrowFlow'
 import { LendFlow } from './components/LendFlow'
+import { MyBorrowing } from './components/MyBorrowing'
+import { MyLending } from './components/MyLending'
 import { LendingStateProvider, useLendingContext } from './contexts/LendingContext'
 import { APP_TABS, ModalState, SelectionModalMode } from './hooks/lendingState'
 
@@ -53,7 +55,8 @@ const LendingDialog = () => {
   const whichTab = useMemo(() => {
     if (pathname === '/borrow') return APP_TABS.BORROW
     if (pathname === '/lend') return APP_TABS.LEND
-    if (pathname === '/my-activity') return APP_TABS.MY_ACTIVITY
+    if (pathname === '/my-lending') return APP_TABS.MY_LENDING
+    if (pathname === '/my-borrowing') return APP_TABS.MY_BORROWING
     return APP_TABS.BORROW
   }, [pathname])
 
@@ -182,11 +185,9 @@ const LendingDialog = () => {
               />
             )}
 
-            {selectedAppTab === APP_TABS.MY_ACTIVITY && (
-              <Flex backgroundColor="$surface1" width="100%" height="30rem" borderRadius="$rounded16">
-                <AvailableOffersCards />
-              </Flex>
-            )}
+            {selectedAppTab === APP_TABS.MY_LENDING && <MyLending />}
+
+            {selectedAppTab === APP_TABS.MY_BORROWING && <MyBorrowing />}
           </Flex>
           {shouldShowOffers && (
             <AvailableOffersCards

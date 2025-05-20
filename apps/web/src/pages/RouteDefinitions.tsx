@@ -124,8 +124,14 @@ export const routes: RouteDefinition[] = [
     getElement: () => <UnicornHome />,
   }),
   createRouteDefinition({
-    path: '/my-activity',
-    getTitle: () => 'My Activity | Unicorn Credit from PWN',
+    path: '/my-lending',
+    getTitle: () => 'My Lending | Unicorn Credit from PWN',
+    getDescription: () => 'Unicorn Credit from PWN',
+    getElement: () => <UnicornHome />,
+  }),
+  createRouteDefinition({
+    path: '/my-borrowing',
+    getTitle: () => 'My Borrowing | Unicorn Credit from PWN',
     getDescription: () => 'Unicorn Credit from PWN',
     getElement: () => <UnicornHome />,
   }),

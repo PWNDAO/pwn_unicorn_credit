@@ -20,7 +20,8 @@ export enum ModalState {
 export enum APP_TABS {
   BORROW = 'borrow',
   LEND = 'lend',
-  MY_ACTIVITY = 'my-activity',
+  MY_LENDING = 'my-lending',
+  MY_BORROWING = 'my-borrowing',
 }
 
 export type SelectionModalState = {
