@@ -4,6 +4,7 @@ import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
 import {
   APP_TABS,
   ModalState,
+  SelectedProposal,
   SelectionModalAction,
   SelectionModalMode,
   SelectionModalState,
@@ -20,7 +21,7 @@ interface LendingContextType {
   selectedAsset2: CurrencyInfo | null
   ltv: number | null
   interestRate: number | null
-  selectedProposal: any
+  selectedProposal: SelectedProposal | null
   isOffersClosed: boolean
   selectionModalDispatch: React.Dispatch<SelectionModalAction>
   selectAppTab: (tab: APP_TABS) => void
@@ -30,12 +31,14 @@ interface LendingContextType {
   changeAsset2: (asset: CurrencyInfo | null) => void
   setLtv: (ltv: number | null) => void
   setInterestRate: (rate: number | null) => void
-  changeSelectedProposal: (proposal: any) => void
+  changeSelectedProposal: (proposal: SelectedProposal | null) => void
   getAssetsByPoolSelected: any[]
   closeOffers: (value: boolean) => void
   handleResetStates: (mode?: 'full') => void
-  handleCreateLoan: (proposal: any) => Promise<void>
+  handleCreateLoan: (proposal: SelectedProposal) => Promise<void>
   handleDiscardAcceptProposal: () => void
+  handleOnSelectAcceptProposal: (proposal: SelectedProposal) => void
+  handleOnClickCloseChevron: () => void
 }
 
 const LendingContext = createContext<LendingContextType | undefined>(undefined)

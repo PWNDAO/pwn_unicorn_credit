@@ -1,11 +1,10 @@
-import { SelectionModalMode } from '../hooks/lendingState'
+import { SelectedProposal, SelectionModalMode } from '../hooks/lendingState'
 
 import { InputAmountSelectToken } from './InputAmountSelectToken'
 
 import { ModalState } from '../hooks/lendingState'
 
 import { useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import { Flex } from 'ui/src'
 import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
 import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
@@ -13,7 +12,6 @@ import { DEFAULT_DURATION_DAYS } from '../constants/duration'
 import { LOAN_TO_VALUE_PERCENT } from '../constants/ltv'
 import { useLendingContext } from '../contexts/LendingContext'
 import { calculateLtv } from '../utils/math'
-import { AcceptProposalFlow } from './AcceptProposalFlow'
 import { AcceptProposalTermsTable } from './AcceptProposalTermsTable'
 import { ActionButton } from './ActionButton'
 import { CustomInputComponent } from './CustomInputComponent'
@@ -37,15 +35,13 @@ export const BorrowFlow = ({
   interestRateCallback?: (interestRate: number) => void
 }) => {
   const [interestRate, setInterestRate] = useState<number | null>(null)
-  const [searchParams] = useSearchParams()
-  const acceptProposalId = searchParams.get('accept')
 
   const ltv = useMemo(
     () => calculateLtv(Number(amountInputValue), Number(selectedPool?.totalUsdValue ?? 0)),
     [amountInputValue, selectedPool],
   )
 
-  const { isOffersClosed } = useLendingContext()
+  const { isOffersClosed, selectedProposal, handleCreateLoan } = useLendingContext()
 
   useEffect(() => {
     ltvCallback?.(Number(ltv))
@@ -55,51 +51,64 @@ export const BorrowFlow = ({
     interestRateCallback?.(Number(interestRate))
   }, [interestRate, interestRateCallback])
 
+  const shouldShowActionButton = useMemo(() => {
+    return (
+      selectedPool &&
+      selectedAsset &&
+      isOffersClosed &&
+      // if loan everything is ready, if custom check interest rate input existence
+      (selectedProposal ? true : interestRate && interestRate > 0)
+    )
+  }, [selectedPool, selectedAsset, isOffersClosed, selectedProposal, interestRate])
+
   return (
     <>
-      {acceptProposalId ? (
-        <Flex maxWidth={'40rem'}>
-          <AcceptProposalFlow />
-        </Flex>
-      ) : (
-        <>
-          <SelectPoolInput
-            onOpenTokenSelector={() => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.POOL })}
-            selectedPool={selectedPool as PoolData}
-          />
-          {selectedPool && (
-            <InputAmountSelectToken
-              label="Borrow"
-              onChangeText={(value) => setAssetInputValue(value)}
-              onOpenTokenSelector={() =>
-                selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })
-              }
-              selectedToken={selectedAsset as CurrencyInfo}
-              disabled
-              mode="borrow-computed"
-            />
-          )}
-          {selectedAsset && (
-            <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
-              <CustomInputComponent
-                label="Interest (%)"
-                onChangeText={(value) => {
-                  setInterestRate(Number(value))
-                }}
-              />
-            </Flex>
-          )}
-          {selectedAsset && selectedPool && isOffersClosed && (
-            <AcceptProposalTermsTable
-              terms={[
-                { label: 'Loan-to-Value', value: `${LOAN_TO_VALUE_PERCENT * 100}%` },
-                { label: 'Duration', value: `${DEFAULT_DURATION_DAYS} days` },
-              ]}
-            />
-          )}
-          {selectedAsset && selectedPool && isOffersClosed && <ActionButton label="Create a new request!" />}
-        </>
+      <SelectPoolInput
+        onOpenTokenSelector={
+          selectedProposal
+            ? () => {}
+            : () => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.POOL })
+        }
+        selectedPool={selectedPool as PoolData}
+      />
+      {selectedPool && (
+        <InputAmountSelectToken
+          label="Borrow"
+          onChangeText={(value) => setAssetInputValue(value)}
+          onOpenTokenSelector={
+            selectedProposal
+              ? () => {}
+              : () => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })
+          }
+          selectedToken={selectedAsset as CurrencyInfo}
+          disabled
+          mode="borrow-computed"
+        />
       )}
+      {selectedAsset && (
+        <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
+          <CustomInputComponent
+            label="Interest (%)"
+            onChangeText={selectedProposal ? () => {} : (value) => setInterestRate(Number(value))}
+            disabled={!!selectedProposal}
+            fixedValue={selectedProposal ? `${Number(selectedProposal?.apr) / 1000}%` : undefined}
+          />
+        </Flex>
+      )}
+      {shouldShowActionButton ? (
+        <AcceptProposalTermsTable
+          terms={[
+            { label: 'Loan-to-Value', value: `${LOAN_TO_VALUE_PERCENT * 100}%` },
+            { label: 'Duration', value: `${DEFAULT_DURATION_DAYS} days` },
+          ]}
+        />
+      ) : null}
+      {shouldShowActionButton ? (
+        <ActionButton
+          label={selectedProposal ? 'Create Loan' : 'Create a new request!'}
+          onPress={selectedProposal ? () => handleCreateLoan(selectedProposal as SelectedProposal) : undefined}
+        />
+      ) : null}
     </>
   )
 }

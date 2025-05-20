@@ -34,7 +34,6 @@ const LendingDialog = () => {
     assetInputValue,
     ltv,
     interestRate,
-    selectedProposal,
     isOffersClosed,
     // functions
     selectionModalDispatch,
@@ -45,10 +44,10 @@ const LendingDialog = () => {
     changeAsset2,
     setLtv,
     setInterestRate,
-    changeSelectedProposal,
     getAssetsByPoolSelected,
-    closeOffers,
     handleResetStates,
+    handleOnClickCloseChevron,
+    handleOnSelectAcceptProposal,
   } = useLendingContext()
 
   const whichTab = useMemo(() => {
@@ -90,16 +89,6 @@ const LendingDialog = () => {
     // select tab
     selectAppTab(option)
     navigate(`/${option.toLowerCase()}`, { replace: true })
-  }
-
-  const handleAcceptProposal = (proposal: any) => {
-    handleResetStates()
-    navigate(`?accept=${proposal.id}`, { replace: false })
-    changeSelectedProposal({
-      ...proposal,
-      pool: selectedPool,
-      mode: selectedAppTab === APP_TABS.BORROW ? 'borrow' : 'lend',
-    })
   }
 
   const shouldShowCloseOffersChevron = useMemo(() => {
@@ -163,7 +152,7 @@ const LendingDialog = () => {
                 hoverStyle={{
                   backgroundColor: 'rgb(35, 33, 34)',
                 }}
-                onPress={() => closeOffers(false)}
+                onPress={handleOnClickCloseChevron}
               >
                 <Text variant="body2" color="$neutral2">
                   <RotatableChevron color="$neutral2" direction="left" height="$spacing24" />
@@ -205,7 +194,7 @@ const LendingDialog = () => {
               ltv={ltv ? ltv * 1000 : undefined}
               interestRate={interestRate ? interestRate * 1000 : undefined}
               mode={selectedAppTab === APP_TABS.BORROW ? 'borrow' : selectedAppTab === APP_TABS.LEND ? 'lend' : 'all'}
-              handleAcceptProposal={handleAcceptProposal}
+              handleAcceptProposal={handleOnSelectAcceptProposal}
             />
           )}
         </Flex>

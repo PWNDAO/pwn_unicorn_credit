@@ -30,6 +30,29 @@ export type SelectionModalState = {
 
 export type SelectionModalAction = { type: ModalState.OPEN; mode: SelectionModalMode } | { type: ModalState.CLOSE }
 
+export type SelectedProposal = {
+  id: string
+  chainId: number
+  tokenAAllowList: string[]
+  tokenBAllowList: string[]
+  creditAmount: number
+  creditAsset: {
+    address: string
+    symbol: string
+    decimals: number
+    name: string
+    chainId: number
+    logoUrl: string
+  }
+  loanToValue: number
+  expiration: number
+  apr: number
+  proposer: string
+  hash: string
+  mode: 'borrow' | 'lend'
+  pool: PoolData | null
+}
+
 export const useLendingState = () => {
   const { address } = useAccount()
 
@@ -72,7 +95,7 @@ export const useLendingState = () => {
   const [ltv, setLtv] = useState<number | null>(null)
   const [interestRate, setInterestRate] = useState<number | null>(null)
 
-  const [selectedProposal, changeSelectedProposal] = useState<any>(null)
+  const [selectedProposal, changeSelectedProposal] = useState<SelectedProposal | null>(null)
 
   const [isOffersClosed, closeOffers] = useState<boolean>(false)
 
@@ -116,9 +139,61 @@ export const useLendingState = () => {
     }
   }
 
+  const onOpenBorrowSelectAcceptProposal = (proposal: SelectedProposal) => {
+    const creditAssetObject: CurrencyInfo = {
+      currency: {
+        ...(proposal?.creditAsset as any),
+      },
+      currencyId: proposal?.creditAsset.address as string,
+      logoUrl: proposal?.creditAsset.logoUrl,
+    }
+    closeOffers(true)
+    changeAsset(creditAssetObject)
+    changeSelectedProposal({
+      ...proposal,
+      pool: selectedPool,
+      mode: 'borrow',
+    })
+    navigate(`?accept=${proposal.id}`, { replace: false })
+  }
+
+  const onCloseBorrowSelectAcceptProposal = (proposal: SelectedProposal) => {
+    changeSelectedProposal(null)
+    setInterestRate(proposal?.apr)
+    closeOffers(false)
+    navigate(`/${selectedAppTab}`, { replace: true })
+  }
+
+  const handleOnDontWantToAcceptProposalResumeCustom = () => {
+    const whichMode = selectedAppTab === APP_TABS.BORROW ? 'borrow' : 'lend'
+    if (whichMode === 'borrow') {
+      onCloseBorrowSelectAcceptProposal(selectedProposal as SelectedProposal)
+    } else {
+      console.warn('lend not implemented')
+    }
+  }
+
+  const handleOnSelectAcceptProposal = (proposal: SelectedProposal) => {
+    const whichMode = selectedAppTab === APP_TABS.BORROW ? 'borrow' : 'lend'
+    if (whichMode === 'borrow') {
+      onOpenBorrowSelectAcceptProposal(proposal)
+    } else {
+      console.warn('lend not implemented')
+    }
+  }
+
+  // TODO: maybe deprecate
   const handleDiscardAcceptProposal = () => {
     handleResetStates('full')
     navigate(`/${selectedAppTab}`, { replace: true })
+  }
+
+  const handleOnClickCloseChevron = () => {
+    if (selectedProposal) {
+      handleOnDontWantToAcceptProposalResumeCustom()
+    } else {
+      closeOffers(false)
+    }
   }
 
   return {
@@ -148,5 +223,7 @@ export const useLendingState = () => {
     handleResetStates,
     handleCreateLoan,
     handleDiscardAcceptProposal,
+    handleOnSelectAcceptProposal,
+    handleOnClickCloseChevron,
   }
 }
