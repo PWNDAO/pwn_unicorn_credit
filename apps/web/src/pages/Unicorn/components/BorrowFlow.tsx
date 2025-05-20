@@ -9,8 +9,12 @@ import { useSearchParams } from 'react-router-dom'
 import { Flex } from 'ui/src'
 import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
 import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
+import { DEFAULT_DURATION_DAYS } from '../constants/duration'
+import { LOAN_TO_VALUE_PERCENT } from '../constants/ltv'
+import { useLendingContext } from '../contexts/LendingContext'
 import { calculateLtv } from '../utils/math'
 import { AcceptProposalFlow } from './AcceptProposalFlow'
+import { AcceptProposalTermsTable } from './AcceptProposalTermsTable'
 import { ActionButton } from './ActionButton'
 import { CustomInputComponent } from './CustomInputComponent'
 import { SelectPoolInput } from './SelectPoolInput'
@@ -40,6 +44,8 @@ export const BorrowFlow = ({
     () => calculateLtv(Number(amountInputValue), Number(selectedPool?.totalUsdValue ?? 0)),
     [amountInputValue, selectedPool],
   )
+
+  const { isOffersClosed } = useLendingContext()
 
   useEffect(() => {
     ltvCallback?.(Number(ltv))
@@ -83,7 +89,15 @@ export const BorrowFlow = ({
               />
             </Flex>
           )}
-          {selectedAsset && selectedPool && <ActionButton label="Create a new request!" />}
+          {selectedAsset && selectedPool && isOffersClosed && (
+            <AcceptProposalTermsTable
+              terms={[
+                { label: 'Loan-to-Value', value: `${LOAN_TO_VALUE_PERCENT * 100}%` },
+                { label: 'Duration', value: `${DEFAULT_DURATION_DAYS} days` },
+              ]}
+            />
+          )}
+          {selectedAsset && selectedPool && isOffersClosed && <ActionButton label="Create a new request!" />}
         </>
       )}
     </>

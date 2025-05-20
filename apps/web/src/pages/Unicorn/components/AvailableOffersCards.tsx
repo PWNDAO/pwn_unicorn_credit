@@ -47,13 +47,13 @@ export const AvailableOffersCards = ({
           if (interestRate) {
             return (credit > 0n ? p.creditAmount >= credit : true) && p.apr <= interestRate
           } else {
-            return (credit > 0n ? p.creditAmount >= credit : true)
+            return credit > 0n ? p.creditAmount >= credit : true
           }
         } else if (mode === 'lend') {
           if (interestRate) {
             return (credit > 0n ? p.creditAmount <= credit : true) && p.apr >= interestRate
           } else {
-            return (credit > 0n ? p.creditAmount <= credit : true)
+            return credit > 0n ? p.creditAmount <= credit : true
           }
         } else {
           return true

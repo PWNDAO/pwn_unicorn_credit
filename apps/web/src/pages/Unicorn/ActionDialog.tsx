@@ -137,7 +137,7 @@ const LendingDialog = () => {
         size="large"
       />
       <Flex grow gap="$spacing8" justifyContent="space-between">
-        <Flex flexDirection="row" gap="$spacing8" width={'100%'}>
+        <Flex flexDirection="row" gap="$spacing8" width={'100%'} height={'100vh'}>
           <Flex
             animation="quick"
             enterStyle={{ opacity: 0 }}
