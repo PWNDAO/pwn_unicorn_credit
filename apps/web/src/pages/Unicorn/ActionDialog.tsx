@@ -113,7 +113,7 @@ const LendingDialog = () => {
   const shouldShowOffers = useMemo(() => {
     if (![APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab)) return false
 
-    if (selectedAppTab === APP_TABS.LEND && selectedAsset && !isOffersClosed && assetInputValue) return true
+    if (selectedAppTab === APP_TABS.LEND && selectedAsset && !isOffersClosed) return true
     if (selectedAppTab === APP_TABS.BORROW && selectedPool && !isOffersClosed) return true
 
     return false

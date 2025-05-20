@@ -45,15 +45,15 @@ export const AvailableOffersCards = ({
         const credit = creditAmount ?? 0n
         if (mode === 'borrow') {
           if (interestRate) {
-            return p.creditAmount >= credit && p.apr <= interestRate
+            return (credit > 0n ? p.creditAmount >= credit : true) && p.apr <= interestRate
           } else {
-            return p.creditAmount >= credit
+            return (credit > 0n ? p.creditAmount >= credit : true)
           }
         } else if (mode === 'lend') {
           if (interestRate) {
-            return p.creditAmount <= credit && p.apr >= interestRate
+            return (credit > 0n ? p.creditAmount <= credit : true) && p.apr >= interestRate
           } else {
-            return p.creditAmount <= credit
+            return (credit > 0n ? p.creditAmount <= credit : true)
           }
         } else {
           return true
