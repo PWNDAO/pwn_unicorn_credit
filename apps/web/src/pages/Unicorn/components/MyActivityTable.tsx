@@ -6,6 +6,16 @@ interface MyActivityTableProps {
   loans: any[]
 }
 
+const timeLeft = (end: number) => {
+  const now = Date.now()
+  const msLeft = end - now
+  if (msLeft <= 0) return null
+  const days = Math.floor(msLeft / (1000 * 60 * 60 * 24))
+  const hours = Math.floor((msLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+  const minutes = Math.floor((msLeft % (1000 * 60 * 60)) / (1000 * 60))
+  return (days > 0 ? `${days}d ` : '') + (hours > 0 ? `${hours}h ` : '') + (minutes > 0 ? `${minutes}m` : '')
+}
+
 export const MyActivityTable = ({ header, mode, loans }: MyActivityTableProps) => {
   const isBorrow = mode === 'borrow'
   return (
@@ -38,35 +48,66 @@ export const MyActivityTable = ({ header, mode, loans }: MyActivityTableProps) =
                 justifyContent="unset"
                 onPress={() => {}}
               >
-                <Flex width="100%" height="100%" justifyContent="center" alignItems="center">
-                  <Flex flexDirection="column" width="100%" alignItems="center" gap="$spacing4">
-                    <Text color="$neutral1" variant="heading3">
+                <Flex
+                  width="100%"
+                  height="100%"
+                  flexDirection="column"
+                  justifyContent="center"
+                  alignItems="stretch"
+                  gap="$spacing8"
+                >
+                  {/* Row 1: Offering/Asking for/Lent/Borrowed ... amount symbol */}
+                  <Flex flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
+                    <Text color="$neutral3" variant="body2">
                       {header === 'Requests'
                         ? isBorrow
-                          ? 'Asking to borrow'
-                          : 'Offering to lend'
+                          ? 'Asking for'
+                          : 'Offering'
                         : header === 'Loans'
                           ? isBorrow
                             ? 'Borrowed'
                             : 'Lent'
                           : isBorrow
                             ? 'Offering to borrow'
-                            : 'Offering to lend'}{' '}
-                      {loan.creditAmount
-                        ? Number(loan.creditAmount / 10 ** (loan.creditAsset?.decimals ?? 6)).toLocaleString()
+                            : 'Offering to lend'}
+                    </Text>
+                    <Text color="$neutral1" variant="body2">
+                      {loan.creditData?.amount
+                        ? Number(loan.creditData.amount / 10 ** (loan.creditAsset?.decimals ?? 6)).toLocaleString()
                         : '—'}{' '}
-                      <Text variant="heading3">{loan.creditAsset?.symbol ?? ''}</Text>{' '}
-                      {header === 'Requests' || header === 'Offers' ? (isBorrow ? 'against' : 'for') : 'against'}{' '}
+                      {loan.creditAsset?.symbol ?? ''}
+                    </Text>
+                  </Flex>
+                  {/* Row 2: Collateral */}
+                  <Flex flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
+                    <Text color="$neutral3" variant="body2">
+                      Collateral
+                    </Text>
+                    <Text color="$neutral1" variant="body2">
                       {'WETH/USDC'}
                     </Text>
-                    <Flex flexDirection="row" alignItems="baseline" gap="$spacing4">
-                      <Text color="$neutral1" variant="heading3">
-                        {'at '}%{(loan.creditData?.apr / 10_00).toFixed(2)}
-                      </Text>
-                      <Text color="$neutral3" variant="body2">
-                        APR
-                      </Text>
-                    </Flex>
+                  </Flex>
+                  {/* Row 3: Interest rate */}
+                  <Flex flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
+                    <Text color="$neutral3" variant="body2">
+                      Interest rate
+                    </Text>
+                    <Text color="$neutral1" variant="body2">
+                      {(loan.creditData?.apr ? (loan.creditData.apr / 10_00).toFixed(2) : '—') + '%'}
+                    </Text>
+                  </Flex>
+                  {/* Row 4: Expiring / Default in */}
+                  <Flex flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
+                    <Text color="$neutral3" variant="body2">
+                      {header === 'Loans' ? 'Default' : 'Expiration'}
+                    </Text>
+                    <Text color="$neutral1" variant="body2">
+                      {header === 'Loans'
+                        ? timeLeft(loan.defaultDate * 1000)
+                        : loan.expiration
+                          ? timeLeft(loan.expiration * 1000)
+                          : '—'}
+                    </Text>
                   </Flex>
                 </Flex>
               </Button>

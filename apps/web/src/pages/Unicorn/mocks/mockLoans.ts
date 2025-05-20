@@ -24,7 +24,7 @@ export const mockLoan = {
   loanOwner: '0x1234567890123456789012345678901234567890',
   startDate: 1747767058225,
   duration: 30 * 24 * 60 * 60,
-  defaultDate: 1747767058225 + 10 * 24 * 60 * 60,
+  defaultDate: 1748722079,
   proposer: '0x1234567890123456789012345678901234567890',
   hash: '0x779c04dab366992bfa2f4f08434df8593e1ecbb0044aa523f34cde64f4426329',
   borrower: '0x1234567890123456789012345678901234567890',
@@ -41,6 +41,7 @@ export const mockLoan = {
     symbol: 'UNI-V3-POS',
     decimals: 0,
   },
+  expiration: 1748722079,
 }
 
 export const mockLoansPlural = Array(10).fill(mockLoan)
