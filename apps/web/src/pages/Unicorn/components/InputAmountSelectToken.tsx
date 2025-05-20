@@ -57,8 +57,8 @@ export const InputAmountSelectToken = ({
   }, [debouncedValue, onChangeText])
 
   const maxBorrowAmount = useMemo(() => {
-    if (mode !== 'borrow-computed') return null
-    if (!selectedPool || !selectedToken) return '~'
+    if (mode !== 'borrow-computed') return '0'
+    if (!selectedPool || !selectedToken) return '0'
 
     const maxBorrowUsd = selectedPool.totalUsdValue * LOAN_TO_VALUE_PERCENT
     const maxBorrowAmount = maxBorrowUsd / Number(assetPrice)
@@ -66,7 +66,21 @@ export const InputAmountSelectToken = ({
   }, [selectedPool, selectedToken, assetPrice])
 
   const placeholderValue = useMemo(() => {
-    if (mode === 'borrow-computed' && maxBorrowAmount) return Number(maxBorrowAmount).toFixed(6)
+    // Determine the number of decimals needed, but cap at 6
+    function getMaxDecimals(num: number, maxDecimals = 6) {
+      if (!isFinite(num)) return 0
+      const str = num.toString()
+      if (str.indexOf('.') === -1) return 0
+      // Remove trailing zeros for accurate count
+      const decimals = str.split('.')[1]?.replace(/0+$/, '') ?? ''
+      return Math.min(decimals.length, maxDecimals)
+    }
+
+    if (mode === 'borrow-computed' && maxBorrowAmount) {
+      const num = Number(maxBorrowAmount)
+      const decimals = getMaxDecimals(num, 6)
+      return num.toFixed(decimals)
+    }
     if (!fixedValue) return '0'
     return fixedValue
   }, [mode, maxBorrowAmount, fixedValue])
