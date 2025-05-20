@@ -4,7 +4,8 @@ import { Button, Flex } from 'ui/src'
 import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
 import { formatUnits } from 'viem'
 import { DEFAULT_DURATION_DAYS } from '../constants/duration'
-import { useLendingContext } from '../contexts/LendingContext'
+import { PoolData, useLendingContext } from '../contexts/LendingContext'
+import { SelectedProposal } from '../hooks/lendingState'
 import { AcceptProposalTermsTable } from './AcceptProposalTermsTable'
 import { ActionButton } from './ActionButton'
 import { TOKEN_BY_ADDRESS } from './AvailableOffersCards'
@@ -17,15 +18,15 @@ export const AcceptProposalFlow = () => {
 
   const creditAssetObject: CurrencyInfo = {
     currency: {
-      ...selectedProposal?.creditAsset,
+      ...(selectedProposal?.creditAsset as any),
     },
-    currencyId: selectedProposal?.creditAsset.address,
+    currencyId: selectedProposal?.creditAsset.address as string,
     logoUrl: selectedProposal?.creditAsset.logoUrl,
   }
   const mode = selectedProposal?.mode as 'borrow' | 'lend'
   const maxBorrowableAmount = useMemo(() => {
     if (mode !== 'borrow' && !selectedProposal?.pool) return 0
-    return Number(selectedProposal?.pool?.totalUsdValue) * (selectedProposal?.loanToValue / 100_000)
+    return Number(selectedProposal?.pool?.totalUsdValue) * (selectedProposal?.loanToValue ?? 0 / 100_000)
   }, [selectedProposal])
 
   const selectedPairTokens = useMemo(() => {
@@ -132,7 +133,7 @@ export const AcceptProposalFlow = () => {
             />
           </Flex>
           <Flex width={'50%'}>
-            <SelectPoolInput onOpenTokenSelector={() => {}} selectedPool={selectedProposal?.pool} />
+            <SelectPoolInput onOpenTokenSelector={() => {}} selectedPool={selectedProposal?.pool as PoolData} />
           </Flex>
         </Flex>
       ) : (
@@ -145,7 +146,7 @@ export const AcceptProposalFlow = () => {
               selectedToken={creditAssetObject}
               disabled
               fixedValue={formatUnits(
-                selectedProposal?.creditAmount ?? 0n,
+                BigInt(selectedProposal?.creditAmount ?? 0),
                 creditAssetObject?.currency?.decimals ?? 18,
               )}
             />
@@ -175,7 +176,7 @@ export const AcceptProposalFlow = () => {
           ]}
         />
       </Flex>
-      <ActionButton label="Create loan" onPress={() => handleCreateLoan(selectedProposal)} />
+      <ActionButton label="Create loan" onPress={() => handleCreateLoan(selectedProposal as SelectedProposal)} />
     </Flex>
   )
 }

@@ -84,7 +84,7 @@ const LendingDialog = () => {
 
   const handleOnChangeTab = (option: APP_TABS) => {
     // reset state
-    handleResetStates()
+    handleResetStates('full')
 
     // select tab
     selectAppTab(option)

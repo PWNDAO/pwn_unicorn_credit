@@ -164,12 +164,50 @@ export const useLendingState = () => {
     navigate(`/${selectedAppTab}`, { replace: true })
   }
 
+  const onCloseLendSelectAcceptProposal = (proposal: SelectedProposal) => {
+    changeSelectedProposal(null)
+    setInterestRate(proposal?.apr)
+    closeOffers(false)
+    navigate(`/${selectedAppTab}`, { replace: true })
+  }
+
+  const onOpenLendSelectAcceptProposal = (proposal: SelectedProposal) => {
+    const creditAssetObject: CurrencyInfo = {
+      currency: {
+        ...(proposal?.creditAsset as any),
+      },
+      currencyId: proposal?.creditAsset.address as string,
+      logoUrl: proposal?.creditAsset.logoUrl,
+    }
+    changeAsset(creditAssetObject)
+    const asset2: CurrencyInfo = {
+      currency: {
+        address: '0x4200000000000000000000000000000000000006',
+        decimals: 18,
+        isNative: false,
+        isToken: true,
+        symbol: 'WETH',
+        chainId: 8453,
+      } as any,
+      currencyId: '0x4200000000000000000000000000000000000006',
+      logoUrl: 'https://assets.coingecko.com/coins/images/2518/standard/weth.png?1696503332',
+    }
+    changeAsset2(asset2)
+    closeOffers(true)
+    changeSelectedProposal({
+      ...proposal,
+      mode: 'lend',
+      pool: selectedPool,
+    })
+    navigate(`?accept=${proposal.id}`, { replace: false })
+  }
+
   const handleOnDontWantToAcceptProposalResumeCustom = () => {
     const whichMode = selectedAppTab === APP_TABS.BORROW ? 'borrow' : 'lend'
     if (whichMode === 'borrow') {
       onCloseBorrowSelectAcceptProposal(selectedProposal as SelectedProposal)
     } else {
-      console.warn('lend not implemented')
+      onCloseLendSelectAcceptProposal(selectedProposal as SelectedProposal)
     }
   }
 
@@ -178,7 +216,7 @@ export const useLendingState = () => {
     if (whichMode === 'borrow') {
       onOpenBorrowSelectAcceptProposal(proposal)
     } else {
-      console.warn('lend not implemented')
+      onOpenLendSelectAcceptProposal(proposal)
     }
   }
 
