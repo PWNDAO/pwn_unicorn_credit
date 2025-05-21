@@ -63,14 +63,16 @@ export const BorrowFlow = ({
 
   return (
     <>
-      <SelectPoolInput
-        onOpenTokenSelector={
-          selectedProposal
-            ? () => {}
-            : () => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.POOL })
-        }
-        selectedPool={selectedPool as PoolData}
-      />
+      <Flex flexDirection="column" gap="$spacing16" width={'30rem'}>
+        <SelectPoolInput
+          onOpenTokenSelector={
+            selectedProposal
+              ? () => {}
+              : () => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.POOL })
+          }
+          selectedPool={selectedPool as PoolData}
+        />
+      </Flex>
       {selectedPool && (
         <InputAmountSelectToken
           label="Borrow"

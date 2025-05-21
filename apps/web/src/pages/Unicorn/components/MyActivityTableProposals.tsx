@@ -1,9 +1,10 @@
 import { Button, Flex, Text } from 'ui/src'
+import { formatUnits } from 'viem'
 
 interface MyActivityTableProps {
-  header: 'Offers' | 'Requests' | 'Loans'
+  header: 'Offers' | 'Requests'
   mode: 'borrow' | 'lend'
-  loans: any[]
+  proposals: any[]
 }
 
 const timeLeft = (end: number) => {
@@ -16,7 +17,7 @@ const timeLeft = (end: number) => {
   return (days > 0 ? `${days}d ` : '') + (hours > 0 ? `${hours}h ` : '') + (minutes > 0 ? `${minutes}m` : '')
 }
 
-export const MyActivityTable = ({ header, mode, loans }: MyActivityTableProps) => {
+export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivityTableProps) => {
   const isBorrow = mode === 'borrow'
   return (
     <Flex width="100%" justifyContent="center" alignItems="center">
@@ -25,28 +26,22 @@ export const MyActivityTable = ({ header, mode, loans }: MyActivityTableProps) =
           {header}
         </Text>
         <Flex flexDirection="column" gap="$spacing16" px="$spacing16" py="$spacing16" overflow="scroll" height="100%">
-          {loans &&
-            loans.map((loan, index) => (
-              <Button
-                width={'$full'}
+          {proposals &&
+            proposals.map((proposal, index) => (
+              <Flex
                 key={index}
+                width={'$full'}
                 height={'$full'}
                 backgroundColor="$surface1"
                 borderColor={'$surface3'}
                 borderRadius="$rounded20"
                 borderWidth="$spacing1"
                 px="$spacing16"
-                py={72}
-                mb={index === loans.length - 1 ? 72 : '0'}
-                pressStyle={{
-                  backgroundColor: 'rgb(35, 33, 34)',
-                }}
+                py="$spacing16"
+                mb={index === proposals.length - 1 ? 72 : '0'}
                 hoverStyle={{
                   backgroundColor: 'rgb(35, 33, 34)',
                 }}
-                size="large"
-                justifyContent="unset"
-                onPress={() => {}}
               >
                 <Flex
                   width="100%"
@@ -56,29 +51,16 @@ export const MyActivityTable = ({ header, mode, loans }: MyActivityTableProps) =
                   alignItems="stretch"
                   gap="$spacing8"
                 >
-                  {/* Row 1: Offering/Asking for/Lent/Borrowed ... amount symbol */}
                   <Flex flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
                     <Text color="$neutral3" variant="body2">
-                      {header === 'Requests'
-                        ? isBorrow
-                          ? 'Asking for'
-                          : 'Offering'
-                        : header === 'Loans'
-                          ? isBorrow
-                            ? 'Borrowed'
-                            : 'Lent'
-                          : isBorrow
-                            ? 'Offering to borrow'
-                            : 'Offering to lend'}
+                      {header === 'Offers' ? 'Offering' : 'Asking for'}
                     </Text>
                     <Text color="$neutral1" variant="body2">
-                      {loan.creditData?.amount
-                        ? Number(loan.creditData.amount / 10 ** (loan.creditAsset?.decimals ?? 6)).toLocaleString()
-                        : '—'}{' '}
-                      {loan.creditAsset?.symbol ?? ''}
+                      {formatUnits(proposal.creditAmount, proposal.creditAsset.decimals) +
+                        ' ' +
+                        proposal.creditAsset.symbol}
                     </Text>
                   </Flex>
-                  {/* Row 2: Collateral */}
                   <Flex flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
                     <Text color="$neutral3" variant="body2">
                       Collateral
@@ -87,30 +69,39 @@ export const MyActivityTable = ({ header, mode, loans }: MyActivityTableProps) =
                       {'WETH/USDC'}
                     </Text>
                   </Flex>
-                  {/* Row 3: Interest rate */}
                   <Flex flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
                     <Text color="$neutral3" variant="body2">
                       Interest rate
                     </Text>
                     <Text color="$neutral1" variant="body2">
-                      {(loan.creditData?.apr ? (loan.creditData.apr / 10_00).toFixed(2) : '—') + '%'}
+                      {(proposal.apr ? (proposal.apr / 10_00).toFixed(2) : '—') + '%'}
                     </Text>
                   </Flex>
-                  {/* Row 4: Expiring / Default in */}
                   <Flex flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
                     <Text color="$neutral3" variant="body2">
-                      {header === 'Loans' ? 'Default' : 'Expiration'}
+                      Expiration
                     </Text>
                     <Text color="$neutral1" variant="body2">
-                      {header === 'Loans'
-                        ? timeLeft(loan.defaultDate * 1000)
-                        : loan.expiration
-                          ? timeLeft(loan.expiration * 1000)
-                          : '—'}
+                      {timeLeft(Date.now() + Math.floor(Math.random() * 4 * 24 * 60 * 60 * 1000))}
                     </Text>
                   </Flex>
+                  <Flex flexDirection="row" justifyContent="center" alignItems="center" width="100%">
+                    <Button
+                      variant="branded"
+                      size="small"
+                      borderRadius="$radius8"
+                      borderColor="$neutral4"
+                      backgroundColor="$accent1"
+                      px="$spacing32"
+                      py="$spacing8"
+                      onPress={() => alert(`Cancel ${isBorrow ? 'request' : 'offer'} #${proposal.id}?`)}
+                      maxWidth={'max-content'}
+                    >
+                      Cancel
+                    </Button>
+                  </Flex>
                 </Flex>
-              </Button>
+              </Flex>
             ))}
         </Flex>
       </Flex>
