@@ -100,6 +100,17 @@ export const useLendingState = () => {
 
   const [isOffersClosed, closeOffers] = useState<boolean>(false)
 
+  const getAssetsByPriceFeedExists = useMemo(() => {
+    // TODO: figure it out, maybe hardcoded or use from sdk definitions
+
+    return [
+      {
+        ...mockTokensBalances[0],
+        sectionKey: TokenOptionSection.PredefinedAssets,
+      },
+    ]
+  }, [])
+
   const getAssetsByPoolSelected = useMemo(() => {
     if (!selectedPool) return []
 
@@ -258,6 +269,7 @@ export const useLendingState = () => {
     setInterestRate,
     changeSelectedProposal,
     getAssetsByPoolSelected,
+    getAssetsByPriceFeedExists,
     closeOffers,
     handleResetStates,
     handleCreateLoan,

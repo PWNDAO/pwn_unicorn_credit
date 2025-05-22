@@ -33,6 +33,7 @@ interface LendingContextType {
   setInterestRate: (rate: number | null) => void
   changeSelectedProposal: (proposal: SelectedProposal | null) => void
   getAssetsByPoolSelected: any[]
+  getAssetsByPriceFeedExists: any[]
   closeOffers: (value: boolean) => void
   handleResetStates: (mode?: 'full') => void
   handleCreateLoan: (proposal: SelectedProposal) => Promise<void>

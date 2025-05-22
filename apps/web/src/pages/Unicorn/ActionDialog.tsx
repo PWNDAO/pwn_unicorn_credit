@@ -47,6 +47,7 @@ const LendingDialog = () => {
     setLtv,
     setInterestRate,
     getAssetsByPoolSelected,
+    getAssetsByPriceFeedExists,
     handleResetStates,
     handleOnClickCloseChevron,
     handleOnSelectAcceptProposal,
@@ -110,6 +111,18 @@ const LendingDialog = () => {
 
     return false
   }, [selectedAppTab, selectedAsset, selectedPool, isOffersClosed, assetInputValue])
+
+  const whichVariationOfTokenSelectorModalToUse = useMemo(() => {
+    if (selectionModalState.mode === SelectionModalMode.POOL) return TokenSelectorVariation.PoolOnly
+    if ([APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab)) return TokenSelectorVariation.FixedAssetsOnly
+    return TokenSelectorVariation.SwapInput
+  }, [selectionModalState.mode, selectedAppTab])
+
+  const whichPredefinedAssetsToUse = useMemo(() => {
+    if (selectedAppTab === APP_TABS.BORROW) return getAssetsByPoolSelected
+    if (selectedAppTab === APP_TABS.LEND) return getAssetsByPriceFeedExists
+    return []
+  }, [selectedAppTab, getAssetsByPoolSelected, getAssetsByPriceFeedExists])
 
   return (
     <Flex
@@ -201,14 +214,8 @@ const LendingDialog = () => {
         </Flex>
         <TokenSelectorModal
           isModalOpen={selectionModalState.isOpen}
-          variation={
-            selectionModalState.mode === SelectionModalMode.POOL
-              ? TokenSelectorVariation.PoolOnly
-              : selectedAppTab === APP_TABS.BORROW
-                ? TokenSelectorVariation.FixedAssetsOnly
-                : TokenSelectorVariation.SwapInput
-          }
-          predefinedAssets={selectedAppTab === APP_TABS.BORROW ? getAssetsByPoolSelected : []}
+          variation={whichVariationOfTokenSelectorModalToUse}
+          predefinedAssets={whichPredefinedAssetsToUse}
           currencyField={
             selectionModalState.mode === SelectionModalMode.POOL ? CurrencyField.INPUT : CurrencyField.OUTPUT
           }
