@@ -38,6 +38,7 @@ import { isExtension, isInterface, isMobileApp, isMobileWeb } from 'utilities/sr
 import { useTrace } from 'utilities/src/telemetry/trace/TraceContext'
 import { useDebounce } from 'utilities/src/time/timing'
 import { PoolData, TokenSelectorPoolsList } from './lists/TokenSelectorPoolsList'
+import { Hook } from './items/TokenOptionItem'
 
 export const TOKEN_SELECTOR_WEB_MAX_WIDTH = 400
 export const TOKEN_SELECTOR_WEB_MAX_HEIGHT = 700
@@ -66,6 +67,7 @@ export interface TokenSelectorProps {
   isLimits?: boolean
   predefinedAssets?: TokenOption[] | TokenSection<TokenOption>[] // this is useful to restrict the assets that can be selected (borrow against LP, only pair + assets with chainlink price feeds)
   onClose: () => void
+  hooks?: Hook[]
   onSelectChain?: (chainId: UniverseChainId | null) => void
   onSelectCurrency: (currency: Currency | undefined, currencyField: CurrencyField | undefined, isBridgePair: boolean | undefined, poolData?: PoolData | undefined) => void
 }
@@ -84,6 +86,7 @@ export function TokenSelectorContent({
   onSelectChain,
   onSelectCurrency,
   predefinedAssets,
+  hooks,
 }: Omit<TokenSelectorProps, 'isModalOpen'>): JSX.Element {
   const { onChangeChainFilter, onChangeText, searchFilter, chainFilter, parsedChainFilter, parsedSearchFilter } =
     useFilterCallbacks(chainId ?? null, flow)
@@ -255,6 +258,7 @@ export function TokenSelectorContent({
             onEmptyActionPress={onSendEmptyActionPress}
             onSelectCurrency={onSelectCurrencyCallback}
             predefinedAssets={predefinedAssets}
+            hooks={hooks}
           />
         )
 

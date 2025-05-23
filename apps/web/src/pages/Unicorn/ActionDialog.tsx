@@ -22,6 +22,7 @@ import { MyBorrowing } from './components/MyBorrowing'
 import { MyLending } from './components/MyLending'
 import { LendingStateProvider, useLendingContext } from './contexts/LendingContext'
 import { APP_TABS, ModalState, SelectionModalMode } from './hooks/lendingState'
+import { mockHooks } from './mocks/mockHooks'
 
 const LendingDialog = () => {
   const navigate = useNavigate()
@@ -216,6 +217,7 @@ const LendingDialog = () => {
           isModalOpen={selectionModalState.isOpen}
           variation={whichVariationOfTokenSelectorModalToUse}
           predefinedAssets={whichPredefinedAssetsToUse}
+          hooks={selectedAppTab === APP_TABS.LEND ? mockHooks : undefined}
           currencyField={
             selectionModalState.mode === SelectionModalMode.POOL ? CurrencyField.INPUT : CurrencyField.OUTPUT
           }

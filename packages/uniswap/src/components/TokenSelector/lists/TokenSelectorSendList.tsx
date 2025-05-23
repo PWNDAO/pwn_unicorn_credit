@@ -1,3 +1,4 @@
+import { Hook } from 'uniswap/src/components/TokenSelector/items/TokenOptionItem'
 import { mockTokensBalances } from '../../../../../../apps/web/src/pages/Unicorn/mocks/mockTokens'
 import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -76,10 +77,12 @@ function _TokenSelectorSendList({
   onSelectCurrency,
   onEmptyActionPress,
   predefinedAssets,
+  hooks,
 }: TokenSectionsHookProps & {
   onSelectCurrency: OnSelectCurrency
   onEmptyActionPress: () => void
   predefinedAssets?: TokenOption[] | TokenSection<TokenOption>[]
+  hooks?: Hook[]
 }): JSX.Element {
   // const {
     // data,
@@ -119,6 +122,7 @@ function _TokenSelectorSendList({
       sections={sections}
       showTokenWarnings={false}
       onSelectCurrency={onSelectCurrency}
+      hooks={hooks}
     />
   )
 }

@@ -1,5 +1,5 @@
 import { memo, useCallback, useState } from 'react'
-import { TokenOptionItem as BaseTokenOptionItem } from 'uniswap/src/components/TokenSelector/items/TokenOptionItem'
+import { TokenOptionItem as BaseTokenOptionItem, Hook } from 'uniswap/src/components/TokenSelector/items/TokenOptionItem'
 import { HorizontalTokenList } from 'uniswap/src/components/TokenSelector/lists/HorizontalTokenList/HorizontalTokenList'
 import { OnSelectCurrency, TokenSection } from 'uniswap/src/components/TokenSelector/types'
 import { SelectorBaseList } from 'uniswap/src/components/lists/SelectorBaseList'
@@ -26,6 +26,7 @@ const TokenOptionItem = memo(function _TokenOptionItem({
   showWarnings,
   showTokenAddress,
   isKeyboardOpen,
+  hooks,
 }: {
   tokenOption: TokenOption
   section: TokenSection<TokenOption>
@@ -34,6 +35,7 @@ const TokenOptionItem = memo(function _TokenOptionItem({
   showTokenAddress?: boolean
   isKeyboardOpen?: boolean
   onSelectCurrency: OnSelectCurrency
+  hooks?: Hook[]
 }): JSX.Element {
   const { convertFiatAmountFormatted, formatNumberOrString } = useLocalizationContext()
   const onPress = useCallback(
@@ -66,6 +68,7 @@ const TokenOptionItem = memo(function _TokenOptionItem({
       showWarnings={showWarnings}
       tokenWarningDismissed={tokenWarningDismissed}
       onPress={onPress}
+      hooks={hooks}
     />
   )
 })
@@ -82,6 +85,7 @@ interface TokenSelectorListProps {
   errorText?: string
   showTokenAddress?: boolean
   isKeyboardOpen?: boolean
+  hooks?: Hook[]
 }
 
 function _TokenSelectorList({
@@ -96,6 +100,7 @@ function _TokenSelectorList({
   emptyElement,
   errorText,
   showTokenAddress,
+  hooks,
 }: TokenSelectorListProps): JSX.Element {
   const [expandedItems, setExpandedItems] = useState<string[]>([])
 
@@ -138,10 +143,11 @@ function _TokenSelectorList({
           showWarnings={showTokenWarnings}
           tokenOption={item}
           onSelectCurrency={onSelectCurrency}
+          hooks={hooks}
         />
       )
     },
-    [onSelectCurrency, showTokenAddress, showTokenWarnings, isKeyboardOpen, handleExpand, isExpandedItem],
+    [onSelectCurrency, showTokenAddress, showTokenWarnings, isKeyboardOpen, handleExpand, isExpandedItem, hooks],
   )
 
   return (

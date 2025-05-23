@@ -16,7 +16,7 @@ import {
 } from 'uniswap/src/components/lists/TokenSectionBaseList/TokenSectionBaseList'
 import { ItemType } from 'uniswap/src/components/lists/types'
 
-const ITEM_ROW_HEIGHT = 68
+const ITEM_ROW_HEIGHT = 90
 
 type BaseListRowInfo = {
   key: Key | undefined

@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react'
-import { Flex, Text, TouchableArea, useSporeColors } from 'ui/src'
+import React, { useCallback, useMemo, useState } from 'react'
+import { Button, Flex, Text, TouchableArea, useSporeColors } from 'ui/src'
 import Check from 'ui/src/assets/icons/check.svg'
 import { iconSizes } from 'ui/src/theme'
 import { TokenLogo } from 'uniswap/src/components/CurrencyLogo/TokenLogo'
@@ -16,6 +16,33 @@ import { shortenAddress } from 'utilities/src/addresses'
 import { dismissNativeKeyboard } from 'utilities/src/device/keyboard'
 import { isInterface } from 'utilities/src/platform'
 
+export type Hook = {
+  address: string
+  protocol: "Aave_v3" | "Morpho" | "Euler" | "Compound_v3"
+  chainId: number
+  apr: number
+  underlyingAddress: string
+}
+
+const getProtocolName = (protocol: "Aave_v3" | "Morpho" | "Euler" | "Compound_v3") => {
+  switch (protocol) {
+    case "Aave_v3":
+      return "Aave v3"
+    case "Morpho":
+      return "Morpho"
+    case "Euler":
+      return "Euler"
+    case "Compound_v3":
+      return "Compound v3"
+    default:
+      return protocol
+  }
+}
+
+const formatApr = (apr: number) => {
+  return Number(apr / 1000).toFixed(2)
+}
+
 interface OptionProps {
   option: TokenOption
   showWarnings: boolean
@@ -30,6 +57,7 @@ interface OptionProps {
   balance: string
   quantityFormatted?: string
   isSelected?: boolean
+  hooks?: Hook[]
 }
 
 function _TokenOptionItem({
@@ -43,11 +71,14 @@ function _TokenOptionItem({
   quantityFormatted,
   isKeyboardOpen,
   isSelected,
+  hooks,
 }: OptionProps): JSX.Element {
   const { currencyInfo, isUnsupported } = option
   const { currency } = currencyInfo
   const [showWarningModal, setShowWarningModal] = useState(false)
   const colors = useSporeColors()
+
+  const [showPoolHooks, setShowPoolHooks] = useState(false)
 
   const severity = getTokenWarningSeverity(currencyInfo)
   const isBlocked = severity === WarningSeverity.Blocked
@@ -81,6 +112,11 @@ function _TokenOptionItem({
     setShowWarningModal(false)
     onPress()
   }, [onPress])
+
+  const hooksForThisToken = useMemo(
+    () => hooks?.filter(v => v.underlyingAddress?.toLowerCase() === (currency as any).address?.toLowerCase()),
+    [hooks, currency]
+  )
 
   return (
     <TokenOptionItemWrapper
@@ -160,6 +196,54 @@ function _TokenOptionItem({
           ) : null}
         </Flex>
       </TouchableArea>
+      {
+        hooksForThisToken && hooksForThisToken.length > 0 && (
+          <Flex width="100%" justifyContent="center" alignItems="center" position='relative'>
+            <Text color="$accent1" fontSize={14} onPress={() => setShowPoolHooks(!showPoolHooks)} pressStyle={{ color: 'white' }} hoverStyle={{ color: 'white', cursor: 'pointer' }}>pool hooks {"(+4)"}</Text>
+            {showPoolHooks && (
+              <Flex 
+                flexDirection="column" 
+                gap="$spacing8" 
+                zIndex={1000} 
+                position='absolute' 
+                top={35} 
+                left={0} 
+                right={0} 
+                bottom={0} 
+                justifyContent='center' 
+                alignItems='center' 
+                backgroundColor='$surface1'
+                width='100%'
+                height={35*hooksForThisToken.length}
+                borderRadius={10}
+                borderWidth={1}
+                borderColor='$surface3'
+              >
+                {hooksForThisToken && hooksForThisToken.length > 0 && hooksForThisToken.map((hook) => (
+                  <Flex 
+                    key={hook.address} 
+                    row 
+                    alignItems='center' 
+                    justifyContent='space-between'
+                    width='100%'
+                    px="$spacing16"
+                    gap="$spacing8" 
+                    borderBottomWidth={1} 
+                    borderBottomColor='transparent' 
+                    hoverStyle={{ cursor: 'pointer', backgroundColor: '$surface2' }}
+                    onPress={onPressTokenOption}
+                    >
+                    <Text fontSize={14} color="$neutral1">{getProtocolName(hook.protocol)}</Text>
+                    <Text fontSize={14} color="$neutral2">{shortenAddress(hook.address, 3, 3)}</Text>
+                    <Text fontSize={14} color="$neutral1">{formatApr(hook.apr)}%</Text>
+                    <Text fontSize={14} color="$neutral1">{(Math.random() * 10000).toFixed(2)}</Text>
+                  </Flex>
+                ))}
+              </Flex>
+            )}
+          </Flex>
+        )
+      }
 
       <TokenWarningModal
         currencyInfo0={currencyInfo}
