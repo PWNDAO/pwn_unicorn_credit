@@ -31,7 +31,7 @@ export const SelectPoolInput = ({
         Borrow Against
       </Text>
       {!selectedPool ? (
-        <Flex centered>
+        <Flex centered width={'max-content'}>
           <Button
             backgroundColor="$accent1"
             borderRadius="$rounded20"

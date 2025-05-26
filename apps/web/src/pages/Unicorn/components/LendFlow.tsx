@@ -10,6 +10,7 @@ import { AcceptProposalTermsTable } from './AcceptProposalTermsTable'
 import { ActionButton } from './ActionButton'
 import { CustomInputComponent } from './CustomInputComponent'
 import { InputAmountSelectToken } from './InputAmountSelectToken'
+import { InputLpPairTokens } from './InputLpPairTokens'
 export const LendFlow = ({
   selectedAsset,
   selectedAsset2,
@@ -52,7 +53,6 @@ export const LendFlow = ({
     <Flex flexDirection="column" gap="$spacing16" width={'30rem'}>
       <InputAmountSelectToken
         label="Lend"
-        label2={`1st Token in Pair`}
         onChangeText={selectedProposal ? () => {} : (value) => setAssetInputValue(value)}
         onOpenTokenSelector={
           selectedProposal
@@ -67,29 +67,33 @@ export const LendFlow = ({
             : undefined
         }
       />
-      <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
-        {selectedAsset && (
-          <InputAmountSelectToken
-            label="2nd Token in Pair"
-            onChangeText={() => {}}
-            onOpenTokenSelector={
-              selectedProposal
-                ? () => {}
-                : () => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET_2 })
-            }
-            selectedToken={selectedAsset2 as CurrencyInfo}
-            includeInputField={false}
-          />
-        )}
-        {selectedAsset2 && (
-          <CustomInputComponent
-            label="Interest (%)"
-            onChangeText={selectedProposal ? () => {} : (value) => setInterestRate(Number(value))}
-            disabled={!!selectedProposal}
-            fixedValue={selectedProposal ? `${Number(selectedProposal?.apr) / 1000}%` : undefined}
-          />
-        )}
+      <Flex flexDirection="row" gap="$spacing16" width={'30rem'} alignItems="center" justifyContent="center">
+        <InputLpPairTokens
+          label="Liquidity Pool Pair"
+          onChangeText={() => {}}
+          onOpenTokenSelector={
+            selectedProposal
+              ? () => {}
+              : () => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET_2 })
+          }
+          selectedToken={selectedAsset2 as CurrencyInfo}
+          firstPredefined={
+            selectedAsset
+              ? {
+                  symbol: selectedAsset?.currency.symbol as string,
+                  address: (selectedAsset?.currency as any)?.address,
+                  logoUrl: selectedAsset?.logoUrl as string,
+                }
+              : null
+          }
+        />
       </Flex>
+      <CustomInputComponent
+        label="Interest (%)"
+        onChangeText={selectedProposal ? () => {} : (value) => setInterestRate(Number(value))}
+        disabled={!!selectedProposal}
+        fixedValue={selectedProposal ? `${Number(selectedProposal?.apr) / 1000}%` : undefined}
+      />
       {shouldShowActionButton ? (
         <AcceptProposalTermsTable
           terms={[

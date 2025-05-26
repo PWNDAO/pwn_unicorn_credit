@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Button, Flex, Text } from 'ui/src'
 import { RotatableChevron } from 'ui/src/components/icons/RotatableChevron'
 import { TokenLogo } from 'uniswap/src/components/CurrencyLogo/TokenLogo'
-import { TextInput } from 'uniswap/src/components/input/TextInput'
 import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
 import { useDebounce } from 'utilities/src/time/timing'
 import { maxUint256 } from 'viem'
@@ -11,7 +10,7 @@ import { LOAN_TO_VALUE_PERCENT } from '../constants/ltv'
 import { useLendingContext } from '../contexts/LendingContext'
 import { useAssetPrice } from '../queries/useAssetPrice'
 
-export const InputAmountSelectToken = ({
+export const InputLpPairTokens = ({
   label,
   onChangeText,
   disabled = false,
@@ -22,6 +21,7 @@ export const InputAmountSelectToken = ({
   includeInputField = true,
   label2,
   mode = 'default',
+  firstPredefined = null,
 }: {
   label: string
   onChangeText: (newValue: string) => void
@@ -33,6 +33,11 @@ export const InputAmountSelectToken = ({
   includeInputField?: boolean
   label2?: string
   mode?: 'default' | 'borrow-computed'
+  firstPredefined?: null | {
+    symbol: string
+    address: Address
+    logoUrl: string | null
+  }
 }) => {
   const [value, setValue] = useState('')
   const debouncedValue = useDebounce(value, 300)
@@ -135,65 +140,58 @@ export const InputAmountSelectToken = ({
           </Text>
         )}
       </Flex>
-      {includeInputField && (
-        <TextInput
-          value={mode === 'borrow-computed' ? undefined : value} // visually it shouldnt look like enabled input, but rather use placeholder vlaue
-          fontSize={32}
-          ml={-15}
-          fontWeight={'300'}
-          onChangeText={handleChangeText}
-          placeholder={placeholderValue}
-          placeholderTextColor={'$neutral2'}
-          color={'$neutral1'}
-          keyboardType="numeric"
-          disabled={disabled}
-        />
-      )}
-      {includeInputField && (
-        <Text variant="subheading2" color="$neutral2">
-          ${inputPrice}
-        </Text>
-      )}
-      <Flex
-        position="absolute"
-        right="$spacing16"
-        top={includeInputField ? '55%' : '50%'}
-        left={includeInputField ? 'unset' : '3.5rem'}
-        transform={[{ translateY: includeInputField ? '-50%' : '0%' }]}
-      >
-        <Button
-          backgroundColor={!selectedToken ? '$accent1' : '$surface1'}
-          borderRadius="$rounded20"
-          borderColor={!selectedToken ? '$accent1' : '$surface3'}
-          borderWidth="$spacing1"
-          px="$spacing8"
-          py="$spacing16"
-          pressStyle={{
-            backgroundColor: 'rgb(192, 92, 152)',
-          }}
-          hoverStyle={{
-            backgroundColor: 'rgb(192, 92, 152)',
-          }}
-          animation="quick"
-          size="medium"
-          isDisabled={!includeInputField && disabled}
-          onPress={onOpenTokenSelector}
-          width={selectedToken ? '8rem' : '100%'}
-        >
-          {!selectedToken ? (
-            <Text variant="buttonLabel2" color="$neutral1">
-              Select token
-            </Text>
+      <Flex row alignItems="center" justifyContent="flex-start" width="100%" gap="$spacing24">
+        <Flex flexDirection="row" alignItems="center" gap="$spacing8" width="max-content">
+          {!firstPredefined && !selectedToken ? (
+            <Text>---</Text>
           ) : (
-            <Flex flexDirection="row" alignItems="center" gap="$spacing8">
-              <TokenLogo size={28} url={selectedToken.logoUrl} />
+            <>
+              <TokenLogo size={28} url={firstPredefined?.logoUrl} />
               <Text variant="buttonLabel2" color="$neutral1">
-                {selectedToken.currency.symbol}
+                {firstPredefined?.symbol}
               </Text>
-            </Flex>
+            </>
           )}
-          <RotatableChevron color="$neutral1" direction="down" height="$spacing16" scale={1.5} />
-        </Button>
+        </Flex>
+        <Text>{' / '}</Text>
+        <Flex width={'max-content'} justifyContent="center" alignItems="center">
+          {!firstPredefined && '---'}
+          {firstPredefined && (
+            <Button
+              backgroundColor={!firstPredefined ? '$surface2Hovered' : !selectedToken ? '$accent1' : '$surface1'}
+              borderRadius="$rounded20"
+              borderColor={!firstPredefined ? '$surface1Hovered' : !selectedToken ? '$accent1' : '$surface3'}
+              borderWidth="$spacing1"
+              px="$spacing4"
+              py="$spacing16"
+              pressStyle={{
+                backgroundColor: 'rgb(192, 92, 152)',
+              }}
+              hoverStyle={{
+                backgroundColor: 'rgb(192, 92, 152)',
+              }}
+              animation="quick"
+              size="medium"
+              isDisabled={disabled || !firstPredefined}
+              onPress={onOpenTokenSelector}
+              width={'max-content'}
+            >
+              {!selectedToken ? (
+                <Text variant="buttonLabel2" color="$neutral1">
+                  Select token
+                </Text>
+              ) : (
+                <Flex flexDirection="row" alignItems="center" gap="$spacing8">
+                  <TokenLogo size={28} url={selectedToken?.logoUrl} />
+                  <Text variant="buttonLabel2" color="$neutral1">
+                    {selectedToken?.currency.symbol}
+                  </Text>
+                </Flex>
+              )}
+              <RotatableChevron color="$neutral1" direction="down" height="$spacing16" scale={1.5} />
+            </Button>
+          )}
+        </Flex>
       </Flex>
     </Flex>
   )

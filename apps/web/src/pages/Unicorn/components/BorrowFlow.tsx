@@ -73,30 +73,26 @@ export const BorrowFlow = ({
           selectedPool={selectedPool as PoolData}
         />
       </Flex>
-      {selectedPool && (
-        <InputAmountSelectToken
-          label="Borrow"
-          onChangeText={(value) => setAssetInputValue(value)}
-          onOpenTokenSelector={
-            selectedProposal
-              ? () => {}
-              : () => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })
-          }
-          selectedToken={selectedAsset as CurrencyInfo}
-          disabled
-          mode="borrow-computed"
+      <InputAmountSelectToken
+        label="Borrow"
+        onChangeText={(value) => setAssetInputValue(value)}
+        onOpenTokenSelector={
+          selectedProposal
+            ? () => {}
+            : () => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })
+        }
+        selectedToken={selectedAsset as CurrencyInfo}
+        disabled
+        mode="borrow-computed"
+      />
+      <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
+        <CustomInputComponent
+          label="Interest (%)"
+          onChangeText={selectedProposal ? () => {} : (value) => setInterestRate(Number(value))}
+          disabled={!!selectedProposal}
+          fixedValue={selectedProposal ? `${Number(selectedProposal?.apr) / 1000}%` : undefined}
         />
-      )}
-      {selectedAsset && (
-        <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
-          <CustomInputComponent
-            label="Interest (%)"
-            onChangeText={selectedProposal ? () => {} : (value) => setInterestRate(Number(value))}
-            disabled={!!selectedProposal}
-            fixedValue={selectedProposal ? `${Number(selectedProposal?.apr) / 1000}%` : undefined}
-          />
-        </Flex>
-      )}
+      </Flex>
       {shouldShowActionButton ? (
         <AcceptProposalTermsTable
           terms={[

@@ -107,8 +107,8 @@ const LendingDialog = () => {
   const shouldShowOffers = useMemo(() => {
     if (![APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab)) return false
 
-    if (selectedAppTab === APP_TABS.LEND && selectedAsset && !isOffersClosed) return true
-    if (selectedAppTab === APP_TABS.BORROW && selectedPool && !isOffersClosed) return true
+    if (selectedAppTab === APP_TABS.LEND && selectedAsset && assetInputValue && !isOffersClosed) return true
+    if (selectedAppTab === APP_TABS.BORROW && selectedPool && selectedAsset && !isOffersClosed) return true
 
     return false
   }, [selectedAppTab, selectedAsset, selectedPool, isOffersClosed, assetInputValue])
@@ -148,7 +148,15 @@ const LendingDialog = () => {
         size="large"
       />
       <Flex grow gap="$spacing8" justifyContent="space-between">
-        <Flex flexDirection="row" gap="$spacing8" width={'100%'} height={'100vh'}>
+        <Flex
+          flexDirection="row"
+          gap="$spacing8"
+          width={'100%'}
+          height={'100vh'}
+          backgroundColor="$surface2"
+          p="$spacing16"
+          borderRadius="$rounded12"
+        >
           <Flex
             animation="quick"
             enterStyle={{ opacity: 0 }}
