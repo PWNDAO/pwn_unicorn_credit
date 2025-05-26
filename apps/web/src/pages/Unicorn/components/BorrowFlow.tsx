@@ -74,7 +74,7 @@ export const BorrowFlow = ({
         />
       </Flex>
       <InputAmountSelectToken
-        label="Borrow"
+        label="I want to borrow ..."
         onChangeText={(value) => setAssetInputValue(value)}
         onOpenTokenSelector={
           selectedProposal
@@ -87,7 +87,7 @@ export const BorrowFlow = ({
       />
       <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
         <CustomInputComponent
-          label="Interest (%)"
+          label="Interest I'll pay for it ..."
           onChangeText={selectedProposal ? () => {} : (value) => setInterestRate(Number(value))}
           disabled={!!selectedProposal}
           fixedValue={selectedProposal ? `${Number(selectedProposal?.apr) / 1000}%` : undefined}
@@ -96,8 +96,9 @@ export const BorrowFlow = ({
       {shouldShowActionButton ? (
         <AcceptProposalTermsTable
           terms={[
-            { label: 'Loan-to-Value', value: `${LOAN_TO_VALUE_PERCENT * 100}%` },
-            { label: 'Duration', value: `${DEFAULT_DURATION_DAYS} days` },
+            { label: 'Borrowing to Collateral Ratio', value: `${LOAN_TO_VALUE_PERCENT * 100}%` },
+            { label: 'Loan Duration', value: `${DEFAULT_DURATION_DAYS} days` },
+            { label: 'Estimated gas fee', value: `~ $${(Math.random() * 0.08 + 0.02).toFixed(2)}`}
           ]}
         />
       ) : null}

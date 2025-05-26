@@ -52,7 +52,7 @@ export const LendFlow = ({
   return (
     <Flex flexDirection="column" gap="$spacing16" width={'30rem'}>
       <InputAmountSelectToken
-        label="Lend"
+        label="I want to lend ..."
         onChangeText={selectedProposal ? () => {} : (value) => setAssetInputValue(value)}
         onOpenTokenSelector={
           selectedProposal
@@ -69,7 +69,7 @@ export const LendFlow = ({
       />
       <Flex flexDirection="row" gap="$spacing16" width={'30rem'} alignItems="center" justifyContent="center">
         <InputLpPairTokens
-          label="Liquidity Pool Pair"
+          label="Collateral required to accept ..."
           onChangeText={() => {}}
           onOpenTokenSelector={
             selectedProposal
@@ -89,7 +89,7 @@ export const LendFlow = ({
         />
       </Flex>
       <CustomInputComponent
-        label="Interest (%)"
+        label="I want to earn ... (%)"
         onChangeText={selectedProposal ? () => {} : (value) => setInterestRate(Number(value))}
         disabled={!!selectedProposal}
         fixedValue={selectedProposal ? `${Number(selectedProposal?.apr) / 1000}%` : undefined}
@@ -97,8 +97,9 @@ export const LendFlow = ({
       {shouldShowActionButton ? (
         <AcceptProposalTermsTable
           terms={[
-            { label: 'Loan-to-Value', value: `${LOAN_TO_VALUE_PERCENT * 100}%` },
-            { label: 'Duration', value: `${DEFAULT_DURATION_DAYS} days` },
+            { label: 'Lending to Collateral Ratio', value: `${LOAN_TO_VALUE_PERCENT * 100}%` },
+            { label: 'Loan Duration', value: `${DEFAULT_DURATION_DAYS} days` },
+            { label: 'Estimated gas fee', value: `~ $${(Math.random() * 0.08 + 0.02).toFixed(2)}`}
           ]}
         />
       ) : null}

@@ -104,13 +104,13 @@ export const AvailableOffersCards = ({
     <Flex
       backgroundColor="$surface1"
       width="25rem"
-      maxHeight="30rem"
+      maxHeight="70vh"
       flex={1}
       borderRadius="$rounded16"
       overflow="hidden"
     >
       <Text variant="subheading2" color="$neutral2" px="$spacing16" py="$spacing16">
-        Accept Now
+        Instant Liquidity To Accept
       </Text>
       <Flex flexDirection="column" gap="$spacing32" px="$spacing16" py="$spacing16" overflow="scroll" height="100%">
         {proposals
