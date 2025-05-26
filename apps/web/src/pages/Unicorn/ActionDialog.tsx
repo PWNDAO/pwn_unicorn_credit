@@ -125,6 +125,11 @@ const LendingDialog = () => {
     return []
   }, [selectedAppTab, getAssetsByPoolSelected, getAssetsByPriceFeedExists])
 
+  const getHooksOrNothing = useMemo(() => {
+    if (selectedAppTab === APP_TABS.LEND && selectionModalState.mode === SelectionModalMode.ASSET) return mockHooks
+    return undefined
+  }, [selectedAppTab, selectionModalState.mode])
+
   return (
     <Flex
       width={'$full'}
@@ -217,7 +222,7 @@ const LendingDialog = () => {
           isModalOpen={selectionModalState.isOpen}
           variation={whichVariationOfTokenSelectorModalToUse}
           predefinedAssets={whichPredefinedAssetsToUse}
-          hooks={selectedAppTab === APP_TABS.LEND ? mockHooks : undefined}
+          hooks={getHooksOrNothing}
           currencyField={
             selectionModalState.mode === SelectionModalMode.POOL ? CurrencyField.INPUT : CurrencyField.OUTPUT
           }
