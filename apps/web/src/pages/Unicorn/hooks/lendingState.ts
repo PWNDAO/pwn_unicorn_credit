@@ -139,6 +139,7 @@ export const useLendingState = () => {
 
   const handleCreateLoan = async (proposal: any) => {
     try {
+      if (!walletClient) throw new Error('No wallet')
       const signature = await walletClient?.signMessage({
         message: 'You will be creating the request in here, in your wallet.',
       })

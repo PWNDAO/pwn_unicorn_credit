@@ -99,7 +99,7 @@ export const LendFlow = ({
           terms={[
             { label: 'Lending to Collateral Ratio', value: `${LOAN_TO_VALUE_PERCENT * 100}%` },
             { label: 'Loan Duration', value: `${DEFAULT_DURATION_DAYS} days` },
-            { label: 'Estimated gas fee', value: `~ $${(Math.random() * 0.08 + 0.02).toFixed(2)}`}
+            { label: 'Estimated gas fee', value: `~ $${(Math.random() * 0.08 + 0.02).toFixed(2)}` },
           ]}
         />
       ) : null}

@@ -152,7 +152,6 @@ const LendingDialog = () => {
           flexDirection="row"
           gap="$spacing16"
           width={'100%'}
-          height={'100vh'}
           backgroundColor="$surface2"
           p="$spacing16"
           borderRadius="$rounded12"
@@ -217,13 +216,13 @@ const LendingDialog = () => {
             {selectedAppTab === APP_TABS.MY_BORROWING && <MyBorrowing />}
           </Flex>
           {shouldShowOffers && (
-              <AvailableOffersCards
-                creditAmount={parseUnits(assetInputValue, selectedAsset?.currency.decimals ?? 0)}
-                ltv={ltv ? ltv * 1000 : undefined}
-                interestRate={interestRate ? interestRate * 1000 : undefined}
-                mode={selectedAppTab === APP_TABS.BORROW ? 'borrow' : selectedAppTab === APP_TABS.LEND ? 'lend' : 'all'}
-                handleAcceptProposal={handleOnSelectAcceptProposal}
-              />
+            <AvailableOffersCards
+              creditAmount={parseUnits(assetInputValue, selectedAsset?.currency.decimals ?? 0)}
+              ltv={ltv ? ltv * 1000 : undefined}
+              interestRate={interestRate ? interestRate * 1000 : undefined}
+              mode={selectedAppTab === APP_TABS.BORROW ? 'borrow' : selectedAppTab === APP_TABS.LEND ? 'lend' : 'all'}
+              handleAcceptProposal={handleOnSelectAcceptProposal}
+            />
           )}
         </Flex>
         <TokenSelectorModal
