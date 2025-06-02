@@ -3,7 +3,7 @@ import { useAccount } from 'hooks/useAccount'
 import { useEffect, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { MultichainContextProvider } from 'state/multichain/MultichainContext'
-import { Button, Flex, SegmentedControl, SegmentedControlOption, Text } from 'ui/src'
+import { Button, Flex, SegmentedControl, SegmentedControlOption, Text, useMedia } from 'ui/src'
 import { RotatableChevron } from 'ui/src/components/icons/RotatableChevron'
 import { TokenSelectorModal, TokenSelectorVariation } from 'uniswap/src/components/TokenSelector/TokenSelector'
 import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
@@ -53,6 +53,8 @@ const LendingDialog = () => {
     handleOnClickCloseChevron,
     handleOnSelectAcceptProposal,
   } = useLendingContext()
+
+  const media = useMedia()
 
   const whichTab = useMemo(() => {
     if (pathname === '/borrow') return APP_TABS.BORROW
@@ -142,7 +144,7 @@ const LendingDialog = () => {
       />
       <Flex grow gap="$spacing8" justifyContent="space-between" width="$full">
         <Flex
-          flexDirection="row"
+          flexDirection={media.xl ? 'column' : 'row'}
           gap="$spacing16"
           width={'100%'}
           backgroundColor={[APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab) ? '$surface2' : 'transparent'}
