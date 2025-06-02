@@ -50,7 +50,7 @@ export const LendFlow = ({
   }, [selectedAsset, selectedAsset2, isOffersClosed, selectedProposal, interestRate, assetInputValue])
 
   return (
-    <Flex flexDirection="column" gap="$spacing16" width={'30rem'}>
+    <Flex flexDirection="column" gap="$spacing16" width={'$full'}>
       <InputAmountSelectToken
         label="I want to lend ..."
         onChangeText={selectedProposal ? () => {} : (value) => setAssetInputValue(value)}
@@ -67,7 +67,7 @@ export const LendFlow = ({
             : undefined
         }
       />
-      <Flex flexDirection="row" gap="$spacing16" width={'30rem'} alignItems="center" justifyContent="center">
+      <Flex flexDirection="row" gap="$spacing16" alignItems="center" justifyContent="center" width={'$full'}>
         <InputLpPairTokens
           label="Collateral required to accept ..."
           onChangeText={() => {}}

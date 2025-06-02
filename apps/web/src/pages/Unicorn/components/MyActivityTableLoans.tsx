@@ -1,4 +1,4 @@
-import { Button, Flex, Text } from 'ui/src'
+import { Button, Flex, Text, useMedia } from 'ui/src'
 
 interface MyActivityTableProps {
   header: 'Offers' | 'Requests' | 'Loans'
@@ -18,8 +18,9 @@ const timeLeft = (end: number) => {
 
 export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTableProps) => {
   const isBorrow = mode === 'borrow'
+  const media = useMedia()
   return (
-    <Flex width="100%" justifyContent="center" alignItems="center">
+    <Flex width="$full">
       <Flex backgroundColor="$surface1" borderRadius="$rounded16" overflow="hidden" height="60vh" flex={1} width="100%">
         <Text variant="subheading2" color="$neutral2" px="$spacing16" py="$spacing16">
           {header}
@@ -49,6 +50,7 @@ export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTablePro
                   justifyContent="center"
                   alignItems="stretch"
                   gap="$spacing8"
+                  minWidth={'20rem'}
                 >
                   {/* Row 1: Offering/Asking for/Lent/Borrowed ... amount symbol */}
                   <Flex flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">

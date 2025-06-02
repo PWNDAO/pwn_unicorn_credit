@@ -20,8 +20,8 @@ const timeLeft = (end: number) => {
 export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivityTableProps) => {
   const isBorrow = mode === 'borrow'
   return (
-    <Flex width="100%" justifyContent="center" alignItems="center">
-      <Flex backgroundColor="$surface1" borderRadius="$rounded16" overflow="hidden" height="60vh" flex={1} width="100%">
+    <Flex width={'$full'}>
+      <Flex backgroundColor="$surface1" borderRadius="$rounded16" overflow="hidden" maxHeight={'60vh'} width={'$full'}>
         <Text variant="subheading2" color="$neutral2" px="$spacing16" py="$spacing16">
           {header}
         </Text>
@@ -50,6 +50,7 @@ export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivity
                   justifyContent="center"
                   alignItems="stretch"
                   gap="$spacing8"
+                  minWidth={'20rem'}
                 >
                   <Flex flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
                     <Text color="$neutral3" variant="body2">
