@@ -192,7 +192,8 @@ export const InputAmountSelectToken = ({
               </Text>
             </Flex>
           )}
-          <RotatableChevron color="$neutral1" direction="down" height="$spacing16" scale={1.5} />
+          {!disabled ||
+            (!selectedToken && <RotatableChevron color="$neutral1" direction="down" height="$spacing16" scale={1.5} />)}
         </Button>
       </Flex>
     </Flex>

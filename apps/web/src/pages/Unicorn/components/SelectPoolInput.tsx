@@ -6,9 +6,11 @@ import { PoolData, formatNumberWithSuffix } from 'uniswap/src/components/TokenSe
 export const SelectPoolInput = ({
   selectedPool,
   onOpenTokenSelector,
+  disabled = false,
 }: {
   selectedPool: PoolData | null
   onOpenTokenSelector: () => void
+  disabled?: boolean
 }) => {
   const handleOpenTokenSelector = () => {
     onOpenTokenSelector()
@@ -31,7 +33,7 @@ export const SelectPoolInput = ({
         I'll use this LP as collateral ...
       </Text>
       {!selectedPool ? (
-        <Flex centered width={'max-content'}>
+        <Flex centered width={'$full'}>
           <Button
             backgroundColor="$accent1"
             borderRadius="$rounded20"
@@ -45,12 +47,13 @@ export const SelectPoolInput = ({
             }}
             animation="quick"
             size="large"
+            isDisabled={disabled}
             onPress={handleOpenTokenSelector}
           >
             <Text variant="buttonLabel1" color="$sporeWhite">
               Select Your Uniswap V3 Position
             </Text>
-            <RotatableChevron color="$neutral1" direction="down" height="$spacing24" />
+            {!disabled && <RotatableChevron color="$neutral1" direction="down" height="$spacing24" />}
           </Button>
         </Flex>
       ) : (
@@ -59,15 +62,24 @@ export const SelectPoolInput = ({
           px="$spacing8"
           onPress={handleOpenTokenSelector}
           pressStyle={{
-            backgroundColor: 'rgb(35, 33, 34)',
+            backgroundColor: !disabled ? 'rgb(35, 33, 34)' : 'transparent',
           }}
           hoverStyle={{
-            backgroundColor: 'rgb(35, 33, 34)',
+            backgroundColor: !disabled ? 'rgb(35, 33, 34)' : 'transparent',
           }}
           borderRadius={16}
+          width={'$full'}
+          disabled={disabled}
         >
-          <Flex flexDirection="column" justifyContent="space-between" alignContent="stretch" height={'100%'} mt={-10}>
-            <Flex row gap="$spacing8" alignItems="center">
+          <Flex
+            flexDirection="column"
+            justifyContent="space-between"
+            alignContent="stretch"
+            height={'100%'}
+            mt={-10}
+            width={'$full'}
+          >
+            <Flex row gap="$spacing8" alignItems="center" width={'$full'}>
               <Flex row gap="$spacing4" alignItems="center">
                 <TokenLogo
                   size={32}
@@ -93,10 +105,10 @@ export const SelectPoolInput = ({
                   {selectedPool.tokens.token1.symbol}
                 </Text>
               </Flex>
-              <RotatableChevron color="$neutral1" direction="down" height="$spacing24" />
+              {!disabled && <RotatableChevron color="$neutral1" direction="down" height="$spacing24" />}
             </Flex>
           </Flex>
-          <Flex row justifyContent="space-between" alignItems="center">
+          <Flex row justifyContent="space-between" alignItems="center" width={'$full'}>
             <Text variant="body1" color="$neutral2">
               ${formatNumberWithSuffix(selectedPool.totalUsdValue)}
             </Text>

@@ -131,14 +131,7 @@ const LendingDialog = () => {
   }, [selectedAppTab, selectionModalState.mode])
 
   return (
-    <Flex
-      width={'$full'}
-      minWidth={'700px'}
-      maxWidth={'$full'}
-      gap="$spacing8"
-      flexDirection="column"
-      alignItems="center"
-    >
+    <Flex width={'$full'} maxWidth={'$full'} gap="$spacing8" flexDirection="column" alignItems="center">
       <SegmentedControl
         options={tabs}
         disabled={false}
@@ -147,12 +140,12 @@ const LendingDialog = () => {
         outlined={false}
         size="large"
       />
-      <Flex grow gap="$spacing8" justifyContent="space-between">
+      <Flex grow gap="$spacing8" justifyContent="space-between" width="$full">
         <Flex
           flexDirection="row"
           gap="$spacing16"
           width={'100%'}
-          backgroundColor="$surface2"
+          backgroundColor={[APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab) ? '$surface2' : 'transparent'}
           p="$spacing16"
           borderRadius="$rounded12"
         >
@@ -162,6 +155,7 @@ const LendingDialog = () => {
             exitStyle={{ opacity: 0 }}
             gap="$spacing16"
             alignItems="center"
+            width="$full"
           >
             {shouldShowCloseOffersChevron && (
               <Button

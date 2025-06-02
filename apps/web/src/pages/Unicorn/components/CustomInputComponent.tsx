@@ -56,7 +56,7 @@ export const CustomInputComponent = ({
         onChangeText={handleChangeText}
         placeholder={fixedValue ?? '0'}
         placeholderTextColor={'$neutral2'}
-        color={'$neutral1'}
+        color={fixedValue ? '$neutral2' : '$neutral1'}
         keyboardType="numeric"
         disabled={disabled}
       />

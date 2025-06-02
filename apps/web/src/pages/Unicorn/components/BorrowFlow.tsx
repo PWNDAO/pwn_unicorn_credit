@@ -61,9 +61,11 @@ export const BorrowFlow = ({
     )
   }, [selectedPool, selectedAsset, isOffersClosed, selectedProposal, interestRate])
 
+  const shouldInputBeDisabled = !!selectedProposal || !!isOffersClosed
+
   return (
-    <>
-      <Flex flexDirection="column" gap="$spacing16" width={'30rem'}>
+    <Flex width={'100%'} gap={'$spacing16'}>
+      <Flex flexDirection="column" gap="$spacing16" width={'$full'}>
         <SelectPoolInput
           onOpenTokenSelector={
             selectedProposal
@@ -71,13 +73,14 @@ export const BorrowFlow = ({
               : () => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.POOL })
           }
           selectedPool={selectedPool as PoolData}
+          disabled={shouldInputBeDisabled}
         />
       </Flex>
       <InputAmountSelectToken
         label="I want to borrow ..."
         onChangeText={(value) => setAssetInputValue(value)}
         onOpenTokenSelector={
-          selectedProposal
+          selectedProposal || isOffersClosed
             ? () => {}
             : () => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })
         }
@@ -85,7 +88,7 @@ export const BorrowFlow = ({
         disabled
         mode="borrow-computed"
       />
-      <Flex flexDirection="row" gap="$spacing16" width={'30rem'}>
+      <Flex flexDirection="row" gap="$spacing16" width={'$full'}>
         <CustomInputComponent
           label="Interest I'll pay for it ..."
           onChangeText={selectedProposal ? () => {} : (value) => setInterestRate(Number(value))}
@@ -108,6 +111,6 @@ export const BorrowFlow = ({
           onPress={selectedProposal ? () => handleCreateLoan(selectedProposal as SelectedProposal) : undefined}
         />
       ) : null}
-    </>
+    </Flex>
   )
 }

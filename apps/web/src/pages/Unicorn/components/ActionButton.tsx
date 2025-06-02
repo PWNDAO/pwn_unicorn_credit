@@ -26,7 +26,6 @@ export const ActionButton = ({ label, onPress }: { label?: string; onPress?: () 
       width="max-content"
       alignSelf="center"
       justifyContent="center"
-      mt={50}
     >
       <Button
         backgroundColor="$accent1"
