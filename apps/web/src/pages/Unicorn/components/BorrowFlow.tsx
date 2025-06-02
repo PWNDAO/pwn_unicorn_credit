@@ -61,7 +61,7 @@ export const BorrowFlow = ({
     )
   }, [selectedPool, selectedAsset, isOffersClosed, selectedProposal, interestRate])
 
-  const shouldInputBeDisabled = !!selectedProposal || !!isOffersClosed
+  const shouldInputBeDisabled = !!selectedProposal
 
   return (
     <Flex width={'100%'} gap={'$spacing16'}>
@@ -80,12 +80,12 @@ export const BorrowFlow = ({
         label="I want to borrow ..."
         onChangeText={(value) => setAssetInputValue(value)}
         onOpenTokenSelector={
-          selectedProposal || isOffersClosed
+          selectedProposal
             ? () => {}
             : () => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })
         }
         selectedToken={selectedAsset as CurrencyInfo}
-        disabled
+        disabled={shouldInputBeDisabled}
         mode="borrow-computed"
       />
       <Flex flexDirection="row" gap="$spacing16" width={'$full'}>

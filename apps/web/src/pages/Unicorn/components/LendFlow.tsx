@@ -86,6 +86,7 @@ export const LendFlow = ({
                 }
               : null
           }
+          disabled={!!selectedProposal}
         />
       </Flex>
       <CustomInputComponent
