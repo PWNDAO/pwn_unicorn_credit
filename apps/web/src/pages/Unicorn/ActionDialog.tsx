@@ -132,6 +132,8 @@ const LendingDialog = () => {
     return undefined
   }, [selectedAppTab, selectionModalState.mode])
 
+  const rightOffset = media.sm ? -10 : -60
+
   return (
     <Flex width={'$full'} maxWidth={'$full'} gap="$spacing8" flexDirection="column" alignItems="center">
       <SegmentedControl
@@ -163,7 +165,7 @@ const LendingDialog = () => {
               <Button
                 position="absolute"
                 top={-10}
-                right={-60}
+                right={rightOffset}
                 backgroundColor="$surface1"
                 borderColor="$surface3"
                 borderRadius="$rounded12"

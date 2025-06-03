@@ -107,7 +107,7 @@ export const AvailableOffersCards = ({
       maxHeight="70vh"
       flex={1}
       borderRadius="$rounded16"
-      overflow="hidden"
+      overflow="scroll"
     >
       <Text variant="subheading2" color="$neutral2" px="$spacing16" py="$spacing16">
         Instant Liquidity To Accept
