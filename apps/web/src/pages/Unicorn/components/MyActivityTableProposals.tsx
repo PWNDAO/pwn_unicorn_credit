@@ -21,7 +21,7 @@ export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivity
   const isBorrow = mode === 'borrow'
   return (
     <Flex width={'$full'}>
-      <Flex backgroundColor="$surface1" borderRadius="$rounded16" overflow="hidden" maxHeight={'60vh'} width={'$full'}>
+      <Flex backgroundColor="$surface1" borderRadius="$rounded16" overflow="hidden" height={'60vh'} width={'$full'}>
         <Text variant="subheading2" color="$neutral2" px="$spacing16" py="$spacing16">
           {header}
         </Text>
