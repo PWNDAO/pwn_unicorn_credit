@@ -7,9 +7,9 @@ import { MyActivityTableProposals } from './MyActivityTableProposals'
 export const MyLending = () => {
   const media = useMedia()
   return (
-    <Flex justifyContent="center" alignItems="center" width={'$full'}>
+    <Flex justifyContent="center" alignItems="center" width={'100%'} maxWidth={'$full'}>
       <Flex
-        flexDirection={media.xl ? 'column' : 'row'}
+        flexDirection={media.lg ? 'column' : 'row'}
         gap="$spacing16"
         width={'$full'}
         justifyContent="center"

@@ -101,14 +101,7 @@ export const AvailableOffersCards = ({
   }
 
   return (
-    <Flex
-      backgroundColor="$surface1"
-      width="25rem"
-      maxHeight="70vh"
-      flex={1}
-      borderRadius="$rounded16"
-      overflow="scroll"
-    >
+    <Flex backgroundColor="$surface1" width="$full" height="70vh" flex={1} borderRadius="$rounded16" overflow="hidden">
       <Text variant="subheading2" color="$neutral2" px="$spacing16" py="$spacing16">
         Instant Liquidity To Accept
       </Text>

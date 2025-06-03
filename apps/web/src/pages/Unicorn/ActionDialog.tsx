@@ -135,16 +135,30 @@ const LendingDialog = () => {
   const rightOffset = media.sm ? -10 : -60
 
   return (
-    <Flex width={'$full'} maxWidth={'$full'} gap="$spacing8" flexDirection="column" alignItems="center">
+    <Flex
+      width={'$full'}
+      maxWidth={'$full'}
+      gap="$spacing8"
+      flexDirection="column"
+      alignItems="center"
+      overflow="hidden"
+    >
       <SegmentedControl
         options={tabs}
         disabled={false}
         selectedOption={selectedAppTab}
         onSelectOption={(option) => handleOnChangeTab(option as APP_TABS)}
         outlined={false}
-        size="large"
+        size={media.sm ? 'small' : 'large'}
       />
-      <Flex grow gap="$spacing8" justifyContent="space-between" width="$full">
+      <Flex
+        grow
+        gap="$spacing8"
+        justifyContent="space-between"
+        width={media.sm ? '90vw' : '100%'}
+        height="85vh"
+        overflow="scroll"
+      >
         <Flex
           flexDirection={media.xl ? 'column' : 'row'}
           gap="$spacing16"

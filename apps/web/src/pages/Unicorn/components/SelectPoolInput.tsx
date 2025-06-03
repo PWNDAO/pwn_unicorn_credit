@@ -51,7 +51,7 @@ export const SelectPoolInput = ({
             onPress={handleOpenTokenSelector}
           >
             <Text variant="buttonLabel1" color="$sporeWhite">
-              Select Your Uniswap V3 Position
+              Select LP Position
             </Text>
             {!disabled && <RotatableChevron color="$neutral1" direction="down" height="$spacing24" />}
           </Button>

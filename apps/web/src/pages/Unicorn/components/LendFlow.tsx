@@ -50,7 +50,7 @@ export const LendFlow = ({
   }, [selectedAsset, selectedAsset2, isOffersClosed, selectedProposal, interestRate, assetInputValue])
 
   return (
-    <Flex flexDirection="column" gap="$spacing16" width={'$full'}>
+    <Flex flexDirection="column" gap="$spacing16" width={'100%'} maxWidth={'$full'}>
       <InputAmountSelectToken
         label="I want to lend ..."
         onChangeText={selectedProposal ? () => {} : (value) => setAssetInputValue(value)}

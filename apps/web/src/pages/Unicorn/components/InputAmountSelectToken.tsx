@@ -124,6 +124,7 @@ export const InputAmountSelectToken = ({
       height={'max-content'}
       minHeight={'7rem'}
       flexShrink={'unset'}
+      maxWidth={'$full'}
     >
       <Flex row justifyContent="space-between" gap={8} mb={8}>
         <Text color="$neutral2" variant="subheading2">
@@ -147,6 +148,7 @@ export const InputAmountSelectToken = ({
           color={'$neutral1'}
           keyboardType="numeric"
           disabled={disabled}
+          width={'$full'}
         />
       )}
       {includeInputField && (

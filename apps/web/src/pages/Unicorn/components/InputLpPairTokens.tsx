@@ -140,7 +140,7 @@ export const InputLpPairTokens = ({
           </Text>
         )}
       </Flex>
-      <Flex row alignItems="center" justifyContent="flex-start" width="100%" gap="$spacing24">
+      <Flex row alignItems="center" justifyContent="flex-start" width="100%" gap="$spacing6">
         <Flex flexDirection="row" alignItems="center" gap="$spacing8" width="max-content">
           {!firstPredefined && !selectedToken ? (
             <Text>---</Text>
@@ -153,7 +153,9 @@ export const InputLpPairTokens = ({
             </>
           )}
         </Flex>
-        <Text>{' / '}</Text>
+        <Flex width={'max-content'} justifyContent="center" alignItems="center">
+          <Text>{' / '}</Text>
+        </Flex>
         <Flex width={'max-content'} justifyContent="center" alignItems="center">
           {!firstPredefined && '---'}
           {firstPredefined && (
@@ -177,7 +179,7 @@ export const InputLpPairTokens = ({
               width={'max-content'}
             >
               {!selectedToken ? (
-                <Text variant="buttonLabel2" color="$neutral1">
+                <Text variant="buttonLabel3" color="$neutral1">
                   Select token
                 </Text>
               ) : (

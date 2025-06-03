@@ -41,7 +41,7 @@ export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTablePro
           py="$spacing16"
           overflow="scroll"
           height="100%"
-          minWidth={'20rem'}
+          width={media.sm ? '90vw' : '100%'}
         >
           {loans &&
             loans.map((loan, index) => (
@@ -60,6 +60,7 @@ export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTablePro
                   backgroundColor: 'rgb(35, 33, 34)',
                 }}
                 id={`loan-${index * 691234}`}
+                minWidth={media.sm ? '0' : '20rem'}
               >
                 <Flex
                   width="100%"
@@ -68,7 +69,6 @@ export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTablePro
                   justifyContent="center"
                   alignItems="stretch"
                   gap="$spacing8"
-                  minWidth={'20rem'}
                 >
                   {/* Row 1: Offering/Asking for/Lent/Borrowed ... amount symbol */}
                   <Flex flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">

@@ -1,4 +1,4 @@
-import { Button, Flex, Text } from 'ui/src'
+import { Button, Flex, Text, useMedia } from 'ui/src'
 import { formatUnits } from 'viem'
 
 interface MyActivityTableProps {
@@ -19,7 +19,7 @@ const timeLeft = (end: number) => {
 
 export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivityTableProps) => {
   const isBorrow = mode === 'borrow'
-
+  const media = useMedia()
   const mockCancelProposal = (index: number) => {
     const res = window.confirm('Cancel proposal #' + index + '?')
     if (res) {
@@ -42,7 +42,7 @@ export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivity
           py="$spacing16"
           overflow="scroll"
           height="100%"
-          minWidth={'20rem'}
+          width={media.sm ? '90vw' : '100%'}
         >
           {proposals &&
             proposals.map((proposal, index) => (
@@ -61,6 +61,7 @@ export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivity
                   backgroundColor: 'rgb(35, 33, 34)',
                 }}
                 id={`proposal-${index * 691234}`}
+                minWidth={media.sm ? '0' : '20rem'}
               >
                 <Flex
                   width="100%"
@@ -69,7 +70,6 @@ export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivity
                   justifyContent="center"
                   alignItems="stretch"
                   gap="$spacing8"
-                  minWidth={'20rem'}
                 >
                   <Flex flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
                     <Text color="$neutral3" variant="body2">

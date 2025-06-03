@@ -9,7 +9,7 @@ export const MyBorrowing = () => {
   return (
     <Flex width="$full" justifyContent="center" alignItems="center">
       <Flex
-        flexDirection={media.xl ? 'column' : 'row'}
+        flexDirection={media.lg ? 'column' : 'row'}
         gap="$spacing16"
         width="$full"
         justifyContent="center"
