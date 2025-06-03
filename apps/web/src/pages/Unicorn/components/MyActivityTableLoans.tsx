@@ -19,13 +19,30 @@ const timeLeft = (end: number) => {
 export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTableProps) => {
   const isBorrow = mode === 'borrow'
   const media = useMedia()
+  const mockRepayLoan = (index: number) => {
+    const res = window.confirm('Repay loan #' + index + '?')
+    if (res) {
+      const element = document.getElementById(`loan-${index * 691234}`)
+      if (element) {
+        element.parentNode?.removeChild(element)
+      }
+    }
+  }
   return (
     <Flex width="$full">
       <Flex backgroundColor="$surface1" borderRadius="$rounded16" overflow="hidden" height="60vh" flex={1} width="100%">
         <Text variant="subheading2" color="$neutral2" px="$spacing16" py="$spacing16">
           {header}
         </Text>
-        <Flex flexDirection="column" gap="$spacing16" px="$spacing16" py="$spacing16" overflow="scroll" height="100%">
+        <Flex
+          flexDirection="column"
+          gap="$spacing16"
+          px="$spacing16"
+          py="$spacing16"
+          overflow="scroll"
+          height="100%"
+          minWidth={'20rem'}
+        >
           {loans &&
             loans.map((loan, index) => (
               <Flex
@@ -42,6 +59,7 @@ export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTablePro
                 hoverStyle={{
                   backgroundColor: 'rgb(35, 33, 34)',
                 }}
+                id={`loan-${index * 691234}`}
               >
                 <Flex
                   width="100%"
@@ -99,7 +117,7 @@ export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTablePro
                     </Text>
                     <Text color="$neutral1" variant="body2">
                       {header === 'Loans'
-                        ? timeLeft(loan.defaultDate * 1000)
+                        ? timeLeft(Date.now() + Math.floor(Math.random() * 4 * 24 * 60 * 60 * 1000))
                         : loan.expiration
                           ? timeLeft(loan.expiration * 1000)
                           : '—'}
@@ -128,7 +146,7 @@ export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTablePro
                         backgroundColor="$accent1"
                         px="$spacing32"
                         py="$spacing8"
-                        onPress={() => alert(`Repay loan #${loan.id}?`)}
+                        onPress={() => mockRepayLoan(index)}
                         maxWidth={'max-content'}
                       >
                         Repay

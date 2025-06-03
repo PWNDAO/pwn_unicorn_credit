@@ -19,13 +19,31 @@ const timeLeft = (end: number) => {
 
 export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivityTableProps) => {
   const isBorrow = mode === 'borrow'
+
+  const mockCancelProposal = (index: number) => {
+    const res = window.confirm('Cancel proposal #' + index + '?')
+    if (res) {
+      const element = document.getElementById(`proposal-${index * 691234}`)
+      if (element) {
+        element.parentNode?.removeChild(element)
+      }
+    }
+  }
   return (
     <Flex width={'$full'}>
       <Flex backgroundColor="$surface1" borderRadius="$rounded16" overflow="hidden" height={'60vh'} width={'$full'}>
         <Text variant="subheading2" color="$neutral2" px="$spacing16" py="$spacing16">
           {header}
         </Text>
-        <Flex flexDirection="column" gap="$spacing16" px="$spacing16" py="$spacing16" overflow="scroll" height="100%">
+        <Flex
+          flexDirection="column"
+          gap="$spacing16"
+          px="$spacing16"
+          py="$spacing16"
+          overflow="scroll"
+          height="100%"
+          minWidth={'20rem'}
+        >
           {proposals &&
             proposals.map((proposal, index) => (
               <Flex
@@ -42,6 +60,7 @@ export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivity
                 hoverStyle={{
                   backgroundColor: 'rgb(35, 33, 34)',
                 }}
+                id={`proposal-${index * 691234}`}
               >
                 <Flex
                   width="100%"
@@ -95,7 +114,7 @@ export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivity
                       backgroundColor="$accent1"
                       px="$spacing32"
                       py="$spacing8"
-                      onPress={() => alert(`Cancel ${isBorrow ? 'request' : 'offer'} #${proposal.id}?`)}
+                      onPress={() => mockCancelProposal(index)}
                       maxWidth={'max-content'}
                     >
                       Cancel
