@@ -192,9 +192,13 @@ export const InputAmountSelectToken = ({
               </Text>
             </Flex>
           )}
-          {!disabled &&
-            (<RotatableChevron color="$neutral1" direction="down" height="$spacing16" scale={1.5} />)}
+          {!disabled && <RotatableChevron color="$neutral1" direction="down" height="$spacing16" scale={1.5} />}
         </Button>
+        {(selectedToken as any)?.currency?.hook?.protocol && (
+          <Text variant="body3" color="$neutral2" style={{ marginLeft: 'auto' }}>
+            {'from'} {String((selectedToken as any).currency.hook.protocol).replace(/_/g, ' ')}
+          </Text>
+        )}
       </Flex>
     </Flex>
   )

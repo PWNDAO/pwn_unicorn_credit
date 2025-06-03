@@ -8,7 +8,7 @@ import { RotatableChevron } from 'ui/src/components/icons/RotatableChevron'
 import { TokenSelectorModal, TokenSelectorVariation } from 'uniswap/src/components/TokenSelector/TokenSelector'
 import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
 import { TokenSelectorFlow } from 'uniswap/src/components/TokenSelector/types'
-import { Token } from 'uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks'
+import { Currency, Token } from 'uniswap/src/data/graphql/uniswap-data-api/__generated__/types-and-hooks'
 import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
 import { TransactionSettingsContextProvider } from 'uniswap/src/features/transactions/settings/contexts/TransactionSettingsContext'
 import { TransactionSettingKey } from 'uniswap/src/features/transactions/settings/slice'
@@ -22,7 +22,7 @@ import { MyBorrowing } from './components/MyBorrowing'
 import { MyLending } from './components/MyLending'
 import { LendingStateProvider, useLendingContext } from './contexts/LendingContext'
 import { APP_TABS, ModalState, SelectionModalMode } from './hooks/lendingState'
-import { mockHooks } from './mocks/mockHooks'
+import { Hook, mockHooks } from './mocks/mockHooks'
 
 const LendingDialog = () => {
   const navigate = useNavigate()
@@ -235,7 +235,7 @@ const LendingDialog = () => {
           onSelectCurrency={(currency, field, isBridgePair, poolData) => {
             if (!poolData && currency) {
               const [currencySymbol, currencyLogoUrl] = (currency as any)?.symbol?.split('###') ?? []
-              const currencyInfo: CurrencyInfo = {
+              const currencyInfo: CurrencyInfo & { currency: Currency & { hook?: Hook } } = {
                 currency: {
                   address: (currency as unknown as Token)?.address ?? '',
                   decimals: currency?.decimals ?? 0,
@@ -247,7 +247,8 @@ const LendingDialog = () => {
                   wrapped: currency?.wrapped,
                   equals: currency?.equals,
                   sortsBefore: () => false,
-                },
+                  hook: (currency as any)?.hook,
+                } as any,
                 currencyId: field?.toString() ?? '',
                 logoUrl: currencyLogoUrl ?? '',
               }

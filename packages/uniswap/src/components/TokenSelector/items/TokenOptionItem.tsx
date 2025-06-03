@@ -46,7 +46,7 @@ const formatApr = (apr: number) => {
 interface OptionProps {
   option: TokenOption
   showWarnings: boolean
-  onPress: () => void
+  onPress: (hook?: Hook) => void
   showTokenAddress?: boolean
   tokenWarningDismissed: boolean
   quantity: number | null
@@ -91,7 +91,7 @@ function _TokenOptionItem({
     setShowWarningModal(true)
   }, [setShowWarningModal])
 
-  const onPressTokenOption = useCallback(() => {
+  const onPressTokenOption = useCallback((hook?: Hook) => {
     if (showWarnings && shouldShowWarningModalOnPress) {
       // On mobile web we need to wait for the keyboard to hide
       // before showing the modal to avoid height issues
@@ -105,12 +105,12 @@ function _TokenOptionItem({
       return
     }
 
-    onPress()
+    onPress(hook);
   }, [showWarnings, shouldShowWarningModalOnPress, onPress, isKeyboardOpen, handleShowWarningModal])
 
   const onAcceptTokenWarning = useCallback(() => {
     setShowWarningModal(false)
-    onPress()
+    onPress(undefined)
   }, [onPress])
 
   const hooksForThisToken = useMemo(
@@ -131,7 +131,7 @@ function _TokenOptionItem({
         hoverStyle={{ backgroundColor: '$surface1Hovered' }}
         opacity={(showWarnings && severity === WarningSeverity.Blocked) || isUnsupported ? 0.5 : 1}
         width="100%"
-        onPress={onPressTokenOption}
+        onPress={() => onPressTokenOption(undefined)}
       >
         <Flex
           row
@@ -199,7 +199,7 @@ function _TokenOptionItem({
       {
         hooksForThisToken && hooksForThisToken.length > 0 && (
           <Flex width="100%" justifyContent="center" alignItems="center" position='relative'>
-            <Text color="$accent1" fontSize={14} onPress={() => setShowPoolHooks(!showPoolHooks)} pressStyle={{ color: 'white' }} hoverStyle={{ color: 'white', cursor: 'pointer' }}>pool hooks {"(+4)"}</Text>
+            <Text color="$accent1" fontSize={14} onPress={() => setShowPoolHooks(!showPoolHooks)} pressStyle={{ color: 'white' }} hoverStyle={{ color: 'white', cursor: 'pointer' }}>External Protocol Hooks {`(+${hooksForThisToken.length})`}</Text>
             {showPoolHooks && (
               <Flex 
                 flexDirection="column" 
@@ -214,7 +214,7 @@ function _TokenOptionItem({
                 alignItems='center' 
                 backgroundColor='$surface1'
                 width='100%'
-                height={35*hooksForThisToken.length}
+                height={60*hooksForThisToken.length}
                 borderRadius={10}
                 borderWidth={1}
                 borderColor='$surface3'
@@ -222,21 +222,27 @@ function _TokenOptionItem({
                 {hooksForThisToken && hooksForThisToken.length > 0 && hooksForThisToken.map((hook) => (
                   <Flex 
                     key={hook.address} 
-                    row 
-                    alignItems='center' 
+                    row
+                    alignItems='center'
                     justifyContent='space-between'
                     width='100%'
                     px="$spacing16"
-                    gap="$spacing8" 
+                    gap="$spacing8"
                     borderBottomWidth={1} 
                     borderBottomColor='transparent' 
                     hoverStyle={{ cursor: 'pointer', backgroundColor: '$surface2' }}
-                    onPress={onPressTokenOption}
-                    >
-                    <Text fontSize={14} color="$neutral1">{getProtocolName(hook.protocol)}</Text>
-                    <Text fontSize={14} color="$neutral2">{shortenAddress(hook.address, 3, 3)}</Text>
-                    <Text fontSize={14} color="$neutral1">{formatApr(hook.apr)}%</Text>
-                    <Text fontSize={14} color="$neutral1">{(Math.random() * 10000).toFixed(2)}</Text>
+                    onPress={() => onPressTokenOption(hook)}
+                  >
+                    <Flex flexDirection="column" alignItems="flex-start">
+                      <Text fontSize={16} fontWeight="400" color="$neutral1">
+                        {getSymbolDisplayText(currency.symbol)}{' '}
+                        <Text fontSize={14} fontWeight="400" color="$neutral2">
+                          on {getProtocolName(hook.protocol)}
+                        </Text>
+                      </Text>
+                      <Text fontSize={13} color="$neutral3">{shortenAddress(hook.address, 3, 3)}</Text>
+                    </Flex>
+                    <Text fontSize={16} color="$neutral1">{(Math.random() * 10000).toFixed(2)}</Text>
                   </Flex>
                 ))}
               </Flex>

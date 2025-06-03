@@ -169,7 +169,8 @@ export function TokenSelectorContent({
       onSelectCurrency({
         ...currencyInfo.currency,
         symbol: `${currencyInfo.currency.symbol}###${currencyInfo.logoUrl}`,
-      } as Currency, currencyField, isBridgePair)
+        hook: (currencyInfo as any).hook,
+      } as Currency & { hook?: Hook }, currencyField, isBridgePair)
     },
     [flow, page, currencyField, onSelectCurrency, debouncedSearchFilter],
   )

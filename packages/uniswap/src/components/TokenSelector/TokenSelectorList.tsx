@@ -7,6 +7,7 @@ import { ItemRowInfo } from 'uniswap/src/components/lists/TokenSectionBaseList/T
 import { TokenOption, TokenSelectorItemTypes } from 'uniswap/src/components/lists/types'
 import { useEnabledChains } from 'uniswap/src/features/chains/hooks/useEnabledChains'
 import { UniverseChainId } from 'uniswap/src/features/chains/types'
+import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
 import { useLocalizationContext } from 'uniswap/src/features/language/LocalizationContext'
 import { useDismissedTokenWarnings } from 'uniswap/src/features/tokens/slice/hooks'
 import { CurrencyId } from 'uniswap/src/types/currency'
@@ -39,7 +40,7 @@ const TokenOptionItem = memo(function _TokenOptionItem({
 }): JSX.Element {
   const { convertFiatAmountFormatted, formatNumberOrString } = useLocalizationContext()
   const onPress = useCallback(
-    () => onSelectCurrency(tokenOption.currencyInfo, section, index),
+    (hook?: Hook) => onSelectCurrency({...tokenOption.currencyInfo, hook} as unknown as CurrencyInfo, section, index),
     [index, onSelectCurrency, section, tokenOption.currencyInfo],
   )
 
@@ -67,7 +68,7 @@ const TokenOptionItem = memo(function _TokenOptionItem({
       showTokenAddress={showTokenAddress}
       showWarnings={showWarnings}
       tokenWarningDismissed={tokenWarningDismissed}
-      onPress={onPress}
+      onPress={(hook) => onPress(hook)}
       hooks={hooks}
     />
   )
