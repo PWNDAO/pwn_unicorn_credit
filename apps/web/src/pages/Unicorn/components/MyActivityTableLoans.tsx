@@ -125,7 +125,7 @@ export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTablePro
                   </Flex>
                   <Flex flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
                     <Text color="$neutral3" variant="body2">
-                      On-chain
+                      Id
                     </Text>
                     <Text
                       color="$neutral1"
