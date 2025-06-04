@@ -1,12 +1,7 @@
 import { useMenuContent } from 'components/NavBar/CompanyMenu/Content'
-import { DownloadApp } from 'components/NavBar/CompanyMenu/DownloadAppCTA'
 import { MenuLink } from 'components/NavBar/CompanyMenu/MenuDropdown'
-import { LegalAndPrivacyMenu } from 'components/NavBar/LegalAndPrivacyMenu'
 import { NavDropdown } from 'components/NavBar/NavDropdown'
 import { getSettingsViewIndex } from 'components/NavBar/PreferencesMenu'
-import { CurrencySettings } from 'components/NavBar/PreferencesMenu/Currency'
-import { LanguageSettings } from 'components/NavBar/PreferencesMenu/Language'
-import { PreferenceSettings } from 'components/NavBar/PreferencesMenu/Preferences'
 import { PreferencesView } from 'components/NavBar/PreferencesMenu/shared'
 import { useTabsContent } from 'components/NavBar/Tabs/TabsContent'
 import { useTheme } from 'lib/styled-components'
@@ -97,18 +92,6 @@ export function MobileMenuDrawer({ isOpen, closeMenu }: { isOpen: boolean; close
             onValueChange={setOpenSections}
           >
             <Flex gap="$spacing24">
-              <MenuSection title={t('common.app')} collapsible={false}>
-                {tabsContent.map((tab, index) => (
-                  <MenuLink
-                    key={`${tab.title}_${index}}`}
-                    label={tab.title}
-                    href={tab.href}
-                    internal
-                    closeMenu={closeMenu}
-                  />
-                ))}
-              </MenuSection>
-
               {menuContent.map((sectionContent, index) => (
                 <MenuSection key={`${sectionContent.title}_${index}`} title={sectionContent.title}>
                   {sectionContent.items.map(({ label, href, internal }, index) => (
@@ -122,19 +105,9 @@ export function MobileMenuDrawer({ isOpen, closeMenu }: { isOpen: boolean; close
                   ))}
                 </MenuSection>
               ))}
-
-              <MenuSection title={t('common.displaySettings')}>
-                <PreferenceSettings showHeader={false} showThemeLabel={false} setSettingsView={changeView} />
-              </MenuSection>
-
-              <DownloadApp onClick={closeMenu} />
               <Socials iconSize="25px" />
-              {isConversionTrackingEnabled && <LegalAndPrivacyMenu closeMenu={closeMenu} />}
             </Flex>
           </Accordion>
-
-          <LanguageSettings onExitMenu={onExitPreferencesMenu} />
-          <CurrencySettings onExitMenu={onExitPreferencesMenu} />
         </AnimateTransition>
       </Flex>
     </NavDropdown>
