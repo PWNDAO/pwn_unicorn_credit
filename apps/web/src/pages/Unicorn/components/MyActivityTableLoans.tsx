@@ -80,7 +80,7 @@ export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTablePro
                         : header === 'Loans'
                           ? isBorrow
                             ? 'Borrowed'
-                            : 'Lent'
+                            : 'Debt'
                           : isBorrow
                             ? 'Offering to borrow'
                             : 'Offering to lend'}
