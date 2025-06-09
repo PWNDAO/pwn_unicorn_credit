@@ -96,7 +96,7 @@ export const BorrowFlow = ({
           fixedValue={selectedProposal ? `${Number(selectedProposal?.apr) / 1000}%` : undefined}
         />
       </Flex>
-      
+
       <AcceptProposalTermsTable
         terms={[
           { label: 'Borrowing to Collateral Ratio', value: `${LOAN_TO_VALUE_PERCENT * 100}%` },

@@ -132,7 +132,7 @@ const LendingDialog = () => {
     return undefined
   }, [selectedAppTab, selectionModalState.mode])
 
-  const rightOffset = media.sm ? -10 : -60
+  const rightOffset = -10
 
   return (
     <Flex

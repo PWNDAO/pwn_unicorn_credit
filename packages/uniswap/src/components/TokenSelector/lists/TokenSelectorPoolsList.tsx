@@ -225,32 +225,42 @@ const PoolOption = ({ position, onSelectCurrency }: { position: Position, onSele
       animation="quick"
       onPress={handleOnSelect}
     >
-      <Flex flexDirection="column" justifyContent="space-between" alignContent='stretch' height={100}>
+      <Flex flexDirection="column" justifyContent="space-between" alignContent='stretch' height={"max-content"}>
         <Flex row gap="$spacing8" alignItems="center">
           <Flex row gap="$spacing4" alignItems="center">
             <TokenLogo 
               size={32} 
-              url={'https://imgs.search.brave.com/qVfnM06301I6nmM20XJwh7E1dtjKpAU1IA0dllgkXNo/rs:fit:40:40:1:0/g:ce/aHR0cHM6Ly9jb2lu/LWltYWdlcy5jb2lu/Z2Vja28uY29tL2Nv/aW5zL2ltYWdlcy82/MzE5L2xhcmdlL3Vz/ZGMucG5nPzE2OTY1/MDY2OTQ'} 
-            />
+              url={'https://token-repository.dappradar.com/tokens?protocol=ethereum&contract=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&file=logo.png'} 
+              />
             <Text fontSize={16} color="$neutral1">{v3Position.token0?.symbol}</Text>
           </Flex>
           <Text fontSize={16} color="$neutral1">/</Text>
           <Flex row gap="$spacing4" alignItems="center">
             <TokenLogo 
               size={32} 
-              url={'https://token-repository.dappradar.com/tokens?protocol=ethereum&contract=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&file=logo.png'} 
+              url={'https://imgs.search.brave.com/qVfnM06301I6nmM20XJwh7E1dtjKpAU1IA0dllgkXNo/rs:fit:40:40:1:0/g:ce/aHR0cHM6Ly9jb2lu/LWltYWdlcy5jb2lu/Z2Vja28uY29tL2Nv/aW5zL2ltYWdlcy82/MzE5L2xhcmdlL3Vz/ZGMucG5nPzE2OTY1/MDY2OTQ'} 
             />
             <Text fontSize={16} color="$neutral1">{v3Position.token1?.symbol}</Text>
           </Flex>
         </Flex>
       </Flex>
       <Flex row justifyContent="space-between" alignItems="center">
-        <Text variant="body1" color="$neutral2">
-          ${formatNumberWithSuffix(totalUsdValue)}
-        </Text>
-        <Text variant="body2" color="$neutral2">
-          {Number(v3Position.feeTier) / 10_000}%
-        </Text>
+        <Flex flexDirection="row" alignItems="baseline" gap="$spacing8">
+          <Text variant="body3" color="$neutral2">
+            Value
+          </Text>
+          <Text variant="body2" color="$neutral1">
+            ${totalUsdValue.toFixed(2).toLocaleString()}
+          </Text>
+        </Flex>
+        <Flex flexDirection="row" alignItems="baseline" gap="$spacing8">
+          <Text variant="body3" color="$neutral2">
+            Fee Tier
+          </Text>
+          <Text variant="body2" color="$neutral1">
+            {Number(v3Position.feeTier) / 10_000}%
+          </Text>
+        </Flex>
       </Flex>
     </Flex>
   )

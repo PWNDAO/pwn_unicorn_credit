@@ -1,7 +1,7 @@
 import { Button, Flex, Text } from 'ui/src'
 import { RotatableChevron } from 'ui/src/components/icons/RotatableChevron'
 import { TokenLogo } from 'uniswap/src/components/CurrencyLogo/TokenLogo'
-import { PoolData, formatNumberWithSuffix } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
+import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
 
 export const SelectPoolInput = ({
   selectedPool,
@@ -110,10 +110,10 @@ export const SelectPoolInput = ({
           </Flex>
           <Flex row justifyContent="space-between" alignItems="center" width={'$full'}>
             <Text variant="body1" color="$neutral2">
-              ${formatNumberWithSuffix(selectedPool.totalUsdValue)}
+              ${selectedPool.totalUsdValue.toFixed(2).toLocaleString()}
             </Text>
             <Text variant="body2" color="$neutral2">
-              {Number(selectedPool.feeTier) / 10_000}%
+              Fee Tier {Number(selectedPool.feeTier) / 10_000}%
             </Text>
           </Flex>
         </Flex>

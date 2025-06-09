@@ -60,18 +60,15 @@ export const AvailableOffersCards = ({
         }
       })
       .sort((a, b) => {
-        // Sort by credit amount first
+        if (a.apr !== b.apr) {
+          return mode === 'lend' ? b.apr - a.apr : a.apr - b.apr
+        }
+
         if (a.creditAmount !== b.creditAmount) {
-          return Number(b.creditAmount - a.creditAmount)
+          return Number(a.creditAmount - b.creditAmount)
         }
 
-        // Then sort by LTV based on mode
-        if (a.loanToValue !== b.loanToValue) {
-          return mode === 'lend' ? b.loanToValue - a.loanToValue : a.loanToValue - b.loanToValue
-        }
-
-        // Finally sort by APR based on mode
-        return mode === 'lend' ? b.apr - a.apr : a.apr - b.apr
+        return 0
       })
   }, [creditAmount, ltv, mode, interestRate, mockLendingProposals])
 
@@ -81,6 +78,7 @@ export const AvailableOffersCards = ({
     if (mode === 'borrow' && !selectedPool) return null
 
     // TODO: some algo, maybe even [best, cheapest, etc]
+    // make it interest
     return {
       [proposals[0].id]: proposals[0],
     }
@@ -129,28 +127,26 @@ export const AvailableOffersCards = ({
                     zIndex={1}
                   >
                     <Text color="$white" variant="buttonLabel3">
-                      Best {mode === 'borrow' ? 'Offer' : 'Request'}
+                      Best Interest
                     </Text>
                   </Flex>
                 )}
 
-                {!isBest && (
-                  <Flex
-                    position="absolute"
-                    top={-10}
-                    left={16}
-                    backgroundColor="$surface2"
-                    opacity={1}
-                    px="$spacing8"
-                    py="$spacing4"
-                    borderRadius="$rounded8"
-                    zIndex={1}
-                  >
-                    <Text color="$neutral1" variant="buttonLabel3">
-                      {mode === 'borrow' ? 'Borrow' : 'Lend'}
-                    </Text>
-                  </Flex>
-                )}
+                <Flex
+                  position="absolute"
+                  top={-10}
+                  left={16}
+                  backgroundColor="$surface2"
+                  opacity={1}
+                  px="$spacing8"
+                  py="$spacing4"
+                  borderRadius="$rounded8"
+                  zIndex={1}
+                >
+                  <Text color="$neutral1" variant="buttonLabel3">
+                    {mode === 'borrow' ? 'Borrow' : 'Lend'}
+                  </Text>
+                </Flex>
 
                 <Button
                   width={'$full'}
@@ -179,18 +175,21 @@ export const AvailableOffersCards = ({
                     alignItems="center"
                     justifyContent="center"
                   >
-                    <Text color="$neutral1" variant="heading2">
-                      {formatNumberWithSuffix(
-                        Number(formatUnits(BigInt(proposal.creditAmount ?? 0), creditAsset.decimals)),
-                      )}{' '}
+                    <Flex flexDirection="row" alignItems="baseline" gap="$spacing4">
+                      <Text variant="body2" color="$neutral3">
+                        Liquidity
+                      </Text>
+                      <Text variant="heading2">
+                        {formatUnits(BigInt(proposal.creditAmount ?? 0), creditAsset.decimals)}
+                      </Text>
                       <Text variant="heading3">{creditAsset.symbol}</Text>
-                    </Text>
+                    </Flex>
                     <Flex flexDirection="row" alignItems="baseline" gap="$spacing4">
                       <Text color="$neutral1" variant="heading3">
-                        %{(proposal.apr / 10_00).toFixed(2)}
+                        {(proposal.apr / 10_00).toFixed(2)}%
                       </Text>
                       <Text color="$neutral3" variant="body2">
-                        APR
+                        Interest
                       </Text>
                     </Flex>
                   </Flex>
