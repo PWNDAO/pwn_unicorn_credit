@@ -70,21 +70,47 @@ const LendingDialog = () => {
 
   const { address } = useAccount()
 
+  const tabCounts: Record<string, number> = {
+    [APP_TABS.MY_LENDING]: 6,
+    [APP_TABS.MY_BORROWING]: 11,
+  }
+
   const tabs: SegmentedControlOption[] = Object.values(APP_TABS).map((tab) => ({
     display: (
-      <Text
-        variant="buttonLabel3"
-        hoverStyle={{ color: '$neutral1' }}
-        color={selectedAppTab === tab ? '$neutral1' : '$neutral2'}
-        tag="h1"
-      >
-        {tab.includes('-')
-          ? tab
-              .split('-')
-              .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-              .join(' ')
-          : tab.charAt(0).toUpperCase() + tab.slice(1).toLowerCase().replace('_', ' ')}
-      </Text>
+      <Flex position="relative" alignItems="center" justifyContent="center">
+        <Text
+          variant="buttonLabel3"
+          hoverStyle={{ color: '$neutral1' }}
+          color={selectedAppTab === tab ? '$neutral1' : '$neutral2'}
+          tag="h1"
+        >
+          {tab.includes('-')
+            ? tab
+                .split('-')
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+                .join(' ')
+            : tab.charAt(0).toUpperCase() + tab.slice(1).toLowerCase().replace('_', ' ')}
+        </Text>
+        {typeof tabCounts[tab] === 'number' && tabCounts[tab] > 0 && (
+          <Flex
+            position="absolute"
+            top={-10}
+            right={-12}
+            minWidth={18}
+            height={18}
+            px={6}
+            backgroundColor="$accentSolid"
+            borderRadius={9}
+            alignItems="center"
+            justifyContent="center"
+            zIndex={1}
+          >
+            <Text color="white" fontSize={12} fontWeight={400} userSelect="none" lineHeight={1}>
+              {`${tabCounts[tab]}`}
+            </Text>
+          </Flex>
+        )}
+      </Flex>
     ),
     value: tab.toLowerCase(),
   }))
