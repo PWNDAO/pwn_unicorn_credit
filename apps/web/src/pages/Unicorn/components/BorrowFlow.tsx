@@ -41,7 +41,7 @@ export const BorrowFlow = ({
     [amountInputValue, selectedPool],
   )
 
-  const { isOffersClosed, selectedProposal, handleCreateLoan } = useLendingContext()
+  const { isOffersClosed, selectedProposal, handleCreateLoan, shouldShowOffers } = useLendingContext()
 
   useEffect(() => {
     ltvCallback?.(Number(ltv))
@@ -55,11 +55,11 @@ export const BorrowFlow = ({
     return (
       selectedPool &&
       selectedAsset &&
-      isOffersClosed &&
+      (isOffersClosed || !shouldShowOffers) &&
       // if loan everything is ready, if custom check interest rate input existence
       (selectedProposal ? true : interestRate && interestRate > 0)
     )
-  }, [selectedPool, selectedAsset, isOffersClosed, selectedProposal, interestRate])
+  }, [selectedPool, selectedAsset, isOffersClosed, selectedProposal, interestRate, shouldShowOffers])
 
   const shouldInputBeDisabled = !!selectedProposal
 

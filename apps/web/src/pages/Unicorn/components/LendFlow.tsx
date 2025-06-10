@@ -29,7 +29,7 @@ export const LendFlow = ({
   const [ltv, setLtv] = useState<number | null>(null)
   const [interestRate, setInterestRate] = useState<number | null>(null)
 
-  const { isOffersClosed, selectedProposal, handleCreateLoan, assetInputValue } = useLendingContext()
+  const { isOffersClosed, selectedProposal, handleCreateLoan, assetInputValue, shouldShowOffers } = useLendingContext()
 
   useEffect(() => {
     ltvCallback?.(Number(ltv))
@@ -43,11 +43,11 @@ export const LendFlow = ({
     return (
       selectedAsset &&
       selectedAsset2 &&
-      isOffersClosed &&
+      (isOffersClosed || !shouldShowOffers) &&
       (selectedProposal ? true : interestRate && interestRate > 0) &&
       (selectedProposal ? true : assetInputValue && Number(assetInputValue) > 0)
     )
-  }, [selectedAsset, selectedAsset2, isOffersClosed, selectedProposal, interestRate, assetInputValue])
+  }, [selectedAsset, selectedAsset2, isOffersClosed, selectedProposal, interestRate, assetInputValue, shouldShowOffers])
 
   return (
     <Flex flexDirection="column" gap="$spacing16" width={'100%'} maxWidth={'$full'}>
