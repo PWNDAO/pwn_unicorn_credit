@@ -34,6 +34,7 @@ interface LendingContextType {
   changeSelectedProposal: (proposal: SelectedProposal | null) => void
   getAssetsByPoolSelected: any[]
   getAssetsByPriceFeedExists: any[]
+  getPredefinedAssetsForSecondAsset: any[]
   closeOffers: (value: boolean) => void
   handleResetStates: (mode?: 'full') => void
   handleCreateLoan: (proposal: SelectedProposal) => Promise<void>

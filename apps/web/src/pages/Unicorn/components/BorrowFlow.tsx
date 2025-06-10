@@ -80,7 +80,7 @@ export const BorrowFlow = ({
         label="I want to borrow ..."
         onChangeText={(value) => setAssetInputValue(value)}
         onOpenTokenSelector={
-          (selectedProposal || !selectedPool)
+          selectedProposal || !selectedPool
             ? () => {}
             : () => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })
         }

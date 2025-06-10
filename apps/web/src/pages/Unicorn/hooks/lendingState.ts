@@ -87,7 +87,7 @@ export const useLendingState = () => {
   const [selectedPool, changePool] = useState<PoolData | null>(null)
 
   // this is credit, can be as you borrow it or lend it
-  const [selectedAsset, changeAsset] = useState<CurrencyInfo | null>(null)
+  const [selectedAsset, setAsset] = useState<CurrencyInfo | null>(null)
 
   // variable second asset in pool pair
   // relevant for lend
@@ -100,6 +100,15 @@ export const useLendingState = () => {
 
   const [isOffersClosed, closeOffers] = useState<boolean>(false)
 
+  const changeAsset = (asset: CurrencyInfo | null) => {
+    setAsset(asset)
+    const isSameAsSecondAsset = (asset?.currency as any)?.address === (selectedAsset2?.currency as any)?.address
+    if (selectedAppTab === APP_TABS.LEND && isSameAsSecondAsset) {
+      // cant have LP consisting of the same asset
+      changeAsset2(null)
+    }
+  }
+
   const getAssetsByPriceFeedExists = useMemo(() => {
     // TODO: figure it out, maybe hardcoded or use from sdk definitions
 
@@ -110,6 +119,20 @@ export const useLendingState = () => {
       },
     ]
   }, [])
+
+  const getPredefinedAssetsForSecondAsset = useMemo(() => {
+    if (!selectedAsset) return []
+    const filtered = mockTokensBalances[0]?.data?.filter(
+      (t) => (t?.currencyInfo?.currency as any)?.address !== (selectedAsset?.currency as any)?.address,
+    )
+    return [
+      {
+        ...mockTokensBalances[0],
+        data: filtered,
+        sectionKey: TokenOptionSection.PredefinedAssets,
+      },
+    ]
+  }, [selectedAsset])
 
   const getAssetsByPoolSelected = useMemo(() => {
     if (!selectedPool) return []
@@ -271,6 +294,7 @@ export const useLendingState = () => {
     changeSelectedProposal,
     getAssetsByPoolSelected,
     getAssetsByPriceFeedExists,
+    getPredefinedAssetsForSecondAsset,
     closeOffers,
     handleResetStates,
     handleCreateLoan,

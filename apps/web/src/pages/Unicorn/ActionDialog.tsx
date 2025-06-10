@@ -49,6 +49,7 @@ const LendingDialog = () => {
     setInterestRate,
     getAssetsByPoolSelected,
     getAssetsByPriceFeedExists,
+    getPredefinedAssetsForSecondAsset,
     handleResetStates,
     handleOnClickCloseChevron,
     handleOnSelectAcceptProposal,
@@ -149,9 +150,18 @@ const LendingDialog = () => {
 
   const whichPredefinedAssetsToUse = useMemo(() => {
     if (selectedAppTab === APP_TABS.BORROW) return getAssetsByPoolSelected
-    if (selectedAppTab === APP_TABS.LEND) return getAssetsByPriceFeedExists
+    if (selectedAppTab === APP_TABS.LEND) {
+      if (selectionModalState.mode === SelectionModalMode.ASSET_2) return getPredefinedAssetsForSecondAsset
+      else return getAssetsByPriceFeedExists
+    }
     return []
-  }, [selectedAppTab, getAssetsByPoolSelected, getAssetsByPriceFeedExists])
+  }, [
+    selectedAppTab,
+    getAssetsByPoolSelected,
+    getAssetsByPriceFeedExists,
+    getPredefinedAssetsForSecondAsset,
+    selectionModalState.mode,
+  ])
 
   const getHooksOrNothing = useMemo(() => {
     if (selectedAppTab === APP_TABS.LEND && selectionModalState.mode === SelectionModalMode.ASSET) return mockHooks
