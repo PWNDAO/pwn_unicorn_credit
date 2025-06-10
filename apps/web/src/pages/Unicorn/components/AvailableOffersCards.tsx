@@ -1,8 +1,7 @@
-import { useMemo } from 'react'
 import { Button, Flex, Text } from 'ui/src'
 import { formatUnits } from 'viem'
 import { useLendingContext } from '../contexts/LendingContext'
-import { mockLendingProposals } from '../mocks/mockProposal'
+import { APP_TABS } from '../hooks/lendingState'
 
 export const TOKEN_BY_ADDRESS = {
   ['0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913']: {
@@ -24,65 +23,10 @@ export const TOKEN_BY_ADDRESS = {
   },
 }
 
-export const AvailableOffersCards = ({
-  creditAmount,
-  ltv,
-  interestRate,
-  mode = 'all',
-  handleAcceptProposal,
-}: {
-  creditAmount?: bigint
-  ltv?: number
-  interestRate?: number
-  mode?: 'borrow' | 'lend' | 'all'
-  handleAcceptProposal?: (proposal: any) => void
-}) => {
-  const { selectedPool, selectedAsset, closeOffers } = useLendingContext()
+export const AvailableOffersCards = ({ handleAcceptProposal }: { handleAcceptProposal?: (proposal: any) => void }) => {
+  const { closeOffers, proposals, bestProposal, selectedAppTab } = useLendingContext()
 
-  const proposals = useMemo(() => {
-    return mockLendingProposals
-      .filter((p) => {
-        const credit = creditAmount ?? 0n
-        if (mode === 'borrow') {
-          if (interestRate) {
-            return (credit > 0n ? p.creditAmount >= credit : true) && p.apr <= interestRate
-          } else {
-            return credit > 0n ? p.creditAmount >= credit : true
-          }
-        } else if (mode === 'lend') {
-          if (interestRate) {
-            return (credit > 0n ? p.creditAmount <= credit : true) && p.apr >= interestRate
-          } else {
-            return credit > 0n ? p.creditAmount <= credit : true
-          }
-        } else {
-          return true
-        }
-      })
-      .sort((a, b) => {
-        if (a.apr !== b.apr) {
-          return mode === 'lend' ? b.apr - a.apr : a.apr - b.apr
-        }
-
-        if (a.creditAmount !== b.creditAmount) {
-          return Number(a.creditAmount - b.creditAmount)
-        }
-
-        return 0
-      })
-  }, [creditAmount, ltv, mode, interestRate, mockLendingProposals])
-
-  const bestProposal = useMemo(() => {
-    if (!proposals || proposals.length === 0) return null
-    if (mode === 'lend' && !selectedAsset) return null
-    if (mode === 'borrow' && !selectedPool) return null
-
-    // TODO: some algo, maybe even [best, cheapest, etc]
-    // make it interest
-    return {
-      [proposals[0].id]: proposals[0],
-    }
-  }, [proposals, selectedPool, selectedAsset])
+  const mode = selectedAppTab === APP_TABS.BORROW ? 'borrow' : selectedAppTab === APP_TABS.LEND ? 'lend' : 'all'
 
   const formatNumberWithSuffix = (num: number): string => {
     const suffixes = ['', 'k', 'M', 'B', 'T']

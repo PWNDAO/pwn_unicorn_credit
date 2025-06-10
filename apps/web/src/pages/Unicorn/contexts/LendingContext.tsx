@@ -23,6 +23,8 @@ interface LendingContextType {
   interestRate: number | null
   selectedProposal: SelectedProposal | null
   isOffersClosed: boolean
+  proposals: any[]
+  bestProposal: any
   selectionModalDispatch: React.Dispatch<SelectionModalAction>
   selectAppTab: (tab: APP_TABS) => void
   changePool: (pool: PoolData | null) => void

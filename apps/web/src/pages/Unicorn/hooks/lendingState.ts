@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
 import { TokenOptionSection } from 'uniswap/src/components/TokenSelector/types'
 import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
+import { parseUnits } from 'viem'
 import { useAccount, useWalletClient } from 'wagmi'
+import { mockLendingProposals } from '../mocks/mockProposal'
 import { mockTokensBalances } from '../mocks/mockTokens'
 
 export enum SelectionModalMode {
@@ -99,6 +101,54 @@ export const useLendingState = () => {
   const [selectedProposal, changeSelectedProposal] = useState<SelectedProposal | null>(null)
 
   const [isOffersClosed, closeOffers] = useState<boolean>(false)
+
+  const proposals = useMemo(() => {
+    return mockLendingProposals
+      .filter((p) => {
+        const credit = parseUnits(assetInputValue, selectedAsset?.currency?.decimals ?? 0) ?? 0n
+        const mode = selectedAppTab === APP_TABS.BORROW ? 'borrow' : selectedAppTab === APP_TABS.LEND ? 'lend' : 'all'
+        if (mode === 'borrow') {
+          if (interestRate) {
+            return (credit > 0n ? p.creditAmount >= Number(credit) : true) && p.apr <= interestRate * 1000
+          } else {
+            return credit > 0n ? p.creditAmount >= Number(credit) : true
+          }
+        } else if (mode === 'lend') {
+          if (interestRate) {
+            return (credit > 0n ? p.creditAmount <= Number(credit) : true) && p.apr >= interestRate * 1000
+          } else {
+            return credit > 0n ? p.creditAmount <= Number(credit) : true
+          }
+        } else {
+          return true
+        }
+      })
+      .sort((a, b) => {
+        const mode = selectedAppTab === APP_TABS.BORROW ? 'borrow' : selectedAppTab === APP_TABS.LEND ? 'lend' : 'all'
+        if (a.apr !== b.apr) {
+          return mode === 'lend' ? b.apr - a.apr : a.apr - b.apr
+        }
+
+        if (a.creditAmount !== b.creditAmount) {
+          return Number(a.creditAmount - b.creditAmount)
+        }
+
+        return 0
+      })
+  }, [assetInputValue, selectedAsset, selectedAppTab, interestRate])
+
+  const bestProposal = useMemo(() => {
+    if (!proposals || proposals.length === 0) return null
+    const mode = selectedAppTab === APP_TABS.BORROW ? 'borrow' : selectedAppTab === APP_TABS.LEND ? 'lend' : 'all'
+    if (mode === 'lend' && !selectedAsset) return null
+    if (mode === 'borrow' && !selectedPool) return null
+
+    // TODO: some algo, maybe even [best, cheapest, etc]
+    // make it interest
+    return {
+      [proposals[0].id]: proposals[0],
+    }
+  }, [proposals, selectedPool, selectedAsset, selectedAppTab])
 
   const changeAsset = (asset: CurrencyInfo | null) => {
     setAsset(asset)
@@ -282,6 +332,8 @@ export const useLendingState = () => {
     interestRate,
     selectedProposal,
     isOffersClosed,
+    proposals,
+    bestProposal,
     // functions
     selectionModalDispatch,
     selectAppTab,

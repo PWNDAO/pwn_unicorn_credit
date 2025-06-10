@@ -14,7 +14,6 @@ import { TransactionSettingsContextProvider } from 'uniswap/src/features/transac
 import { TransactionSettingKey } from 'uniswap/src/features/transactions/settings/slice'
 import { SwapFormContextProvider } from 'uniswap/src/features/transactions/swap/contexts/SwapFormContext'
 import { CurrencyField } from 'uniswap/src/types/currency'
-import { parseUnits } from 'viem'
 import { AvailableOffersCards } from './components/AvailableOffersCards'
 import { BorrowFlow } from './components/BorrowFlow'
 import { LendFlow } from './components/LendFlow'
@@ -263,15 +262,7 @@ const LendingDialog = () => {
 
             {selectedAppTab === APP_TABS.MY_BORROWING && <MyBorrowing />}
           </Flex>
-          {shouldShowOffers && (
-            <AvailableOffersCards
-              creditAmount={parseUnits(assetInputValue, selectedAsset?.currency.decimals ?? 0)}
-              ltv={ltv ? ltv * 1000 : undefined}
-              interestRate={interestRate ? interestRate * 1000 : undefined}
-              mode={selectedAppTab === APP_TABS.BORROW ? 'borrow' : selectedAppTab === APP_TABS.LEND ? 'lend' : 'all'}
-              handleAcceptProposal={handleOnSelectAcceptProposal}
-            />
-          )}
+          {shouldShowOffers && <AvailableOffersCards handleAcceptProposal={handleOnSelectAcceptProposal} />}
         </Flex>
         <TokenSelectorModal
           isModalOpen={selectionModalState.isOpen}
