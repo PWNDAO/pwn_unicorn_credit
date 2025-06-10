@@ -150,6 +150,15 @@ export const useLendingState = () => {
     }
   }, [proposals, selectedPool, selectedAsset, selectedAppTab])
 
+  const shouldShowOffers = useMemo(() => {
+    if (![APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab)) return false
+
+    if (selectedAppTab === APP_TABS.LEND && selectedAsset && assetInputValue && !isOffersClosed) return true
+    if (selectedAppTab === APP_TABS.BORROW && selectedPool && selectedAsset && !isOffersClosed) return true
+
+    return false
+  }, [selectedAppTab, selectedAsset, selectedPool, isOffersClosed, assetInputValue])
+
   const changeAsset = (asset: CurrencyInfo | null) => {
     setAsset(asset)
     const isSameAsSecondAsset = (asset?.currency as any)?.address === (selectedAsset2?.currency as any)?.address
@@ -334,6 +343,7 @@ export const useLendingState = () => {
     isOffersClosed,
     proposals,
     bestProposal,
+    shouldShowOffers,
     // functions
     selectionModalDispatch,
     selectAppTab,

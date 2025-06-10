@@ -34,9 +34,8 @@ const LendingDialog = () => {
     selectedAsset,
     selectedAsset2,
     assetInputValue,
-    ltv,
-    interestRate,
     isOffersClosed,
+    shouldShowOffers,
     // functions
     selectionModalDispatch,
     selectAppTab,
@@ -131,15 +130,6 @@ const LendingDialog = () => {
         (selectedAppTab === APP_TABS.BORROW && selectedPool && isOffersClosed))
     )
   }, [selectedAppTab, selectedAsset, selectedPool, isOffersClosed])
-
-  const shouldShowOffers = useMemo(() => {
-    if (![APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab)) return false
-
-    if (selectedAppTab === APP_TABS.LEND && selectedAsset && assetInputValue && !isOffersClosed) return true
-    if (selectedAppTab === APP_TABS.BORROW && selectedPool && selectedAsset && !isOffersClosed) return true
-
-    return false
-  }, [selectedAppTab, selectedAsset, selectedPool, isOffersClosed, assetInputValue])
 
   const whichVariationOfTokenSelectorModalToUse = useMemo(() => {
     if (selectionModalState.mode === SelectionModalMode.POOL) return TokenSelectorVariation.PoolOnly

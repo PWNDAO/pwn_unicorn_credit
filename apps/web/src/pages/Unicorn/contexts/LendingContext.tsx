@@ -25,6 +25,7 @@ interface LendingContextType {
   isOffersClosed: boolean
   proposals: any[]
   bestProposal: any
+  shouldShowOffers: boolean
   selectionModalDispatch: React.Dispatch<SelectionModalAction>
   selectAppTab: (tab: APP_TABS) => void
   changePool: (pool: PoolData | null) => void
