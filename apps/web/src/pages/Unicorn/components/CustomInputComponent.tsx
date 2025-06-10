@@ -6,13 +6,11 @@ import { useDebounce } from 'utilities/src/time/timing'
 export const CustomInputComponent = ({
   label,
   onChangeText,
-  maxValue = 100,
   disabled = false,
   fixedValue,
 }: {
   label: string
   onChangeText: (newValue: string) => void
-  maxValue?: number
   disabled?: boolean
   fixedValue?: string
 }) => {
@@ -21,7 +19,7 @@ export const CustomInputComponent = ({
 
   const handleChangeText = useCallback((newValue: string) => {
     const numValue = Number(newValue)
-    if (isNaN(numValue) || numValue > 100) {
+    if (isNaN(numValue)) {
       return
     }
     setValue(newValue)
