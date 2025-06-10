@@ -80,12 +80,12 @@ export const BorrowFlow = ({
         label="I want to borrow ..."
         onChangeText={(value) => setAssetInputValue(value)}
         onOpenTokenSelector={
-          selectedProposal
+          (selectedProposal || !selectedPool)
             ? () => {}
             : () => selectionModalDispatch({ type: ModalState.OPEN, mode: SelectionModalMode.ASSET })
         }
         selectedToken={selectedAsset as CurrencyInfo}
-        disabled={shouldInputBeDisabled}
+        disabled={!!selectedProposal || !selectedPool}
         mode="borrow-computed"
       />
       <Flex flexDirection="row" gap="$spacing16" width={'$full'}>
