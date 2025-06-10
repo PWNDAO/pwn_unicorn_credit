@@ -94,12 +94,12 @@ const LendingDialog = () => {
         {typeof tabCounts[tab] === 'number' && tabCounts[tab] > 0 && (
           <Flex
             position="absolute"
-            top={-10}
-            right={-12}
+            top={-12}
+            right={-13}
             minWidth={18}
             height={18}
-            px={6}
-            backgroundColor="$accentSolid"
+            px={2}
+            backgroundColor="$neutral3"
             borderRadius={9}
             alignItems="center"
             justifyContent="center"
