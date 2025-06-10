@@ -19,8 +19,8 @@ export const useMenuContent = (): MenuSection[] => {
 
   return [
     {
-      title: 'Made on',
-      items: [{ label: 'PWN.xyz', href: 'https://pwn.xyz', internal: false }],
+      title: 'Built on',
+      items: [{ label: 'PWN Protocol', href: 'https://pwn.xyz', internal: false }],
     },
     // {
     //   title: t('common.company'),
