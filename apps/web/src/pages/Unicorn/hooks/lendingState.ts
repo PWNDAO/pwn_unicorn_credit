@@ -151,13 +151,22 @@ export const useLendingState = () => {
   }, [proposals, selectedPool, selectedAsset, selectedAppTab])
 
   const shouldShowOffers = useMemo(() => {
-    if (![APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab)) return false
+    const isBorrowOrLend = [APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab)
+    if (!isBorrowOrLend) return false
 
-    if (selectedAppTab === APP_TABS.LEND && selectedAsset && assetInputValue && !isOffersClosed) return true
-    if (selectedAppTab === APP_TABS.BORROW && selectedPool && selectedAsset && !isOffersClosed) return true
+    const isRespectiveSelection =
+      selectedAppTab === APP_TABS.LEND
+        ? selectedAsset && assetInputValue
+        : selectedPool && selectedAsset && assetInputValue
 
-    return false
-  }, [selectedAppTab, selectedAsset, selectedPool, isOffersClosed, assetInputValue])
+    if (!isRespectiveSelection) return false
+
+    if (isOffersClosed) return false
+
+    if (!bestProposal) return false
+
+    return true
+  }, [selectedAppTab, selectedAsset, selectedPool, isOffersClosed, assetInputValue, bestProposal])
 
   const changeAsset = (asset: CurrencyInfo | null) => {
     setAsset(asset)
