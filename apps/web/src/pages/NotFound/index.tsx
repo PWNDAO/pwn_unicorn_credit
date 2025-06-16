@@ -68,7 +68,8 @@ export default function NotFound({ title, subtitle, actionButton }: NotFoundProp
         </Header>
         {actionButton ?? (
           <Button size="small" onPress={() => navigate('/')} variant="branded">
-            <Trans i18nKey="notFound.oops" />
+            {/* <Trans i18nKey="notFound.oops" /> */}
+            Go to Home
           </Button>
         )}
       </Trace>

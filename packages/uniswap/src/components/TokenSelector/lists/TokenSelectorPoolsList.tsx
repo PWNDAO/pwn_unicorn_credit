@@ -1,28 +1,21 @@
 import { formatUnits } from '@ethersproject/units'
 import { PoolPosition, Position, PositionStatus, ProtocolVersion, Token } from '@uniswap/client-pools/dist/pools/v1/types_pb'
-import { memo, useMemo } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Skeleton, Flex, AnimateTransition, Loader, Text } from 'ui/src'
 import { fonts } from 'ui/src/theme'
 import { BaseCard } from 'uniswap/src/components/BaseCard/BaseCard'
-import { TokenSelectorList } from 'uniswap/src/components/TokenSelector/TokenSelectorList'
-import { usePortfolioTokenOptions } from 'uniswap/src/components/TokenSelector/hooks/usePortfolioTokenOptions'
 import {
-  OnSelectCurrency,
   TokenOptionSection,
-  TokenSection,
   TokenSectionsHookProps,
 } from 'uniswap/src/components/TokenSelector/types'
-import { useTokenOptionsSection } from 'uniswap/src/components/TokenSelector/utils'
 import { SectionHeader } from 'uniswap/src/components/lists/TokenSectionHeader'
-import { TokenOption } from 'uniswap/src/components/lists/types'
 import { useGetPositionsQuery } from 'uniswap/src/data/rest/getPositions'
 import { ITEM_SECTION_HEADER_ROW_HEIGHT } from '../constants'
 import { GqlResult } from 'uniswap/src/data/types'
-import { TokenSectionBaseList } from '../../lists/TokenSectionBaseList/TokenSectionBaseList'
-import { useBottomSheetFocusHook } from '../../modals/hooks'
 import { useAssetPrice } from '../../../../../../apps/web/src/pages/Unicorn/queries/useAssetPrice'
-
+import { mockPositions } from '../../../../../../apps/web/src/pages/Unicorn/mocks/mockPosition'
+import { TokenLogo } from '../../CurrencyLogo/TokenLogo'
 export interface PoolOption {
   tokenId: string
   tickLower: string
@@ -74,57 +67,18 @@ function useTokenSectionsForPools({
     includeHidden: true,
   })
 
-  // TODO: this is an attempt to hack LPs into token selector
-  // const positions: TokenOption[] = (data?.positions ?? []).map((position): TokenOption => {
-  //   const token = position.position.value as PoolPosition
-  //   return {
-  //     currencyInfo: {
-  //       // Attempt to construct CurrencyInfo from the assumed 'token' object
-  //       currency: {
-  //         chainId: position.chainId,
-  //         isNative: false,
-  //         isToken: true,
-  //         address: token?.token0?.address ?? '',
-  //         decimals: token?.token0?.decimals ?? 0,
-  //         equals: () => false,
-  //         sortsBefore: () => false,
-  //         wrapped: token?.token0 as any,
-  //       },
-  //       currencyId: `${position.chainId}-${token?.token0?.address}`,
-  //       logoUrl: token?.token0?.logo ?? '',
-  //       isSpam: false,
-  //       spamCode: undefined,
-  //       safetyInfo: undefined,
-  //     },
-  //     quantity: token?.amount0 ? parseFloat(formatUnits(token.amount0, token.token0?.decimals ?? 0)) : null,
-  //     balanceUSD: 0,
-  //     isUnsupported: false,
-  //   }
-  // })
-
   const positions = data?.positions ?? []
 
-  // const combinedOptions = useMemo(
-  //   () => [...positions],
-  //   [positions],
-  // )
-
-  const loading = isLoading // Combine loading states
-  // Combine errors: use the first error encountered, or undefined if none.
+  const loading = isLoading
   const error = positionsError;
-
-  // const sections = useTokenOptionsSection({
-  //   sectionKey: TokenOptionSection.YourTokens,
-  //   tokenOptions: combinedOptions, // Use the combined list
-  // })
 
   return useMemo(
     () => ({
       data: positions,
       loading,
       error: error || undefined,
-      refetch: () => { // Combine refetch functions
-        refetchPositions?.() // Call positions refetch if it exists
+      refetch: () => {
+        refetchPositions?.()
       },
     }),
     [error, loading, refetchPositions, positions],
@@ -159,7 +113,7 @@ enum Chain {
   POLYGON = 137,
 }
 
-const chainName = (chainId: number): string => {
+export const chainName = (chainId: number): string => {
   switch(chainId) {
     case Chain.ETHEREUM:
       return 'Ethereum'
@@ -201,6 +155,20 @@ export interface PoolData {
   feeTier: number,
 }
 
+export const formatNumberWithSuffix = (num: number): string => {
+  const suffixes = ['', 'k', 'M', 'B', 'T']
+  const tier = Math.floor(Math.log10(Math.abs(num)) / 3)
+
+  if (tier === 0) return num.toString()
+
+  const suffix = suffixes[tier]
+  const scale = Math.pow(10, tier * 3)
+  const scaled = num / scale
+
+  // Handle decimals - show up to 2 decimal places if needed
+  return scaled.toFixed(scaled % 1 === 0 ? 0 : 2) + suffix
+}
+
 
 const PoolOption = ({ position, onSelectCurrency }: { position: Position, onSelectCurrency: (poolData: PoolData) => void }): JSX.Element => {
   const v3Position = position?.position?.value as PoolPosition
@@ -239,60 +207,60 @@ const PoolOption = ({ position, onSelectCurrency }: { position: Position, onSele
 
   return (
     <Flex
-      backgroundColor="$surface2"
       borderRadius="$rounded16"
       borderWidth={1}
-      borderColor="$surface3"
-      p="$spacing16"
+      borderColor="$neutral3"
+      p="$spacing24"
       mb="$spacing8"
       gap="$spacing8"
       flexDirection="column"
+      pressStyle={{
+        backgroundColor: 'rgb(35, 33, 34)',
+        cursor: 'pointer'
+      }}
       hoverStyle={{
-        backgroundColor: '$surface3',
+        backgroundColor: 'rgb(35, 33, 34)',
         cursor: 'pointer'
       }}
       animation="quick"
       onPress={handleOnSelect}
     >
-      <Flex row justifyContent="space-between" alignItems="center">
-        <Text variant="subheading1" color="$neutral1">
-          {v3Position.token0?.name ?? ''} / {v3Position.token1?.name ?? ''}
-        </Text>
-        <Text variant="body2" color="$neutral2">
-          {Number(v3Position.feeTier) / 10_000}% Fee Tier
-        </Text>
+      <Flex flexDirection="column" justifyContent="space-between" alignContent='stretch' height={"max-content"}>
+        <Flex row gap="$spacing8" alignItems="center">
+          <Flex row gap="$spacing4" alignItems="center">
+            <TokenLogo 
+              size={32} 
+              url={'https://token-repository.dappradar.com/tokens?protocol=ethereum&contract=0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2&file=logo.png'} 
+              />
+            <Text fontSize={16} color="$neutral1">{v3Position.token0?.symbol}</Text>
+          </Flex>
+          <Text fontSize={16} color="$neutral1">/</Text>
+          <Flex row gap="$spacing4" alignItems="center">
+            <TokenLogo 
+              size={32} 
+              url={'https://imgs.search.brave.com/qVfnM06301I6nmM20XJwh7E1dtjKpAU1IA0dllgkXNo/rs:fit:40:40:1:0/g:ce/aHR0cHM6Ly9jb2lu/LWltYWdlcy5jb2lu/Z2Vja28uY29tL2Nv/aW5zL2ltYWdlcy82/MzE5L2xhcmdlL3Vz/ZGMucG5nPzE2OTY1/MDY2OTQ'} 
+            />
+            <Text fontSize={16} color="$neutral1">{v3Position.token1?.symbol}</Text>
+          </Flex>
+        </Flex>
       </Flex>
       <Flex row justifyContent="space-between" alignItems="center">
-        <Text variant="body2" color="$neutral2">
-          Chain
-        </Text>
-        <Text variant="body2" color="$neutral1">
-          {chainName(v3Position.token0?.chainId ?? 0)}
-        </Text>
-      </Flex>
-      <Flex row justifyContent="space-between" alignItems="center">
-        <Text variant="body2" color="$neutral2">
-          Total LP Value
-        </Text>
-        <Text variant="body2" color="$neutral1">
-          ${totalUsdValue.toFixed(2)}
-        </Text>
-      </Flex>
-      <Flex row justifyContent="space-between" alignItems="center">
-        <Text variant="body2" color="$neutral2">
-          {v3Position.token0?.name} Amount
-        </Text>
-        <Text variant="body2" color="$neutral1">
-          {formattedAmount0}
-        </Text>
-      </Flex>
-      <Flex row justifyContent="space-between" alignItems="center">
-        <Text variant="body2" color="$neutral2">
-          {v3Position.token1?.name} Amount
-        </Text>
-        <Text variant="body2" color="$neutral1">
-          {formattedAmount1}
-        </Text>
+        <Flex flexDirection="row" alignItems="baseline" gap="$spacing8">
+          <Text variant="body3" color="$neutral2">
+            Value
+          </Text>
+          <Text variant="body2" color="$neutral1">
+            ${totalUsdValue.toFixed(2).toLocaleString()}
+          </Text>
+        </Flex>
+        <Flex flexDirection="row" alignItems="baseline" gap="$spacing8">
+          <Text variant="body3" color="$neutral2">
+            Fee Tier
+          </Text>
+          <Text variant="body2" color="$neutral1">
+            {Number(v3Position.feeTier) / 10_000}%
+          </Text>
+        </Flex>
       </Flex>
     </Flex>
   )
@@ -322,6 +290,22 @@ function PoolSelectorList({
           <Loader.Token gap="$none" repeat={15} />
         </Flex>
         <Flex px="$spacing16">
+          { (!positions || positions.length === 0) && (
+            <Flex
+              backgroundColor="$surface2"
+              borderRadius="$rounded16"
+              borderWidth={1}
+              borderColor="$surface3"
+              p="$spacing16"
+              mb="$spacing8"
+              gap="$spacing8"
+              flexDirection="column"
+            >
+              <Text variant="subheading2" color="$neutral2">
+                You don't have any Uniswap V3 Positions yet, or we couldn't find any.
+              </Text>
+            </Flex>
+          )}
           { positions
             .filter((position) => position?.position?.case === 'v3Position')
             .filter(v => Boolean(v.position.value))
@@ -346,16 +330,20 @@ function _TokenSelectorPoolsList({
   onSelectCurrency: (poolData: PoolData) => void
   onEmptyActionPress: () => void
 }): JSX.Element {
-  const {
-    data: sections,
-    loading,
-    error,
-    refetch,
-  } = useTokenSectionsForPools({
-    activeAccountAddress,
-    chainFilter,
-  })
+  // const {
+  //   data: sections,
+  //   loading,
+  //   error,
+  //   refetch,
+  // } = useTokenSectionsForPools({
+  //   activeAccountAddress,
+  const sections = mockPositions;
   const emptyElement = useMemo(() => <EmptyList onEmptyActionPress={onEmptyActionPress} />, [onEmptyActionPress])
+
+  const [loading, setLoading] = useState(true)
+  useEffect(() => {
+    setTimeout(() => { setLoading(false) }, 2000)
+  }, [])
 
   return (
     <PoolSelectorList
@@ -363,18 +351,6 @@ function _TokenSelectorPoolsList({
       loading={loading}
       onSelectCurrency={onSelectCurrency}
     />
-    // <TokenSelectorList
-    //   showTokenAddress
-    //   chainFilter={chainFilter}
-    //   emptyElement={emptyElement}
-    //   hasError={Boolean(error)}
-    //   isKeyboardOpen={isKeyboardOpen}
-    //   loading={loading}
-    //   refetch={refetch}
-    //   sections={sections}
-    //   showTokenWarnings={false}
-    //   onSelectCurrency={onSelectCurrency}
-    // />
   )
 }
 

@@ -1,6 +1,4 @@
 import Navbar from 'components/NavBar/index'
-import { MobileAppPromoBanner, useMobileAppPromoBannerEligible } from 'components/TopLevelBanners/MobileAppPromoBanner'
-import { UkBanner, useRenderUkBanner } from 'components/TopLevelBanners/UkBanner'
 import { useScroll } from 'hooks/useScroll'
 import styled from 'lib/styled-components'
 import { useBag } from 'nft/hooks'
@@ -21,10 +19,6 @@ const AppHeader = styled.div`
     pointer-events: auto;
   }
 `
-const Banners = styled.div`
-  position: relative;
-  z-index: ${Z_INDEX.sticky};
-`
 const NavOnScroll = styled.div<{ $transparent?: boolean }>`
   width: 100%;
   transition: transform ${({ theme }) => theme.transition.duration.slow};
@@ -36,15 +30,9 @@ export const Header = memo(function Header() {
   const { isScrolledDown } = useScroll()
   const isBagExpanded = useBag((state) => state.bagExpanded)
   const isHeaderTransparent = !isScrolledDown && !isBagExpanded
-  const renderUkBanner = useRenderUkBanner()
-  const extensionEligible = useMobileAppPromoBannerEligible()
 
   return (
     <AppHeader id="AppHeader">
-      <Banners>
-        {extensionEligible && <MobileAppPromoBanner />}
-        {renderUkBanner && <UkBanner />}
-      </Banners>
       <NavOnScroll $transparent={isHeaderTransparent}>
         <Navbar />
       </NavOnScroll>

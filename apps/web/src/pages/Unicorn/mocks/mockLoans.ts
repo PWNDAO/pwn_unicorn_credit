@@ -1,0 +1,47 @@
+export const mockLoan = {
+  id: '1',
+  chainId: 8453,
+  creditAmount: 5_000_000_000,
+  creditAsset: {
+    address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+    symbol: 'USDC',
+    decimals: 6,
+    name: 'USD Coin',
+    chainId: 8453,
+    logoUrl:
+      'https://imgs.search.brave.com/qVfnM06301I6nmM20XJwh7E1dtjKpAU1IA0dllgkXNo/rs:fit:40:40:1:0/g:ce/aHR0cHM6Ly9jb2lu/LWltYWdlcy5jb2lu/Z2Vja28uY29tL2Nv/aW5zL2ltYWdlcy82/MzE5L2xhcmdlL3Vz/ZGMucG5nPzE2OTY1/MDY2OTQ',
+  },
+  creditData: {
+    accruingInterestApr: 0,
+    amount: 4_582_000_000,
+    apr: 7582,
+    fixedInterestAmount: 115_802_425,
+    ltv: 65_000,
+    totalRepaymentAmount: 5_740_202_425,
+  },
+  loanTokenContractAddress: '0x4440C069272cC34b80C7B11bEE657D0349Ba9C23',
+  originalLender: '0x1234567890123456789012345678901234567890',
+  loanOwner: '0x1234567890123456789012345678901234567890',
+  startDate: 1747767058225,
+  duration: 30 * 24 * 60 * 60,
+  defaultDate: 1748722079,
+  proposer: '0x1234567890123456789012345678901234567890',
+  hash: '0x779c04dab366992bfa2f4f08434df8593e1ecbb0044aa523f34cde64f4426329',
+  borrower: '0x1234567890123456789012345678901234567890',
+  status: 0,
+  type: 'pwn_contracts.v1_1simpleloan',
+  collateral: {
+    tokenA: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+    tokenB: '0x4200000000000000000000000000000000000006',
+    tokenId: '2939470',
+    address: '0xd0b53D9277642d899DF5C87A3966A349A798F224',
+    chainId: 8453,
+    category: 666,
+    name: 'Uniswap V3 Positions NFT-V1',
+    symbol: 'UNI-V3-POS',
+    decimals: 0,
+  },
+  expiration: 1748722079,
+}
+
+export const mockLoansPlural = Array(10).fill(mockLoan)

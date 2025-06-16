@@ -1,3 +1,5 @@
+import { Hook } from 'uniswap/src/components/TokenSelector/items/TokenOptionItem'
+import { mockTokensBalances } from '../../../../../../apps/web/src/pages/Unicorn/mocks/mockTokens'
 import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Flex } from 'ui/src'
@@ -74,19 +76,38 @@ function _TokenSelectorSendList({
   isKeyboardOpen,
   onSelectCurrency,
   onEmptyActionPress,
+  predefinedAssets,
+  hooks,
 }: TokenSectionsHookProps & {
   onSelectCurrency: OnSelectCurrency
   onEmptyActionPress: () => void
+  predefinedAssets?: TokenOption[] | TokenSection<TokenOption>[]
+  hooks?: Hook[]
 }): JSX.Element {
-  const {
-    data: sections,
-    loading,
-    error,
-    refetch,
-  } = useTokenSectionsForSend({
-    activeAccountAddress,
-    chainFilter,
-  })
+  // const {
+    // data,
+    // loading,
+    // error,
+    // refetch,
+  // } = useTokenSectionsForSend({
+  //   activeAccountAddress,
+  //   chainFilter,
+  // })
+  function isTokenSection(data: unknown): data is TokenSection<TokenOption>[] {
+    return Array.isArray(data) && 'sectionKey' in (data[0] ?? {}) && 'data' in (data[0] ?? {})
+  }
+
+  const sections = predefinedAssets 
+    ? isTokenSection(predefinedAssets)
+      ? predefinedAssets
+      : [{
+          sectionKey: TokenOptionSection.PredefinedAssets,
+          data: predefinedAssets as TokenOption[]
+        }]
+    : mockTokensBalances
+  const loading = false
+  const error = false
+  const refetch = () => {}
   const emptyElement = useMemo(() => <EmptyList onEmptyActionPress={onEmptyActionPress} />, [onEmptyActionPress])
 
   return (
@@ -101,6 +122,7 @@ function _TokenSelectorSendList({
       sections={sections}
       showTokenWarnings={false}
       onSelectCurrency={onSelectCurrency}
+      hooks={hooks}
     />
   )
 }

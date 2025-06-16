@@ -1,5 +1,5 @@
 import { memo, useCallback, useState } from 'react'
-import { TokenOptionItem as BaseTokenOptionItem } from 'uniswap/src/components/TokenSelector/items/TokenOptionItem'
+import { TokenOptionItem as BaseTokenOptionItem, Hook } from 'uniswap/src/components/TokenSelector/items/TokenOptionItem'
 import { HorizontalTokenList } from 'uniswap/src/components/TokenSelector/lists/HorizontalTokenList/HorizontalTokenList'
 import { OnSelectCurrency, TokenSection } from 'uniswap/src/components/TokenSelector/types'
 import { SelectorBaseList } from 'uniswap/src/components/lists/SelectorBaseList'
@@ -7,6 +7,7 @@ import { ItemRowInfo } from 'uniswap/src/components/lists/TokenSectionBaseList/T
 import { TokenOption, TokenSelectorItemTypes } from 'uniswap/src/components/lists/types'
 import { useEnabledChains } from 'uniswap/src/features/chains/hooks/useEnabledChains'
 import { UniverseChainId } from 'uniswap/src/features/chains/types'
+import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
 import { useLocalizationContext } from 'uniswap/src/features/language/LocalizationContext'
 import { useDismissedTokenWarnings } from 'uniswap/src/features/tokens/slice/hooks'
 import { CurrencyId } from 'uniswap/src/types/currency'
@@ -26,6 +27,7 @@ const TokenOptionItem = memo(function _TokenOptionItem({
   showWarnings,
   showTokenAddress,
   isKeyboardOpen,
+  hooks,
 }: {
   tokenOption: TokenOption
   section: TokenSection<TokenOption>
@@ -34,10 +36,11 @@ const TokenOptionItem = memo(function _TokenOptionItem({
   showTokenAddress?: boolean
   isKeyboardOpen?: boolean
   onSelectCurrency: OnSelectCurrency
+  hooks?: Hook[]
 }): JSX.Element {
   const { convertFiatAmountFormatted, formatNumberOrString } = useLocalizationContext()
   const onPress = useCallback(
-    () => onSelectCurrency(tokenOption.currencyInfo, section, index),
+    (hook?: Hook) => onSelectCurrency({...tokenOption.currencyInfo, hook} as unknown as CurrencyInfo, section, index),
     [index, onSelectCurrency, section, tokenOption.currencyInfo],
   )
 
@@ -65,7 +68,8 @@ const TokenOptionItem = memo(function _TokenOptionItem({
       showTokenAddress={showTokenAddress}
       showWarnings={showWarnings}
       tokenWarningDismissed={tokenWarningDismissed}
-      onPress={onPress}
+      onPress={(hook) => onPress(hook)}
+      hooks={hooks}
     />
   )
 })
@@ -82,6 +86,7 @@ interface TokenSelectorListProps {
   errorText?: string
   showTokenAddress?: boolean
   isKeyboardOpen?: boolean
+  hooks?: Hook[]
 }
 
 function _TokenSelectorList({
@@ -96,6 +101,7 @@ function _TokenSelectorList({
   emptyElement,
   errorText,
   showTokenAddress,
+  hooks,
 }: TokenSelectorListProps): JSX.Element {
   const [expandedItems, setExpandedItems] = useState<string[]>([])
 
@@ -138,10 +144,11 @@ function _TokenSelectorList({
           showWarnings={showTokenWarnings}
           tokenOption={item}
           onSelectCurrency={onSelectCurrency}
+          hooks={hooks}
         />
       )
     },
-    [onSelectCurrency, showTokenAddress, showTokenWarnings, isKeyboardOpen, handleExpand, isExpandedItem],
+    [onSelectCurrency, showTokenAddress, showTokenWarnings, isKeyboardOpen, handleExpand, isExpandedItem, hooks],
   )
 
   return (
