@@ -8,6 +8,7 @@
     "@crowdin/cli": "3.14.0",
     "@ethersproject/keccak256": "5.7.0",
     "@manypkg/cli": "0.19.2",
+    "@wagmi/core": "2.17.2",
     "danger": "11.2.6",
     "depcheck": "1.4.7",
     "dotenv-cli": "7.1.0",
@@ -20,7 +21,8 @@
     "prettier-plugin-organize-imports": "3.2.4",
     "syncpack": "8.5.14",
     "turbo": "1.13.4",
-    "turbo-ignore": "1.11.3"
+    "turbo-ignore": "1.11.3",
+    "viem": "2.31.3"
   },
   "engines": {
     "node": "=22.13.1",
@@ -102,7 +104,7 @@
     "resolve": "1.22.4",
     "semver": "7.5.2",
     "typescript": "5.3.3",
-    "viem": "2.22.9",
+    "viem": "2.31.3",
     "xml2js": "0.5.0",
     "yaml": "2.2.2",
     "webpack": "5.90.0",
