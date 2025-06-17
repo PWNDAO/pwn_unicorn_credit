@@ -4,9 +4,29 @@ import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelect
 import { TokenOptionSection } from 'uniswap/src/components/TokenSelector/types'
 import { CurrencyInfo } from 'uniswap/src/features/dataApi/types'
 import { parseUnits } from 'viem'
-import { useAccount, useWalletClient } from 'wagmi'
+import { useAccount, useConfig, useWalletClient } from 'wagmi'
 import { mockLendingProposals } from '../mocks/mockProposal'
 import { mockTokensBalances } from '../mocks/mockTokens'
+// import { useUserWithNonce } from "@pwndao/sdk-v1-react"
+import {
+  ERC20Token,
+  getUniqueCreditCollateralKey,
+  SupportedChain,
+  UniswapV3Position,
+  ZERO_ADDRESS,
+} from '@pwndao/sdk-core'
+import {
+  API,
+  createUtilizedCreditId,
+  makeProposal,
+  ProposalType,
+  SimpleLoanContract,
+  UniswapV3LpIndividualProposalContract,
+} from '@pwndao/v1-core'
+
+export enum UniswapV3PoolContractByChain {
+  Sepolia = '0x03a520b32C04BF3bEEf7BEb72E919cf822Ed34f1',
+}
 
 export enum SelectionModalMode {
   ASSET = 'asset',
@@ -256,6 +276,80 @@ export const useLendingState = () => {
     }
   }
 
+  // must be used within wagmiprovider???? even though it is, figure oout
+  // const { userWithNonce } = useUserWithNonce([11155111])
+  const config = useConfig()
+
+  const handleCreateProposal = async () => {
+    const chaindId = selectedAsset?.currency?.chainId as SupportedChain
+    const collateral = new UniswapV3Position(
+      chaindId,
+      UniswapV3PoolContractByChain.Sepolia,
+      selectedPool?.tokens.token0.address,
+      selectedPool?.tokens?.token1?.address,
+      Number(selectedPool?.poolId).toString(),
+    )
+    const credit = new ERC20Token(
+      chaindId,
+      (selectedAsset?.currency as any)?.address,
+      (selectedAsset?.currency as any)?.decimals ?? 18,
+      (selectedAsset?.currency as any)?.name,
+      (selectedAsset?.currency as any)?.symbol,
+      (selectedAsset?.currency as any)?.logoUrl ?? '',
+    )
+    const ltvAndAprKey = getUniqueCreditCollateralKey(credit, collateral)
+    const contract = new UniswapV3LpIndividualProposalContract(config as any)
+    const utilizedCreditId = createUtilizedCreditId({
+      proposer: '0x0000000000000000000000000000000000000000' as `0x${string}`, // userWithNonce?.address as `0x${string}`,
+      availableCreditLimit: parseUnits(assetInputValue, selectedAsset?.currency?.decimals ?? 0) ?? 0n,
+    })
+    const proposal = await makeProposal<ProposalType.UniswapV3Individual>(
+      null as any,
+      ProposalType.UniswapV3Individual,
+      {
+        // userWithNonce
+        expirationDays: 15,
+        creditAmount: parseUnits(assetInputValue, selectedAsset?.currency?.decimals ?? 0) ?? 0n,
+        ltv: {
+          [ltvAndAprKey]: 6500,
+        },
+        apr: {
+          [ltvAndAprKey]: (interestRate ?? 0) * 1000,
+        },
+        utilizedCreditId,
+        duration: {
+          // SDK doesnt require this??????
+          days: 30,
+          date: undefined,
+        },
+        collateral,
+        credit,
+        minCreditAmount: 0n,
+        minCreditAmountPercentage: 0,
+        acceptorController: ZERO_ADDRESS,
+        acceptorControllerData: ZERO_ADDRESS,
+        collateralId: selectedPool?.poolId.toString() ?? '',
+        token0Denominator: true,
+        isOffer: false,
+        sourceOfFunds: null,
+      },
+      {
+        api: {
+          // these two wont be needed, because we are doing onchain proposals from proposal contract
+          persistProposal: async () => {
+            return {} as any
+          },
+          persistProposals: async () => {
+            return [] as any
+          },
+          updateNonces: API.post.updateNonce,
+        },
+        contract: contract,
+        loanContract: new SimpleLoanContract(config as any),
+      },
+    )
+  }
+
   const onOpenBorrowSelectAcceptProposal = (proposal: SelectedProposal) => {
     const creditAssetObject: CurrencyInfo = {
       currency: {
@@ -385,5 +479,6 @@ export const useLendingState = () => {
     handleDiscardAcceptProposal,
     handleOnSelectAcceptProposal,
     handleOnClickCloseChevron,
+    handleCreateProposal,
   }
 }

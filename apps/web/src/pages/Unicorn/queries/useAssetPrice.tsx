@@ -8,14 +8,14 @@ export const useAssetPrice = (chainId: number | undefined, contractAddress: stri
       if (chainId && chainId === 11155111) {
         const storageKey = `mockPrice_${chainId}_${contractAddress}`
         let mockPrice = localStorage.getItem(storageKey)
-        
+
         if (!mockPrice) {
           // Generate random price between $0.01 and $1000
           const randomPrice = Math.random() * 1000 + 5
           mockPrice = randomPrice.toFixed(2)
           localStorage.setItem(storageKey, mockPrice)
         }
-        
+
         console.log('Using mock price for Sepolia:', mockPrice)
         return Number(mockPrice)
       }

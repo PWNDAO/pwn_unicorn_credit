@@ -1,3 +1,4 @@
+import { wagmiConfig } from 'components/Web3Provider/wagmiConfig'
 import { PrefetchBalancesWrapper } from 'graphql/data/apollo/AdaptiveTokenBalancesProvider'
 import { useAccount } from 'hooks/useAccount'
 import { useEffect, useMemo } from 'react'
@@ -14,6 +15,7 @@ import { TransactionSettingsContextProvider } from 'uniswap/src/features/transac
 import { TransactionSettingKey } from 'uniswap/src/features/transactions/settings/slice'
 import { SwapFormContextProvider } from 'uniswap/src/features/transactions/swap/contexts/SwapFormContext'
 import { CurrencyField } from 'uniswap/src/types/currency'
+import { WagmiProvider } from 'wagmi'
 import { AvailableOffersCards } from './components/AvailableOffersCards'
 import { BorrowFlow } from './components/BorrowFlow'
 import { LendFlow } from './components/LendFlow'
@@ -302,6 +304,7 @@ const LendingDialog = () => {
             }
             selectionModalDispatch({ type: ModalState.CLOSE })
           }}
+          chainId={11155111}
         />
       </Flex>
     </Flex>
@@ -311,17 +314,19 @@ const LendingDialog = () => {
 export const ActionDialog = () => {
   return (
     <Flex>
-      <MultichainContextProvider initialChainId={1}>
-        <TransactionSettingsContextProvider settingKey={TransactionSettingKey.Swap}>
-          <PrefetchBalancesWrapper>
-            <SwapFormContextProvider prefilledState={{} as any} hideFooter hideSettings>
-              <LendingStateProvider>
-                <LendingDialog />
-              </LendingStateProvider>
-            </SwapFormContextProvider>
-          </PrefetchBalancesWrapper>
-        </TransactionSettingsContextProvider>
-      </MultichainContextProvider>
+      <WagmiProvider config={wagmiConfig}>
+        <MultichainContextProvider initialChainId={1}>
+          <TransactionSettingsContextProvider settingKey={TransactionSettingKey.Swap}>
+            <PrefetchBalancesWrapper>
+              <SwapFormContextProvider prefilledState={{} as any} hideFooter hideSettings>
+                <LendingStateProvider>
+                  <LendingDialog />
+                </LendingStateProvider>
+              </SwapFormContextProvider>
+            </PrefetchBalancesWrapper>
+          </TransactionSettingsContextProvider>
+        </MultichainContextProvider>
+      </WagmiProvider>
     </Flex>
   )
 }

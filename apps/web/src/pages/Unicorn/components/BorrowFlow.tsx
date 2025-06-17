@@ -41,7 +41,8 @@ export const BorrowFlow = ({
     [amountInputValue, selectedPool],
   )
 
-  const { isOffersClosed, selectedProposal, handleCreateLoan, shouldShowOffers } = useLendingContext()
+  const { isOffersClosed, selectedProposal, handleCreateLoan, shouldShowOffers, handleCreateProposal } =
+    useLendingContext()
 
   useEffect(() => {
     ltvCallback?.(Number(ltv))
@@ -107,7 +108,11 @@ export const BorrowFlow = ({
       {shouldShowActionButton ? (
         <ActionButton
           label={selectedProposal ? 'Create Loan' : 'Create a new request!'}
-          onPress={selectedProposal ? () => handleCreateLoan(selectedProposal as SelectedProposal) : undefined}
+          onPress={
+            selectedProposal
+              ? () => handleCreateLoan(selectedProposal as SelectedProposal)
+              : () => handleCreateProposal()
+          }
         />
       ) : null}
     </Flex>

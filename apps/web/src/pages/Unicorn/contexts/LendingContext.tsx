@@ -44,6 +44,7 @@ interface LendingContextType {
   handleDiscardAcceptProposal: () => void
   handleOnSelectAcceptProposal: (proposal: SelectedProposal) => void
   handleOnClickCloseChevron: () => void
+  handleCreateProposal: () => Promise<void>
 }
 
 const LendingContext = createContext<LendingContextType | undefined>(undefined)
