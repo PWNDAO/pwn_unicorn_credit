@@ -4,6 +4,21 @@ export const useAssetPrice = (chainId: number | undefined, contractAddress: stri
   return useQuery({
     queryKey: ['assetPrice', chainId, contractAddress],
     queryFn: async () => {
+      // For Sepolia testnet, use mock data from localStorage
+      if (chainId && chainId === 11155111) {
+        const storageKey = `mockPrice_${chainId}_${contractAddress}`
+        let mockPrice = localStorage.getItem(storageKey)
+        
+        if (!mockPrice) {
+          // Generate random price between $0.01 and $1000
+          const randomPrice = Math.random() * 1000 + 5
+          mockPrice = randomPrice.toFixed(2)
+          localStorage.setItem(storageKey, mockPrice)
+        }
+        
+        console.log('Using mock price for Sepolia:', mockPrice)
+        return Number(mockPrice)
+      }
       const url = `https://api-staging.pwn.xyz/api/v1/asset/price/${encodeURIComponent(String(chainId))}/${encodeURIComponent(String(contractAddress))}/null`
       const response = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' } })
       const data = await response.json()
