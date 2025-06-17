@@ -133,15 +133,21 @@ const LendingDialog = () => {
 
   const whichVariationOfTokenSelectorModalToUse = useMemo(() => {
     if (selectionModalState.mode === SelectionModalMode.POOL) return TokenSelectorVariation.PoolOnly
-    if ([APP_TABS.BORROW, APP_TABS.LEND].includes(selectedAppTab)) return TokenSelectorVariation.FixedAssetsOnly
+    if (selectedAppTab === APP_TABS.LEND) {
+      if (selectionModalState.mode === SelectionModalMode.ASSET_2) return TokenSelectorVariation.FixedAssetsOnly
+      else return TokenSelectorVariation.BalancesOnly
+    }
+    if ([APP_TABS.BORROW].includes(selectedAppTab)) return TokenSelectorVariation.FixedAssetsOnly
     return TokenSelectorVariation.SwapInput
   }, [selectionModalState.mode, selectedAppTab])
 
   const whichPredefinedAssetsToUse = useMemo(() => {
-    if (selectedAppTab === APP_TABS.BORROW) return getAssetsByPoolSelected
+    if (selectedAppTab === APP_TABS.BORROW) {
+      return getAssetsByPoolSelected
+    }
     if (selectedAppTab === APP_TABS.LEND) {
       if (selectionModalState.mode === SelectionModalMode.ASSET_2) return getPredefinedAssetsForSecondAsset
-      else return getAssetsByPriceFeedExists
+      else return []
     }
     return []
   }, [

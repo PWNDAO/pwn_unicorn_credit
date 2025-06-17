@@ -1,6 +1,6 @@
 import { formatUnits } from '@ethersproject/units'
 import { PoolPosition, Position, PositionStatus, ProtocolVersion, Token } from '@uniswap/client-pools/dist/pools/v1/types_pb'
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Skeleton, Flex, AnimateTransition, Loader, Text } from 'ui/src'
 import { fonts } from 'ui/src/theme'
@@ -13,9 +13,10 @@ import { SectionHeader } from 'uniswap/src/components/lists/TokenSectionHeader'
 import { useGetPositionsQuery } from 'uniswap/src/data/rest/getPositions'
 import { ITEM_SECTION_HEADER_ROW_HEIGHT } from '../constants'
 import { GqlResult } from 'uniswap/src/data/types'
-import { useAssetPrice } from '../../../../../../apps/web/src/pages/Unicorn/queries/useAssetPrice'
 import { mockPositions } from '../../../../../../apps/web/src/pages/Unicorn/mocks/mockPosition'
 import { TokenLogo } from '../../CurrencyLogo/TokenLogo'
+import { useAssetPrice } from '../../../../../../apps/web/src/pages/Unicorn/queries/useAssetPrice'
+
 export interface PoolOption {
   tokenId: string
   tickLower: string
@@ -330,20 +331,16 @@ function _TokenSelectorPoolsList({
   onSelectCurrency: (poolData: PoolData) => void
   onEmptyActionPress: () => void
 }): JSX.Element {
-  // const {
-  //   data: sections,
-  //   loading,
-  //   error,
-  //   refetch,
-  // } = useTokenSectionsForPools({
-  //   activeAccountAddress,
-  const sections = mockPositions;
-  const emptyElement = useMemo(() => <EmptyList onEmptyActionPress={onEmptyActionPress} />, [onEmptyActionPress])
-
-  const [loading, setLoading] = useState(true)
-  useEffect(() => {
-    setTimeout(() => { setLoading(false) }, 2000)
-  }, [])
+  const {
+    data: dataSections,
+    loading,
+    error,
+    refetch,
+  } = useTokenSectionsForPools({
+    activeAccountAddress,
+    chainFilter,
+  })
+  const sections = dataSections ?? mockPositions;
 
   return (
     <PoolSelectorList

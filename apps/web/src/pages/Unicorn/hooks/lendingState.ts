@@ -178,11 +178,15 @@ export const useLendingState = () => {
   }
 
   const getAssetsByPriceFeedExists = useMemo(() => {
-    // TODO: figure it out, maybe hardcoded or use from sdk definitions
-
+    // get allowlist for chain
     return [
       {
         ...mockTokensBalances[0],
+        data: mockTokensBalances[0].data.map((t) => ({
+          ...t,
+          balanceUSD: 0,
+          quantity: 0,
+        })),
         sectionKey: TokenOptionSection.PredefinedAssets,
       },
     ]
@@ -190,9 +194,13 @@ export const useLendingState = () => {
 
   const getPredefinedAssetsForSecondAsset = useMemo(() => {
     if (!selectedAsset) return []
-    const filtered = mockTokensBalances[0]?.data?.filter(
-      (t) => (t?.currencyInfo?.currency as any)?.address !== (selectedAsset?.currency as any)?.address,
-    )
+    const filtered = mockTokensBalances[0]?.data
+      ?.filter((t) => (t?.currencyInfo?.currency as any)?.address !== (selectedAsset?.currency as any)?.address)
+      .map((t) => ({
+        ...t,
+        balanceUSD: 0,
+        quantity: 0,
+      }))
     return [
       {
         ...mockTokensBalances[0],
@@ -208,6 +216,11 @@ export const useLendingState = () => {
     return [
       {
         ...mockTokensBalances[0],
+        data: mockTokensBalances[0].data.map((t) => ({
+          ...t,
+          balanceUSD: 0,
+          quantity: 0,
+        })),
         sectionKey: TokenOptionSection.PredefinedAssets,
       },
     ]

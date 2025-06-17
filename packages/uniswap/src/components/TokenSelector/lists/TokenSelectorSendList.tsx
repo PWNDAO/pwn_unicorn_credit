@@ -84,18 +84,25 @@ function _TokenSelectorSendList({
   predefinedAssets?: TokenOption[] | TokenSection<TokenOption>[]
   hooks?: Hook[]
 }): JSX.Element {
-  // const {
-    // data,
-    // loading,
-    // error,
-    // refetch,
-  // } = useTokenSectionsForSend({
-  //   activeAccountAddress,
-  //   chainFilter,
-  // })
+  const {
+    data,
+    loading: loadingSections,
+    error: errorSections,
+    refetch: refetchSections,
+  } = useTokenSectionsForSend({
+    activeAccountAddress,
+    chainFilter,
+  })
   function isTokenSection(data: unknown): data is TokenSection<TokenOption>[] {
     return Array.isArray(data) && 'sectionKey' in (data[0] ?? {}) && 'data' in (data[0] ?? {})
   }
+
+  const fetchedDataWithoutNativeTokens = data?.map(section => {
+    return {
+      ...section,
+      data: section.data?.filter(t => !t.currencyInfo.currency.isNative)
+    }
+  })
 
   const sections = predefinedAssets 
     ? isTokenSection(predefinedAssets)
@@ -104,10 +111,12 @@ function _TokenSelectorSendList({
           sectionKey: TokenOptionSection.PredefinedAssets,
           data: predefinedAssets as TokenOption[]
         }]
-    : mockTokensBalances
-  const loading = false
-  const error = false
-  const refetch = () => {}
+    : fetchedDataWithoutNativeTokens ?? mockTokensBalances
+  const loading = loadingSections
+  const error = errorSections
+  const refetch = () => {
+    refetchSections?.()
+  }
   const emptyElement = useMemo(() => <EmptyList onEmptyActionPress={onEmptyActionPress} />, [onEmptyActionPress])
 
   return (
