@@ -77,7 +77,7 @@ export const BorrowFlow = ({
         />
       </Flex>
       <InputAmountSelectToken
-        label="I want to borrow ..."
+        label="I want to borrow"
         onChangeText={(value) => setAssetInputValue(value)}
         onOpenTokenSelector={
           selectedProposal || !selectedPool
@@ -90,7 +90,7 @@ export const BorrowFlow = ({
       />
       <Flex flexDirection="row" gap="$spacing16" width={'$full'}>
         <CustomInputComponent
-          label="Interest I'll pay for it ..."
+          label="Interest I'll pay for it (%)"
           onChangeText={selectedProposal ? () => {} : (value) => setInterestRate(Number(value))}
           disabled={!!selectedProposal}
           fixedValue={selectedProposal ? `${Number(selectedProposal?.apr) / 1000}%` : undefined}

@@ -52,7 +52,7 @@ export const LendFlow = ({
   return (
     <Flex flexDirection="column" gap="$spacing16" width={'100%'} maxWidth={'$full'}>
       <InputAmountSelectToken
-        label="I want to lend ..."
+        label="I want to lend"
         onChangeText={selectedProposal ? () => {} : (value) => setAssetInputValue(value)}
         onOpenTokenSelector={
           selectedProposal
@@ -69,7 +69,7 @@ export const LendFlow = ({
       />
       <Flex flexDirection="row" gap="$spacing16" alignItems="center" justifyContent="center" width={'$full'}>
         <InputLpPairTokens
-          label="Collateral required to accept ..."
+          label="Collateral required to accept"
           onChangeText={() => {}}
           onOpenTokenSelector={
             selectedProposal
@@ -90,7 +90,7 @@ export const LendFlow = ({
         />
       </Flex>
       <CustomInputComponent
-        label="I want to earn ... (%)"
+        label="I want to earn (%)"
         onChangeText={selectedProposal ? () => {} : (value) => setInterestRate(Number(value))}
         disabled={!!selectedProposal}
         fixedValue={selectedProposal ? `${Number(selectedProposal?.apr) / 1000}%` : undefined}
