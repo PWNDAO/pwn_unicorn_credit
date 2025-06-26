@@ -10,6 +10,7 @@ import { maxUint256 } from 'viem'
 import { LOAN_TO_VALUE_PERCENT } from '../constants/ltv'
 import { useLendingContext } from '../contexts/LendingContext'
 import { useAssetPrice } from '../queries/useAssetPrice'
+import { thousandSeparatorFormat } from '../lib/thousandSeparatorFormat'
 
 export const InputAmountSelectToken = ({
   label,
@@ -153,7 +154,7 @@ export const InputAmountSelectToken = ({
       )}
       {includeInputField && (
         <Text variant="subheading2" color="$neutral2">
-          ${inputPrice}
+          ${thousandSeparatorFormat(inputPrice.toString())}
         </Text>
       )}
       <Flex
