@@ -2,6 +2,7 @@ import { Button, Flex, Text } from 'ui/src'
 import { RotatableChevron } from 'ui/src/components/icons/RotatableChevron'
 import { TokenLogo } from 'uniswap/src/components/CurrencyLogo/TokenLogo'
 import { PoolData } from 'uniswap/src/components/TokenSelector/lists/TokenSelectorPoolsList'
+import { thousandSeparatorFormat } from '../lib/thousandSeparatorFormat'
 
 export const SelectPoolInput = ({
   selectedPool,
@@ -110,10 +111,7 @@ export const SelectPoolInput = ({
           </Flex>
           <Flex row justifyContent="space-between" alignItems="center" width={'$full'}>
             <Text variant="body1" color="$neutral2">
-              ${selectedPool.totalUsdValue.toFixed(2).toLocaleString()}
-            </Text>
-            <Text variant="body2" color="$neutral2">
-              Fee Tier {Number(selectedPool.feeTier) / 10_000}%
+              ${thousandSeparatorFormat(selectedPool.totalUsdValue.toFixed(2))}
             </Text>
           </Flex>
         </Flex>
