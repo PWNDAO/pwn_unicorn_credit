@@ -22,8 +22,6 @@ const AppHeader = styled.div`
 const NavOnScroll = styled.div<{ $transparent?: boolean }>`
   width: 100%;
   transition: transform ${({ theme }) => theme.transition.duration.slow};
-  background-color: ${({ theme, $transparent }) => !$transparent && theme.surface1};
-  border-bottom: ${({ theme, $transparent }) => !$transparent && `1px solid ${theme.surface3}`};
 `
 
 export const Header = memo(function Header() {
