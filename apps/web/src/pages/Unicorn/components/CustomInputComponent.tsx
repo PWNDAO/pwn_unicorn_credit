@@ -18,11 +18,12 @@ export const CustomInputComponent = ({
   const debouncedValue = useDebounce(value, 300)
 
   const handleChangeText = useCallback((newValue: string) => {
-    const numValue = Number(newValue)
+    const sanitizedValue = newValue.replaceAll(' ', '')
+    const numValue = Number(sanitizedValue)
     if (isNaN(numValue)) {
       return
     }
-    setValue(newValue)
+    setValue(sanitizedValue)
   }, [])
 
   useEffect(() => {

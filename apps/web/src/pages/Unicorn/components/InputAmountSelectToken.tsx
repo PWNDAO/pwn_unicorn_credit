@@ -9,8 +9,8 @@ import { useDebounce } from 'utilities/src/time/timing'
 import { maxUint256 } from 'viem'
 import { LOAN_TO_VALUE_PERCENT } from '../constants/ltv'
 import { useLendingContext } from '../contexts/LendingContext'
-import { useAssetPrice } from '../queries/useAssetPrice'
 import { thousandSeparatorFormat } from '../lib/thousandSeparatorFormat'
+import { useAssetPrice } from '../queries/useAssetPrice'
 
 export const InputAmountSelectToken = ({
   label,
@@ -46,11 +46,12 @@ export const InputAmountSelectToken = ({
   )
 
   const handleChangeText = useCallback((newValue: string) => {
-    const numValue = Number(newValue)
+    const sanitizedValue = newValue.replaceAll(' ', '')
+    const numValue = Number(sanitizedValue)
     if (isNaN(numValue) || numValue > maxValue) {
       return
     }
-    setValue(newValue)
+    setValue(sanitizedValue)
   }, [])
 
   useEffect(() => {
