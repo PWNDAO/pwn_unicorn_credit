@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Button, Flex, Text, useMedia } from 'ui/src'
 import { TokenLogo } from 'uniswap/src/components/CurrencyLogo/TokenLogo'
 
@@ -20,15 +21,22 @@ const timeLeft = (end: number) => {
 export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTableProps) => {
   const isBorrow = mode === 'borrow'
   const media = useMedia()
+
+  // Local state to manage loan list for optimistic UI updates
+  const [loanList, setLoanList] = useState(loans ?? [])
+
+  // Sync with parent prop whenever it changes
+  useEffect(() => {
+    setLoanList(loans ?? [])
+  }, [loans])
+
   const mockRepayLoan = (index: number) => {
     const res = window.confirm('Repay loan #' + index + '?')
     if (res) {
-      const element = document.getElementById(`loan-${index * 691234}`)
-      if (element) {
-        element.parentNode?.removeChild(element)
-      }
+      setLoanList((prev) => prev.filter((_, i) => i !== index))
     }
   }
+
   return (
     <Flex width="$full">
       <Flex backgroundColor="$surface1" borderRadius="$rounded16" overflow="hidden" height="60vh" flex={1} width="100%">
@@ -43,9 +51,10 @@ export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTablePro
           overflow="scroll"
           height="100%"
           width={media.sm ? '90vw' : '100%'}
+          minWidth={media.sm ? '0' : '20rem'}
         >
-          {loans &&
-            loans.map((loan, index) => (
+          {loanList && loanList.length > 0 ? (
+            loanList.map((loan, index) => (
               <Flex
                 width={'$full'}
                 key={index}
@@ -56,7 +65,7 @@ export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTablePro
                 borderWidth="$spacing1"
                 px="$spacing16"
                 py="$spacing16"
-                mb={index === loans.length - 1 ? 72 : '0'}
+                mb={index === loanList.length - 1 ? 72 : '0'}
                 hoverStyle={{
                   backgroundColor: 'rgb(35, 33, 34)',
                 }}
@@ -172,7 +181,14 @@ export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTablePro
                   </Flex>
                 </Flex>
               </Flex>
-            ))}
+            ))
+          ) : (
+            <Flex flex={1} justifyContent="center" alignItems="center" width="100%" minWidth={media.sm ? '0' : '20rem'}>
+              <Text variant="body2" color="$neutral3">
+                No {header.toLowerCase()} yet
+              </Text>
+            </Flex>
+          )}
         </Flex>
       </Flex>
     </Flex>
