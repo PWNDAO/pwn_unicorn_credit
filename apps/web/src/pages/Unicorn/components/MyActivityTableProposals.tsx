@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Button, Flex, Text, useMedia } from 'ui/src'
 import { TokenLogo } from 'uniswap/src/components/CurrencyLogo/TokenLogo'
 import { formatUnits } from 'viem'
@@ -21,18 +22,32 @@ const timeLeft = (end: number) => {
 export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivityTableProps) => {
   const isBorrow = mode === 'borrow'
   const media = useMedia()
+
+  // Maintain proposals in local state so we can remove cancelled ones
+  const [proposalList, setProposalList] = useState(proposals ?? [])
+
+  // Keep local state in sync if parent updates the prop
+  useEffect(() => {
+    setProposalList(proposals ?? [])
+  }, [proposals])
+
   const mockCancelProposal = (index: number) => {
     const res = window.confirm('Cancel proposal #' + index + '?')
     if (res) {
-      const element = document.getElementById(`proposal-${index * 691234}`)
-      if (element) {
-        element.parentNode?.removeChild(element)
-      }
+      setProposalList((prev) => prev.filter((_, i) => i !== index))
     }
   }
+
   return (
     <Flex width={'$full'}>
-      <Flex backgroundColor="$surface1" borderRadius="$rounded16" overflow="hidden" height={'60vh'} width={'$full'}>
+      <Flex
+        backgroundColor="$surface1"
+        borderRadius="$rounded16"
+        overflow="hidden"
+        height={'60vh'}
+        width={'$full'}
+        flex={1}
+      >
         <Text variant="subheading2" color="$neutral2" px="$spacing16" py="$spacing16">
           {header}
         </Text>
@@ -44,9 +59,11 @@ export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivity
           overflow="scroll"
           height="100%"
           width={media.sm ? '90vw' : '100%'}
+          minWidth={media.sm ? '0' : '20rem'}
+          flex={1}
         >
-          {proposals &&
-            proposals.map((proposal, index) => (
+          {proposalList && proposalList.length > 0 ? (
+            proposalList.map((proposal, index) => (
               <Flex
                 key={index}
                 width={'$full'}
@@ -57,7 +74,7 @@ export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivity
                 borderWidth="$spacing1"
                 px="$spacing16"
                 py="$spacing16"
-                mb={index === proposals.length - 1 ? 72 : '0'}
+                mb={index === proposalList.length - 1 ? 72 : '0'}
                 hoverStyle={{
                   backgroundColor: 'rgb(35, 33, 34)',
                 }}
@@ -87,14 +104,20 @@ export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivity
                       LP Pair
                     </Text>
                     <Flex flexDirection="row" alignItems="center" gap="$spacing8">
-                      <TokenLogo size={20} url="https://assets.coingecko.com/coins/images/2518/standard/weth.png?1696503332" />
+                      <TokenLogo
+                        size={20}
+                        url="https://assets.coingecko.com/coins/images/2518/standard/weth.png?1696503332"
+                      />
                       <Text variant="body2" color="$neutral1">
                         WETH
                       </Text>
                       <Text variant="body2" color="$neutral1">
                         /
                       </Text>
-                      <TokenLogo size={20} url="https://imgs.search.brave.com/qVfnM06301I6nmM20XJwh7E1dtjKpAU1IA0dllgkXNo/rs:fit:40:40:1:0/g:ce/aHR0cHM6Ly9jb2lu/LWltYWdlcy5jb2lu/Z2Vja28uY29tL2Nv/aW5zL2ltYWdlcy82/MzE5L2xhcmdlL3Vz/ZGMucG5nPzE2OTY1/MDY2OTQ" />
+                      <TokenLogo
+                        size={20}
+                        url="https://imgs.search.brave.com/qVfnM06301I6nmM20XJwh7E1dtjKpAU1IA0dllgkXNo/rs:fit:40:40:1:0/g:ce/aHR0cHM6Ly9jb2lu/LWltYWdlcy5jb2lu/Z2Vja28uY29tL2Nv/aW5zL2ltYWdlcy82/MzE5L2xhcmdlL3Vz/ZGMucG5nPzE2OTY1/MDY2OTQ"
+                      />
                       <Text variant="body2" color="$neutral1">
                         USDC
                       </Text>
@@ -133,7 +156,22 @@ export const MyActivityTableProposals = ({ header, mode, proposals }: MyActivity
                   </Flex>
                 </Flex>
               </Flex>
-            ))}
+            ))
+          ) : (
+            <Flex
+              flex={1}
+              justifyContent="center"
+              alignItems="center"
+              width="100%"
+              minWidth={media.sm ? '0' : '20rem'}
+              px="$spacing16"
+              py="$spacing16"
+            >
+              <Text variant="body2" color="$neutral3">
+                No {header.toLowerCase()} yet
+              </Text>
+            </Flex>
+          )}
         </Flex>
       </Flex>
     </Flex>
