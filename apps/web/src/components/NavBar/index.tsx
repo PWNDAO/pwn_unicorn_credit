@@ -95,7 +95,8 @@ export default function Navbar() {
   const account = useAccount()
   const NAV_SEARCH_MAX_HEIGHT = 'calc(100vh - 30px)'
 
-  const hideChainSelector = useShouldHideChainSelector()
+  // const hideChainSelector = useShouldHideChainSelector()
+  const hideChainSelector = true
 
   const { isTestnetModeEnabled } = useEnabledChains()
   const isEmbeddedWalletEnabled = useFeatureFlag(FeatureFlags.EmbeddedWallet)
