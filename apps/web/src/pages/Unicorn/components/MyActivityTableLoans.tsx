@@ -1,4 +1,5 @@
 import { Button, Flex, Text, useMedia } from 'ui/src'
+import { TokenLogo } from 'uniswap/src/components/CurrencyLogo/TokenLogo'
 
 interface MyActivityTableProps {
   header: 'Offers' | 'Requests' | 'Loans'
@@ -95,11 +96,21 @@ export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTablePro
                   {/* Row 2: Collateral */}
                   <Flex flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
                     <Text color="$neutral3" variant="body2">
-                      Collateral
+                      LP Pair
                     </Text>
-                    <Text color="$neutral1" variant="body2">
-                      {'WETH/USDC'}
-                    </Text>
+                    <Flex flexDirection="row" alignItems="center" gap="$spacing8">
+                      <TokenLogo size={20} url="https://assets.coingecko.com/coins/images/2518/standard/weth.png?1696503332" />
+                      <Text variant="body2" color="$neutral1">
+                        WETH
+                      </Text>
+                      <Text variant="body2" color="$neutral1">
+                        /
+                      </Text>
+                      <TokenLogo size={20} url="https://imgs.search.brave.com/qVfnM06301I6nmM20XJwh7E1dtjKpAU1IA0dllgkXNo/rs:fit:40:40:1:0/g:ce/aHR0cHM6Ly9jb2lu/LWltYWdlcy5jb2lu/Z2Vja28uY29tL2Nv/aW5zL2ltYWdlcy82/MzE5L2xhcmdlL3Vz/ZGMucG5nPzE2OTY1/MDY2OTQ" />
+                      <Text variant="body2" color="$neutral1">
+                        USDC
+                      </Text>
+                    </Flex>
                   </Flex>
                   {/* Row 3: Interest rate */}
                   <Flex flexDirection="row" justifyContent="space-between" alignItems="center" width="100%">
