@@ -102,18 +102,28 @@ export const useLendingState = () => {
 
   const [isOffersClosed, closeOffers] = useState<boolean>(false)
 
+  const parseToUppercase = (input: any): string => {
+    return String(input).toUpperCase()
+  }
+
   const proposals = useMemo(() => {
     return mockLendingProposals
       .filter((p) => {
         const credit = parseUnits(assetInputValue, selectedAsset?.currency?.decimals ?? 0) ?? 0n
         const mode = selectedAppTab === APP_TABS.BORROW ? 'borrow' : selectedAppTab === APP_TABS.LEND ? 'lend' : 'all'
         if (mode === 'borrow') {
+          if (parseToUppercase((selectedAsset?.currency as any)?.address) !== parseToUppercase(p.creditAsset.address)) {
+            return false
+          }
           if (interestRate) {
             return (credit > 0n ? p.creditAmount >= Number(credit) : true) && p.apr <= interestRate * 1000
           } else {
             return credit > 0n ? p.creditAmount >= Number(credit) : true
           }
         } else if (mode === 'lend') {
+          if (parseToUppercase((selectedAsset?.currency as any)?.address) !== parseToUppercase(p.creditAsset.address)) {
+            return false
+          }
           if (interestRate) {
             return (credit > 0n ? p.creditAmount <= Number(credit) : true) && p.apr >= interestRate * 1000
           } else {
