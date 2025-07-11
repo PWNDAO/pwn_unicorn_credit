@@ -355,6 +355,7 @@ export function FeeTierSearchModal() {
               gap="$gap4"
               maxHeight={350}
               overflow="scroll"
+              $platform-web={{ overflow: 'auto' }}
               px="$spacing16"
               className="scrollbar-hidden"
             >

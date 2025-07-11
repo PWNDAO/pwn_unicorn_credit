@@ -183,6 +183,7 @@ const LendingDialog = () => {
         width={media.sm ? '90vw' : '100%'}
         height="85vh"
         overflow="scroll"
+        $platform-web={{ overflow: 'auto' }}
       >
         <Flex
           flexDirection={media.xl ? 'column' : 'row'}

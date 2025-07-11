@@ -49,6 +49,7 @@ export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTablePro
           px="$spacing16"
           py="$spacing16"
           overflow="scroll"
+          $platform-web={{ overflow: 'auto' }}
           height="100%"
           width={media.sm ? '90vw' : '100%'}
           minWidth={media.sm ? '0' : '20rem'}

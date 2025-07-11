@@ -76,7 +76,7 @@ export const AvailableOffersCards = ({ handleAcceptProposal }: { handleAcceptPro
       <Text variant="subheading2" color="$neutral2" px="$spacing16" py="$spacing16">
         Instant Liquidity To Accept
       </Text>
-      <Flex flexDirection="column" gap="$spacing16" px="$spacing16" py="$spacing16" overflow="scroll" height="100%">
+      <Flex flexDirection="column" gap="$spacing16" px="$spacing16" py="$spacing16" overflow="scroll" $platform-web={{ overflow: 'auto' }} height="100%">
         {proposals
           ?.filter((p) => Boolean(p))
           .map((proposal, index) => {

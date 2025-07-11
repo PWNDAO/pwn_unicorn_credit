@@ -158,7 +158,7 @@ export default function FeatureFlagModal() {
           </Flex>
           <ModalCloseIcon onClose={closeModal} />
         </CenteredRow>
-        <Flex maxHeight="600px" pb="$gap8" overflow="scroll" $md={{ maxHeight: 'unset' }}>
+        <Flex maxHeight="600px" pb="$gap8" overflow="scroll" $platform-web={{ overflow: 'auto' }} $md={{ maxHeight: 'unset' }}>
           <FeatureFlagOption flag={FeatureFlags.EmbeddedWallet} label="Add internal embedded wallet functionality" />
           <FeatureFlagOption flag={FeatureFlags.V4Swap} label="Enable v4 in the shared swap flow" />
           <FeatureFlagOption flag={FeatureFlags.UniswapX} label="[Universal Swap Flow Only] Enable UniswapX" />
