@@ -15,11 +15,11 @@ export const ScrollBarStyles = css<{ $isHorizontalScroll?: boolean }>`
       return $isHorizontalScroll
         ? css`
             height: 4px;
-            overflow-x: scroll;
+            overflow-x: auto;
           `
         : css`
             width: 4px;
-            overflow-y: scroll;
+            overflow-y: auto;
           `
     }}
   }

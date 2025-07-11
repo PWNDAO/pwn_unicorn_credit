@@ -36,27 +36,27 @@ const OptionsSelector = styled(Tabs.List, {
       small: {
         height: 30,
         gap: '$spacing6',
-        borderRadius: '$rounded16',
+        borderRadius: 0,
       },
       smallThumbnail: {
         height: 34,
         gap: '$spacing6',
-        borderRadius: '$rounded16',
+        borderRadius: 0,
       },
       default: {
         height: 34,
         gap: '$gap8',
-        borderRadius: '$rounded20',
+        borderRadius: 0,
       },
       large: {
         height: 42,
         gap: '$gap12',
-        borderRadius: '$rounded24',
+        borderRadius: 0,
       },
       largeThumbnail: {
         height: 42,
         gap: '$gap12',
-        borderRadius: '$rounded24',
+        borderRadius: 0,
       },
     },
   } as const,
