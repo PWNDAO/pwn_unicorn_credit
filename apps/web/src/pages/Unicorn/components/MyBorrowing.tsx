@@ -1,11 +1,16 @@
 import { Flex, useMedia } from 'ui/src'
-import { mockLoansPlural } from '../mocks/mockLoans'
-import { mockLendingProposals } from '../mocks/mockProposal'
+import { useProposals } from '../hooks/useProposals'
+import { useLoans } from '../hooks/useLoans'
 import { MyActivityTableLoans } from './MyActivityTableLoans'
 import { MyActivityTableProposals } from './MyActivityTableProposals'
 
 export const MyBorrowing = () => {
   const media = useMedia()
+  
+  // Fetch proposals and loans for borrowing mode
+  const { data: proposals, isLoading: proposalsLoading, error: proposalsError } = useProposals({ mode: 'borrow' })
+  const { data: loans, isLoading: loansLoading, error: loansError } = useLoans({ mode: 'borrow' })
+
   return (
     <Flex width="$full" justifyContent="center" alignItems="center">
       <Flex
@@ -15,8 +20,20 @@ export const MyBorrowing = () => {
         justifyContent="center"
         alignItems="center"
       >
-        <MyActivityTableProposals header="Requests" mode="borrow" proposals={mockLendingProposals} />
-        <MyActivityTableLoans header="Loans" mode="borrow" loans={mockLoansPlural} />
+        <MyActivityTableProposals 
+          header="Requests" 
+          mode="borrow" 
+          proposals={proposals || []}
+          isLoading={proposalsLoading}
+          error={proposalsError}
+        />
+        <MyActivityTableLoans 
+          header="Loans" 
+          mode="borrow" 
+          loans={loans || []}
+          isLoading={loansLoading}
+          error={loansError}
+        />
       </Flex>
     </Flex>
   )

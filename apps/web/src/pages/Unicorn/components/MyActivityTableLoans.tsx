@@ -4,6 +4,8 @@ interface MyActivityTableProps {
   header: 'Offers' | 'Requests' | 'Loans'
   mode: 'borrow' | 'lend'
   loans: any[]
+  isLoading?: boolean
+  error?: Error | null
 }
 
 const timeLeft = (end: number) => {
@@ -16,7 +18,7 @@ const timeLeft = (end: number) => {
   return (days > 0 ? `${days}d ` : '') + (hours > 0 ? `${hours}h ` : '') + (minutes > 0 ? `${minutes}m` : '')
 }
 
-export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTableProps) => {
+export const MyActivityTableLoans = ({ header, mode, loans, isLoading = false, error }: MyActivityTableProps) => {
   const isBorrow = mode === 'borrow'
   const media = useMedia()
   const mockRepayLoan = (index: number) => {
@@ -28,6 +30,53 @@ export const MyActivityTableLoans = ({ header, mode, loans }: MyActivityTablePro
       }
     }
   }
+
+  if (isLoading) {
+    return (
+      <Flex width="$full">
+        <Flex backgroundColor="$surface1" borderRadius="$rounded16" overflow="hidden" height="60vh" flex={1} width="100%">
+          <Text variant="subheading2" color="$neutral2" px="$spacing16" py="$spacing16">
+            {header}
+          </Text>
+          <Flex
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            height="100%"
+            width="100%"
+          >
+            <Text color="$neutral2" variant="body2">
+              Loading...
+            </Text>
+          </Flex>
+        </Flex>
+      </Flex>
+    )
+  }
+
+  if (error) {
+    return (
+      <Flex width="$full">
+        <Flex backgroundColor="$surface1" borderRadius="$rounded16" overflow="hidden" height="60vh" flex={1} width="100%">
+          <Text variant="subheading2" color="$neutral2" px="$spacing16" py="$spacing16">
+            {header}
+          </Text>
+          <Flex
+            flexDirection="column"
+            justifyContent="center"
+            alignItems="center"
+            height="100%"
+            width="100%"
+          >
+            <Text color="$red1" variant="body2">
+              Error loading data: {error.message}
+            </Text>
+          </Flex>
+        </Flex>
+      </Flex>
+    )
+  }
+
   return (
     <Flex width="$full">
       <Flex backgroundColor="$surface1" borderRadius="$rounded16" overflow="hidden" height="60vh" flex={1} width="100%">
