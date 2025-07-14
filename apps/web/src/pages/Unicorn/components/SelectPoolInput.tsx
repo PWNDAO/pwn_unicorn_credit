@@ -30,7 +30,7 @@ export const SelectPoolInput = ({
       pb="$spacing24"
     >
       <Text color="$neutral2" variant="subheading2">
-        I'll use this LP as collateral ...
+        I'll use this LP as collateral
       </Text>
       {!selectedPool ? (
         <Flex centered width={'$full'}>

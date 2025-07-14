@@ -10,9 +10,9 @@ export const mockTokensBalances = [
           'TokenBalance:VG9rZW5CYWxhbmNlOjB4YTdGRjMyZmI3MjRFMEQ0NkIyYTE0ODk2QzRiYjUxM0VmMmRiMjJiMV9WRzlyWlc0NlFrRlRSVjl1ZFd4c19VU0Q=',
         currencyInfo: {
           currency: {
-            address: '0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+            address: '0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8',
             buyFeeBps: undefined,
-            chainId: 8453,
+            chainId: 11155111,
             decimals: 6,
             isNative: false,
             isToken: true,
@@ -20,7 +20,7 @@ export const mockTokensBalances = [
             sellFeeBps: undefined,
             symbol: 'USDC',
           },
-          currencyId: '8453-0x833589fcd6edb6e08f4c7c32d4f71b54bda02913',
+          currencyId: '11155111-0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8',
           isSpam: false,
           logoUrl: 'https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694',
           safetyInfo: {
@@ -44,9 +44,9 @@ export const mockTokensBalances = [
           'TokenBalance:VG9rZW5CYWxhbmNlOjB4YTdGRjMyZmI3MjRFMEQ0NkIyYTE0ODk2QzRiYjUxM0VmMmRiMjJiMV9WRzlyWlc0NlFrRlRSVjl1ZFd4c19V1f=',
         currencyInfo: {
           currency: {
-            address: '0x4200000000000000000000000000000000000006',
+            address: '0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9',
             buyFeeBps: undefined,
-            chainId: 8453,
+            chainId: 11155111,
             decimals: 18,
             isNative: false,
             isToken: true,
@@ -54,7 +54,7 @@ export const mockTokensBalances = [
             sellFeeBps: undefined,
             symbol: 'WETH',
           },
-          currencyId: '8453-0x4200000000000000000000000000000000000006',
+          currencyId: '11155111-0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9',
           isSpam: false,
           logoUrl: 'https://assets.coingecko.com/coins/images/2518/standard/weth.png?1696503332',
           safetyInfo: {
