@@ -168,14 +168,14 @@ const LendingDialog = () => {
       alignItems="center"
       overflow="hidden"
     >
-      <SegmentedControl
+      {/* <SegmentedControl
         options={tabs}
         disabled={false}
         selectedOption={selectedAppTab}
         onSelectOption={(option) => handleOnChangeTab(option as APP_TABS)}
         outlined={false}
         size={media.sm ? 'small' : 'large'}
-      />
+      /> */}
       <Flex
         grow
         gap="$spacing8"

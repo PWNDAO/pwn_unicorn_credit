@@ -2,7 +2,13 @@ import styled from 'lib/styled-components'
 import { Body } from 'pages/App/Body'
 import { Header } from 'pages/App/Header'
 import { GRID_AREAS } from 'pages/App/utils/shared'
+import { LendingStateProvider } from 'pages/Unicorn/contexts/LendingContext'
 import { breakpoints } from 'ui/src/theme'
+import { TransactionSettingsContextProvider } from 'uniswap/src/features/transactions/settings/contexts/TransactionSettingsContext'
+import { MultichainContextProvider } from 'state/multichain/MultichainContext'
+import { PrefetchBalancesWrapper } from 'graphql/data/apollo/AdaptiveTokenBalancesProvider'
+import { SwapFormContextProvider } from 'uniswap/src/features/transactions/swap/contexts/SwapFormContext'
+import { TransactionSettingKey } from 'uniswap/src/features/transactions/settings/slice'
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -35,11 +41,22 @@ const AppBody = styled.div`
 
 export function AppLayout() {
   return (
+    <MultichainContextProvider initialChainId={1}>
+    <TransactionSettingsContextProvider settingKey={TransactionSettingKey.Swap}>
+      <PrefetchBalancesWrapper>
+        <SwapFormContextProvider prefilledState={{} as any} hideFooter hideSettings>
+          <LendingStateProvider>
     <AppContainer>
       <Header />
       <AppBody>
         <Body />
       </AppBody>
     </AppContainer>
+
+    </LendingStateProvider>
+            </SwapFormContextProvider>
+          </PrefetchBalancesWrapper>
+        </TransactionSettingsContextProvider>
+      </MultichainContextProvider>
   )
 }
